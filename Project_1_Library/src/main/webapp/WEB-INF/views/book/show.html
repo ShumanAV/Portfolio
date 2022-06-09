@@ -11,6 +11,15 @@
 
     <p th:text="${book.title} + ', ' + ${book.author} + ', ' + ${book.year_of_writing}"></p>
 
+    <form th:method="PATCH" th:action="@{/books/{id}(id=${book.book_id})}">
+        <label for="person">Выберите человека: </label>
+        <select th:object="${person}" th:field="*{person_id}" id="person">
+            <option th:each="person : ${people}" th:value="${person.getPerson_id()}" th:text="${person.getName()}"></option>
+        </select>
+
+        <input type="submit" value="Назначить книгу"/>
+    </form>
+
     <hr>
 
     <form th:method="GET" th:action="@{/books/{id}/edit(id=${book.book_id})}" th:object="${book}">

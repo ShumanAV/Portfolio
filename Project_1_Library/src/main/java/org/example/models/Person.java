@@ -20,6 +20,8 @@ public class Person {
         this.year_of_birth = year_of_birth;
     }
 
+    // Пустой конструктор нужен для спринга (тот же @ModelAttribute создает объект с помощью пустого конструктора и с помощью
+    // сеттеров пемощает в него значения
     public Person() {
 
     }

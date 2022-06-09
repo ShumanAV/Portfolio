@@ -1,6 +1,7 @@
 package org.example.dao;
 
 import org.example.models.Book;
+import org.example.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,11 +18,6 @@ public class BookDAO {
     @Autowired
     public BookDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    public List<Book> howManyBooksHasThisPerson(int id) {
-        return jdbcTemplate.query("SELECT title, author, year_of_writing FROM Person JOIN Book ON Person.person_id = Book.person_id WHERE Person.person_id = ?",
-                new Object[]{id}, new BeanPropertyRowMapper<>(Book.class));
     }
 
     public List<Book> index() {
@@ -52,4 +48,20 @@ public class BookDAO {
         jdbcTemplate.update("DELETE FROM Book WHERE book_id=?", id);
     }
 
+    // Получаем человека, которому принадлежит указанная книга с указанным id
+    public Optional<Person> getBookOwner(int id) {
+        return jdbcTemplate.query("SELECT Person.* FROM Person INNER JOIN Book ON Person.person_id = Book.person_id WHERE Book.book_id = ?", new Object[]{id},
+                new BeanPropertyRowMapper<>(Person.class)).stream().findAny();
+    }
+
+    // Освобождаем книгу по id книги, когда человек возвращает ее
+    public void release(int id) {
+        jdbcTemplate.update("Update Book Set person_id = NULL WHERE book_id = ?", id);
+    }
+
+    // Назначаем книге c id человека selectedPerson
+    public void assign(int id, Person selectedPerson) {
+        jdbcTemplate.update("Update Book Set person_id = ? WHERE book_id = ?",
+                selectedPerson.getPerson_id(), id);
+    }
 }

@@ -27,6 +27,8 @@ public class Book {
         this.year_of_writing = year_of_writing;
     }
 
+    // Пустой конструктор нужен для спринга (тот же @ModelAttribute создает объект с помощью пустого конструктора и с помощью
+    // сеттеров пемощает в него значения
     public Book() {
 
     }

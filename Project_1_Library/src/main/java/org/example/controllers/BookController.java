@@ -1,7 +1,9 @@
 package org.example.controllers;
 
 import org.example.dao.BookDAO;
+import org.example.dao.PersonDAO;
 import org.example.models.Book;
+import org.example.models.Person;
 import org.example.util.BookValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,17 +12,20 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/books")
 public class BookController {
 
     private final BookDAO bookDAO;
+    private final PersonDAO personDAO;
     private final BookValidator bookValidator;
 
     @Autowired
-    public BookController(BookDAO bookDAO, BookValidator bookValidator) {
+    public BookController(BookDAO bookDAO, PersonDAO personDAO, BookValidator bookValidator) {
         this.bookDAO = bookDAO;
+        this.personDAO = personDAO;
         this.bookValidator = bookValidator;
     }
 
@@ -48,9 +53,16 @@ public class BookController {
     }
 
     @GetMapping("/{id}")    // динамический id
-    public String show(@PathVariable("id") int id, Model model) {
+    public String show(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person) {
         model.addAttribute("book", bookDAO.show(id));
-//        model.addAttribute("books", bookDAO.isTheBookFree(id));
+
+        Optional<Person> bookOwner = bookDAO.getBookOwner(id);
+
+        if (bookOwner.isPresent()) {
+            model.addAttribute("owner", bookOwner.get());
+        } else {
+            model.addAttribute("people", personDAO.index());
+        }
         return "book/show";
     }
 
@@ -77,6 +89,19 @@ public class BookController {
     public String delete(@PathVariable("id") int id) {
         bookDAO.delete(id);
         return "redirect:/books";
+    }
+
+    @PatchMapping("/{id}/release")
+    public String release(@PathVariable("id") int id) {
+        bookDAO.release(id);
+        return "redirect:/books/" + id;
+    }
+
+    @PatchMapping("/{id}/assign")
+    public String assign(@PathVariable("id") int id, @ModelAttribute("person") Person selectedPerson) {
+        // у selectedPerson назначено только поле id остальные null
+        bookDAO.assign(id, selectedPerson);
+        return "redirect:/books/" + id;
     }
 
 }
