@@ -12,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -37,10 +36,10 @@ public class BookController {
             @RequestParam(value = "books_per_page", required = false) Integer booksPerPage,
             @RequestParam(value = "sort_by_year", required = false) Boolean sortByYear) {
 
-        if (page != null && booksPerPage != null) {
-            model.addAttribute("books", bookService.findAll(page, booksPerPage, sortByYear));
-        } else {
+        if (page == null && booksPerPage == null) {
             model.addAttribute("books", bookService.findAll(sortByYear));
+        } else {
+            model.addAttribute("books", bookService.findAllWithPagination(page, booksPerPage, sortByYear));
         }
         return "book/index";
     }

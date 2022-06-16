@@ -28,7 +28,7 @@ public class BookService {
         return bookRepository.findAll(Sort.by(returnSortedField(sortByYear)));
     }
 
-    public List<Book> findAll(int pageNumber, int booksPerPage, Boolean sortByYear) {
+    public List<Book> findAllWithPagination(int pageNumber, int booksPerPage, Boolean sortByYear) {
         return bookRepository.findAll(PageRequest.of(pageNumber, booksPerPage, Sort.by(returnSortedField(sortByYear)))).getContent();
     }
 
@@ -54,7 +54,12 @@ public class BookService {
 
     @Transactional
     public void update(int id, Book updatedBook) {
+        Book bookToBeUpdated = bookRepository.findById(id).get();
+
+        //добавляем по сути новую книгу, которая не находится в Persistent Context, поэтому нужен save()
         updatedBook.setBookId(id);
+        updatedBook.setOwner(bookToBeUpdated.getOwner());   // у редактируемой книги поле owner null, поэтому его заполняем, чтобы связь не терялась
+
         bookRepository.save(updatedBook);
     }
 
@@ -65,23 +70,32 @@ public class BookService {
 
     // Получаем человека, которому принадлежит указанная книга с указанным id
     public Optional<Person> getBookOwner(int id) {
+        // здесь Hibernate.initialize() не нужен, так как владелец (сторона One) загружается не лениво
         Book book = bookRepository.findById(id).orElse(null);
         return Optional.ofNullable(book.getOwner());
     }
 
     @Transactional
-    // Освобождаем книгу по id книги, когда человек возвращает ее
+    // Освобождаем книгу по id книги (убираем owner'а и дату взятия книги), когда человек возвращает ее
     public void release(int id) {
-        Book book = bookRepository.findById(id).orElse(null);
-        book.setOwner(null);
+        bookRepository.findById(id).ifPresent(
+                book -> {
+                    book.setDateOfTaken(null);
+                    book.setOwner(null);
+                }
+        );
+
     }
 
     @Transactional
-    // Назначаем книге c id человека selectedPerson
+    // Назначаем книге c id человека selectedPerson (устанавливаем owner'а и дату взятия книги - текущую дату)
     public void assign(int id, Person selectedPerson) {
-        Book book = bookRepository.findById(id).orElse(null);
-        book.setOwner(selectedPerson);
-        book.setDateOfTaken(new Date());
+        bookRepository.findById(id).ifPresent(
+                book -> {
+                    book.setOwner(selectedPerson);
+                    book.setDateOfTaken(new Date());
+                }
+        );
     }
 
     public List<Book> findByTitleStartingWith(String startingWith) {

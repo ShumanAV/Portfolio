@@ -6,14 +6,13 @@
 </head>
 <body>
     <h1>Страница человека</h1>
-    <br>
-    <br>
+    <br/>
+    <br/>
 
-    <p th:text="${person.name} + ', ' + ${person.yearOfBirth}"></p>
+    <p th:text="${person.fullName} + ', ' + ${person.yearOfBirth}"></p>
 
     <div th:if="${books.isEmpty()}">
         <p>Человек пока не взял ни одной книги</p>
-        <hr/>
     </div>
 
     <div th:if="${!books.isEmpty()}">
@@ -21,10 +20,11 @@
         <b>Книги: </b>
         <br/>
         <div th:each="book : ${books}">
-            <p th:style="${book.overdueBook ? 'color:red' : 'color:black'}"  th:text="${book.title} + ', ' + ${book.author} + ', ' + ${book.yearOfWriting}">Book</p>
+            <p th:style="${book.expired ? 'color:red' : 'color:black'}" th:text="${book.title} + ', ' + ${book.author} + ', ' + ${book.yearOfWriting}">Book</p>
         </div>
-        <hr/>
     </div>
+    <hr/>
+    <br/>
 
     <form th:method="GET" th:action="@{/people/{id}/edit(id=${person.id})}" th:object="${person}">
         <input type="submit" value="Редактировать"/>

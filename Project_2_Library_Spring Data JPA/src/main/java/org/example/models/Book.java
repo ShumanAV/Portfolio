@@ -38,8 +38,9 @@ public class Book {
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person owner;
 
+    // Hibernate не будет замечать этого поля
     @Transient
-    private Boolean overdueBook;
+    private Boolean expired;
 
     public Book(String title, String author, int yearOfWriting) {
         this.title = title;
@@ -48,7 +49,7 @@ public class Book {
     }
 
     // Пустой конструктор нужен для спринга (тот же @ModelAttribute создает объект с помощью пустого конструктора и с помощью
-    // сеттеров пемощает в него значения
+    // сеттеров помещает в него значения
     public Book() {
     }
 
@@ -62,12 +63,12 @@ public class Book {
                 '}';
     }
 
-    public Boolean getOverdueBook() {
-        return overdueBook;
+    public Boolean getExpired() {
+        return expired;
     }
 
-    public void setOverdueBook(Boolean overdueBook) {
-        this.overdueBook = overdueBook;
+    public void setExpired(Boolean expired) {
+        this.expired = expired;
     }
 
     public Date getDateOfTaken() {

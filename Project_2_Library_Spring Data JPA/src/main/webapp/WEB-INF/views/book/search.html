@@ -29,7 +29,7 @@
                 <p th:text="(*{title} + ', ' + *{author} + ', ' + *{yearOfWriting})"></p>
 
                 <div th:if="*{owner}">
-                    <span>Книга сейчас у: </span> <span th:text="*{owner.getName()}">Person name</span>
+                    <span>Книга сейчас у: </span> <span th:text="*{owner.getFullName()}">Person name</span>
                 </div>
 
                 <div th:if="*{owner == null}">
@@ -40,6 +40,9 @@
         </div>
 
     </div>
+
+    <br/>
+    <a href="/books">Назад </a>
 
 </body>
 </html>
