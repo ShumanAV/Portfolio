@@ -16,8 +16,8 @@ public class Person {
     // вся ниже аннотация по валидации данных импортирована из зависимости org.hibernate.validator
     @NotEmpty(message = "Имя не должно быть пустым")
     @Size(min = 2, max = 100, message = "Имя должно содержать количество символов от 2 до 100")
-    @Column(name = "name")
-    private String name;
+    @Column(name = "full_name")
+    private String fullName;
 
     @Min(value = 1900, message = "Год рождения должен быть больше 1900")
     @Column(name = "year_of_birth")
@@ -26,8 +26,8 @@ public class Person {
     @OneToMany(mappedBy = "owner")
     private List<Book> books;
 
-    public Person(String name, int yearOfBirth) {
-        this.name = name;
+    public Person(String fullName, int yearOfBirth) {
+        this.fullName = fullName;
         this.yearOfBirth = yearOfBirth;
     }
 
@@ -40,7 +40,7 @@ public class Person {
     public String toString() {
         return "Person{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", fullName='" + fullName + '\'' +
                 ", yearOfBirth=" + yearOfBirth +
                 '}';
     }
@@ -61,12 +61,12 @@ public class Person {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public int getYearOfBirth() {

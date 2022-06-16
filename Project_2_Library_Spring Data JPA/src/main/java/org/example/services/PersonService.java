@@ -1,15 +1,17 @@
 package org.example.services;
 
+import javafx.print.Collation;
 import org.example.models.Book;
 import org.example.models.Person;
 import org.example.repositories.PersonRepository;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -47,14 +49,18 @@ public class PersonService {
     }
 
     public List<Book> getBooksByPersonId(int id) {
-        Person person = personRepository.findById(id).orElse(null);
-        List<Book> books = person.getBooks();
-        for (Book book: books) {
-            Date bookDateOfTaken = book.getDateOfTaken();
-            Date nowDate = new Date();
-            Long tenDaysInMs = 10l * 24 * 60 * 60 * 1000;
-            book.setOverdueBook((nowDate.getTime() - bookDateOfTaken.getTime()) > tenDaysInMs);
+        Optional<Person> person = personRepository.findById(id);
+        if (person.isPresent()) {
+            List<Book> books = person.get().getBooks();
+            for (Book book : books) {
+                Date bookDateOfTaken = book.getDateOfTaken();
+                Date nowDate = new Date();
+                Long tenDaysInMs = 10l * 24 * 60 * 60 * 1000;
+                book.setExpired(Math.abs(nowDate.getTime() - bookDateOfTaken.getTime()) > tenDaysInMs);
+            }
+            return books;
+        } else {
+            return Collections.emptyList();
         }
-        return books;
     }
 }

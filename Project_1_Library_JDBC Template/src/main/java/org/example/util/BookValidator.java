@@ -1,9 +1,7 @@
 package org.example.util;
 
 import org.example.dao.BookDAO;
-import org.example.dao.PersonDAO;
 import org.example.models.Book;
-import org.example.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -28,7 +26,7 @@ public class BookValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Book book = (Book) o;
 
-        if (bookDAO.show(book.getTitle(), book.getAuthor(), book.getYear_of_writing()).isPresent()) {
+        if (bookDAO.show(book.getTitle(), book.getAuthor(), book.getYearOfWriting()).isPresent()) {
             errors.rejectValue("title", "", "Такая книга с таким автором и годом написания уже существует");
         }
     }

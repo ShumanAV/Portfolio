@@ -10,7 +10,7 @@
   <br/>
 
   <div th:each="book : ${books}">
-    <a th:text="${book.title} + ', ' + ${book.author} + ', ' + ${book.year_of_writing}" th:href="@{/books/{id}(id=${book.book_id})}"></a>
+    <a th:text="${book.title} + ', ' + ${book.author} + ', ' + ${book.yearOfWriting}" th:href="@{/books/{id}(id=${book.bookId})}"></a>
   </div>
   <br/>
   <br/>

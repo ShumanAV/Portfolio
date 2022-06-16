@@ -13,7 +13,7 @@
 
 <!--    этот блок показывается если у книги есть владелец-->
     <div th:if="${owner}">
-        <span>Книга сейчас у: </span> <span th:text="${owner.getName()}">Person name</span>
+        <span>Книга сейчас у: </span> <span th:text="${owner.getFullName()}">Person name</span>
         <br/>
         <br/>
         <form th:method="PATCH" th:action="@{/books/{id}/release(id=${book.bookId})}">
@@ -28,7 +28,7 @@
         <form th:method="PATCH" th:action="@{/books/{id}/assign(id=${book.bookId})}">
             <label for="person">Выберите человека: </label>
             <select th:object="${person}" th:field="*{id}" id="person">
-                <option th:each="person : ${people}" th:value="${person.getId()}" th:text="${person.getName()}"></option>
+                <option th:each="person : ${people}" th:value="${person.getId()}" th:text="${person.getFullName()}"></option>
             </select>
 
             <input type="submit" value="Назначить книгу"/>
@@ -36,6 +36,7 @@
     </div>
 
     <hr/>
+    <br/>
 
     <form th:method="GET" th:action="@{/books/{id}/edit(id=${book.bookId})}" th:object="${book}">
         <input type="submit" value="Редактировать"/>

@@ -11,9 +11,9 @@
     <br>
 
     <form th:method="PATCH" th:action="@{/people/{id}(id=${person.id})}" th:object="${person}">
-        <label for="name">Введите ФИО: </label>
-        <input type="text" th:field="*{name}" id="name">
-        <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
+        <label for="fullName">Введите ФИО: </label>
+        <input type="text" th:field="*{fullName}" id="fullName">
+        <div style="color:red" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">Name Error</div>
 
         <br>
 

@@ -21,7 +21,7 @@
         <b>Книги: </b>
         <br/>
         <div th:each="book : ${books}">
-            <p th:text="${book.title} + ', ' + ${book.author} + ', ' + ${book.year_of_writing}">Book</p>
+            <p th:text="${book.title} + ', ' + ${book.author} + ', ' + ${book.yearOfWriting}">Book</p>
         </div>
         <hr/>
     </div>
