@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>One person</title>
+</head>
+<body>
+    <h1>Страница человека</h1>
+    <br>
+    <br>
+
+    <p th:text="${person.name} + ', ' + ${person.year_of_birth}"></p>
+    <br>
+    <br>
+    Идет запись о книгах
+    <hr>
+
+    <form th:method="GET" th:action="@{/people/{id}/edit(id=${person.person_id})}" th:object="${person}">
+        <input type="submit" value="Редактировать"/>
+    </form>
+    <br>
+    <form th:method="DELETE" th:action="@{/people/{id}(id=${person.person_id})}" th:object="${person}">
+        <input type="submit" value="Удалить"/>
+    </form>
+</body>
+</html>
