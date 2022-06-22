@@ -9,22 +9,25 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>FirstRestApp_Lesson_91</artifactId>
+	<artifactId>Project_3_1_Meteostation_RestAPI_Server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>FirstRestApp_Lesson_91</name>
-	<description>Demo project for Spring Boot</description>
+	<name>Project_3_1_Meteostation_RestAPI_Server</name>
+	<description>Project_3_1 Rest API server for Meteostation</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
 	<dependencies>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+
 <!--		jackson входит в spring-boot-starter-web-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -36,23 +39,24 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.1.5.Final</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
 			<version>3.1.0</version>
 		</dependency>
-
-
 
 	</dependencies>
 

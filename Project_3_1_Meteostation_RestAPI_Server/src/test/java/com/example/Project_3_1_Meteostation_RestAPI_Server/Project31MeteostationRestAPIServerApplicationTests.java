@@ -1,10 +1,10 @@
-package com.example.FirstRestApp_Lesson_91;
+package com.example.Project_3_1_Meteostation_RestAPI_Server;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FirstRestAppLesson91ApplicationTests {
+class Project31MeteostationRestAPIServerApplicationTests {
 
 	@Test
 	void contextLoads() {
