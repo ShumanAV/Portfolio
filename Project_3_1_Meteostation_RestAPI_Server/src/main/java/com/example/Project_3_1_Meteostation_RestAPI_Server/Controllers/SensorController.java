@@ -5,8 +5,8 @@ import com.example.Project_3_1_Meteostation_RestAPI_Server.models.Sensor;
 import com.example.Project_3_1_Meteostation_RestAPI_Server.services.SensorService;
 import com.example.Project_3_1_Meteostation_RestAPI_Server.util.responses.ErrorResponse;
 import com.example.Project_3_1_Meteostation_RestAPI_Server.util.ConverterDTOModel;
-import com.example.Project_3_1_Meteostation_RestAPI_Server.util.ErrorsUtil;
-import com.example.Project_3_1_Meteostation_RestAPI_Server.util.exceptions.MeasurementException;
+import com.example.Project_3_1_Meteostation_RestAPI_Server.util.CreateMessageException;
+import com.example.Project_3_1_Meteostation_RestAPI_Server.util.exceptions.SensorAndMeasurementException;
 import com.example.Project_3_1_Meteostation_RestAPI_Server.util.validators.SensorValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,17 +40,18 @@ public class SensorController {
         sensorValidator.validate(modelMapper.convert(sensorDTO, Sensor.class), bindingResult);
 
         if (bindingResult.hasErrors()) {
-            ErrorsUtil.returnErrorsToClient(bindingResult);
+            CreateMessageException.returnErrorsToClient(bindingResult);
         }
 
         sensorService.save((Sensor) modelMapper.convert(sensorDTO, Sensor.class));
+
         // вернется клиенту, что все прошло ок, т.е. отправляем HTTP ответ с пустым телом и статусом 200
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     // в этом методе ловим выброшенный MeasurementException
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(MeasurementException e) {
+    private ResponseEntity<ErrorResponse> handleException(SensorAndMeasurementException e) {
         // создаем наш объект ErrorResponse с ошибкой
         ErrorResponse response = new ErrorResponse(
                 e.getMessage(),
