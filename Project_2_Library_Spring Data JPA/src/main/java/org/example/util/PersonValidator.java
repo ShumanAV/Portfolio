@@ -25,5 +25,10 @@ public class PersonValidator implements Validator {
     @Override
     public void validate(Object o, Errors errors) {
         Person person = (Person) o;
+
+        // поиск человека с таким же именем
+        if (personService.findByFullName(person.getFullName()).isPresent()) {
+            errors.rejectValue("fullName", "", "Человек с таким именем уже существует");
+        }
     }
 }

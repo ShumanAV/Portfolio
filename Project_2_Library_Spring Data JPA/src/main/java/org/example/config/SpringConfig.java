@@ -26,18 +26,18 @@ import java.util.Objects;
 import java.util.Properties;
 
 // этот класс полностью идентичен конфигурационному файлу applicationContextMVC.xml
-// для того, чтобы подключить шаблолнизатор Thymeleaf вместо стандартного, мы имплеминтируем интерфейс WebMvcConfigurer
+// для того, чтобы подключить шаблолнизатор Thymeleaf вместо стандартного, мы имплементируем интерфейс WebMvcConfigurer
 // с реализацией метода configureViewResolvers, в котором задаем шаблонизатор Thymeleaf
 @Configuration
 @ComponentScan("org.example")
-@EnableWebMvc   //аналогично <mvc:annotation-driven/>, которая включает необх аннотации для spring mvc
-@PropertySource("classpath:hibernate.properties")   // подключаем файл с конфигурацией
-@EnableTransactionManagement    //spring за нас будет открывать и закрывать транзакции
-@EnableJpaRepositories("org.example.repositories") //  включаем поддержку JPA репозиториев
+@EnableWebMvc                                           //аналогично <mvc:annotation-driven/>, которая включает необх аннотации для spring mvc
+@PropertySource("classpath:hibernate.properties")       // подключаем файл с конфигурацией
+@EnableTransactionManagement                            //spring за нас будет открывать и закрывать транзакции
+@EnableJpaRepositories("org.example.repositories")      //  включаем поддержку JPA репозиториев
 public class SpringConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
-    private final Environment environment;      //с англ "окружение", через него получаем доступ к свойствам, которые подгрузили из файла hibernate.properties
+    private final Environment environment;  //с англ "окружение", через него получаем доступ к свойствам, которые подгрузили из файла hibernate.properties
 
     @Autowired
     public SpringConfig(ApplicationContext applicationContext, Environment environment) {

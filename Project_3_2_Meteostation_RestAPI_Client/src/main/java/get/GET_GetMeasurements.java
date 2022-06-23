@@ -16,7 +16,9 @@ public class GET_GetMeasurements {
         // отправляем запрос, получаем ответ в виде строки
         MeasurementsResponse response = restTemplate.getForObject(url, MeasurementsResponse.class);
 
-        XchartDraw.draw(response.getMeasurements());
+        if (response != null && response.getMeasurements() != null) {
+            XchartDraw.draw(response.getMeasurements());
+        }
 
     }
 

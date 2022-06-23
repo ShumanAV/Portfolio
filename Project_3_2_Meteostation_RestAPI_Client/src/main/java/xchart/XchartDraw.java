@@ -16,11 +16,11 @@ public class XchartDraw {
         double[] yData = new double[measurements.size()];
 
         for (int i = 0; i < measurements.size(); i++) {
-            xData[i] = measurements.get(i).getValue();
-            yData[i] = i;
+            xData[i] = i;
+            yData[i] = measurements.get(i).getValue();
         }
 
-        XYChart chart = QuickChart.getChart("Meteo measurements", "x", "y", "x(y)", xData, yData);
+        XYChart chart = QuickChart.getChart("Meteo measurements", "X", "Y", "X(Y)", xData, yData);
 
         new SwingWrapper<>(chart).displayChart();
 
