@@ -1,33 +1,31 @@
 package com.example.Project_3_1_Meteostation_RestAPI_Server.dto;
 
-import javax.persistence.Column;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 public class MeasurementDTO {
 
-    @Min(value = -100, message = "Min value should be greater than -100C")
-    @Max(value = 100, message = "Min value should be greater than 100C")
-    @Column(name = "temperature_value")
-    private float value;
+    @NotNull
+    @Min(value = -100, message = "Min value should be greater or equal to -100")
+    @Max(value = 100, message = "Max value should be less or equal to 100")
+    private Float value;
 
-    @NotEmpty(message = "Raining should not be empty")
-    @Column(name = "raining")
-    private boolean raining;
+    @NotNull
+    private Boolean raining;
 
-    @NotEmpty(message = "Name of Sensor should not be empty")
-    private String[] sensor;
+    @NotNull
+    private SensorDTO sensor;
 
     public float getValue() {
         return value;
     }
 
-    public String getSensor() {
+    public SensorDTO getSensor() {
         return sensor;
     }
 
-    public void setSensor(String sensor) {
+    public void setSensor(SensorDTO sensor) {
         this.sensor = sensor;
     }
 

@@ -3,7 +3,7 @@ package com.example.Project_3_1_Meteostation_RestAPI_Server.models;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,18 +15,20 @@ public class Measurement {
     @Column(name = "id")
     private int id;
 
+    @NotNull
     @Min(value = -100, message = "Min value should be greater than -100C")
     @Max(value = 100, message = "Min value should be greater than 100C")
     @Column(name = "temperature_value")
-    private float value;
+    private Float value;
 
-    @NotEmpty(message = "Raining should not be empty")
+    @NotNull
     @Column(name = "raining")
-    private boolean raining;
+    private Boolean raining;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "sensor_id", referencedColumnName = "id")
     private Sensor sensor;

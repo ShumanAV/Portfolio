@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Project31MeteostationRestAPIServerApplicationTests {
+class Project3ServerApplicationTests {
 
 	@Test
 	void contextLoads() {

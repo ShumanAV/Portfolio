@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Project_3_2_Meteostation_RestAPI_Client" />
         <module name="14_REST_API_Consumer_Lesson_90" />
         <module name="14_REST_API_Client_Lesson_90" />
       </profile>

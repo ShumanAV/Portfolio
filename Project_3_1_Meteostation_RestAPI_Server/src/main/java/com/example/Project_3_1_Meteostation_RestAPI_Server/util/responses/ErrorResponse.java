@@ -1,7 +1,8 @@
-package com.example.Project_3_1_Meteostation_RestAPI_Server.util;
+package com.example.Project_3_1_Meteostation_RestAPI_Server.util.responses;
 
-// объекты этого класса будут отправляться если у нас будет ошибка, например, id несуществующего элемента
-public class SensorErrorResponse {
+// Класс обертка для ошибок,
+// объекты этого класса будут отправляться в виде json если будет ошибка, например, id несуществующего элемента
+public class ErrorResponse {
 
     // поле с сообщением об ошибке
     private String message;
@@ -9,7 +10,7 @@ public class SensorErrorResponse {
     // поле с временем ошибки
     private long timestamp;
 
-    public SensorErrorResponse(String message, long timestamp) {
+    public ErrorResponse(String message, long timestamp) {
         this.message = message;
         this.timestamp = timestamp;
     }

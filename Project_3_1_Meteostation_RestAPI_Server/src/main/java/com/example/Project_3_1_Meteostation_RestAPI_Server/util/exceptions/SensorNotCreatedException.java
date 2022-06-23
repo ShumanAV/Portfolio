@@ -1,4 +1,4 @@
-package com.example.Project_3_1_Meteostation_RestAPI_Server.util.exception;
+package com.example.Project_3_1_Meteostation_RestAPI_Server.util.exceptions;
 
 // данный Exception о том, что в тех данных, которые прислал клиент, либо в имени сенсора были ошибки, либо сенсор с таким именем уже существует, в результате
 // сенсор не был создан
