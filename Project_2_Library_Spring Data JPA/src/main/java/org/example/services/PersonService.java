@@ -24,30 +24,36 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
+    // поиск всех людей
     public List<Person> findAll() {
         return personRepository.findAll();
     }
 
+    // поиск человека по id
     public Person findById(int id) {
         return personRepository.findById(id).orElse(null);
     }
 
+    // сохранение нового человека
     @Transactional
     public void save(Person person) {
         personRepository.save(person);
     }
 
+    // изменение существующего человека
     @Transactional
     public void update(int id, Person updatedPerson) {
         updatedPerson.setId(id);
         personRepository.save(updatedPerson);
     }
 
+    // удаление человека
     @Transactional
     public void delete(int id) {
         personRepository.deleteById(id);
     }
 
+    // поиск книг по id человека, подсчет просрочки взятия книги, с учетом срока в 10 дней, установка просрочено/непросрочено в книге
     public List<Book> getBooksByPersonId(int id) {
         Optional<Person> person = personRepository.findById(id);
         if (person.isPresent()) {
@@ -62,5 +68,10 @@ public class PersonService {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    // поиск человека по имени
+    public Optional<Person> findByFullName(String fullName) {
+        return personRepository.findByFullName(fullName);
     }
 }

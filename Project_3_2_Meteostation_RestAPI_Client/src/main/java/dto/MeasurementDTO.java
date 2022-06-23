@@ -2,25 +2,25 @@ package dto;
 
 public class MeasurementDTO {
 
-    private float value;
+    private Float value;
 
-    private boolean raining;
+    private Boolean raining;
 
     private SensorDTO sensor;
 
-    public float getValue() {
+    public Float getValue() {
         return value;
     }
 
-    public void setValue(float value) {
+    public void setValue(Float value) {
         this.value = value;
     }
 
-    public boolean isRaining() {
+    public Boolean isRaining() {
         return raining;
     }
 
-    public void setRaining(boolean raining) {
+    public void setRaining(Boolean raining) {
         this.raining = raining;
     }
 

@@ -24,15 +24,17 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
+    // поиск всех книг
     public List<Book> findAll(Boolean sortByYear) {
         return bookRepository.findAll(Sort.by(returnSortedField(sortByYear)));
     }
 
+    // поиск всех книг с учетом пагинации и сортировки
     public List<Book> findAllWithPagination(int pageNumber, int booksPerPage, Boolean sortByYear) {
         return bookRepository.findAll(PageRequest.of(pageNumber, booksPerPage, Sort.by(returnSortedField(sortByYear)))).getContent();
     }
 
-    // внутренний метод для определения поля для сортировки книг
+    // внутренний метод для определения поля для сортировки книг, если не задана сортировка по году написания книги, значит сортируем по bookId
     private String returnSortedField(Boolean sortByYear) {
         String sortedField;
         if (sortByYear == null || !sortByYear) {
@@ -43,15 +45,18 @@ public class BookService {
         return sortedField;
     }
 
+    // поиск книги по id
     public Book findById(int id) {
         return bookRepository.findById(id).orElse(null);
     }
 
+    // сохраняем новую книгу
     @Transactional
     public void save(Book book) {
         bookRepository.save(book);
     }
 
+    // изменяем существующую книгу
     @Transactional
     public void update(int id, Book updatedBook) {
         Book bookToBeUpdated = bookRepository.findById(id).get();
@@ -63,6 +68,7 @@ public class BookService {
         bookRepository.save(updatedBook);
     }
 
+    // удаляем существующую книгу
     @Transactional
     public void delete(int id) {
         bookRepository.deleteById(id);
@@ -75,8 +81,8 @@ public class BookService {
         return Optional.ofNullable(book.getOwner());
     }
 
+    // Освобождаем книгу по id книги (убираем старого владельца owner'а и дату взятия книги), когда человек возвращает ее
     @Transactional
-    // Освобождаем книгу по id книги (убираем owner'а и дату взятия книги), когда человек возвращает ее
     public void release(int id) {
         bookRepository.findById(id).ifPresent(
                 book -> {
@@ -87,8 +93,8 @@ public class BookService {
 
     }
 
+    // Назначаем книге c id, человека selectedPerson (устанавливаем нового владельца owner'а и дату взятия книги - текущую дату)
     @Transactional
-    // Назначаем книге c id человека selectedPerson (устанавливаем owner'а и дату взятия книги - текущую дату)
     public void assign(int id, Person selectedPerson) {
         bookRepository.findById(id).ifPresent(
                 book -> {
@@ -98,7 +104,13 @@ public class BookService {
         );
     }
 
+    // поиск книг по первым буквам
     public List<Book> findByTitleStartingWith(String startingWith) {
         return bookRepository.findByTitleStartingWith(startingWith);
+    }
+
+    // поиск книги по названию
+    public Optional<Book> findByTitle(String title) {
+        return bookRepository.findByTitle(title);
     }
 }

@@ -34,7 +34,7 @@ public class POST_AddMeasurements {
             }
 
             // вычисляем температуру в пределах от -100 до 100
-            float temperature = random.nextFloat() * MAX_TEMPERATURE * (random.nextInt(3) == 1 ? 1: -1);
+            float temperature = random.nextFloat() * MAX_TEMPERATURE * (random.nextBoolean() ? 1: -1);
             temperature = new BigDecimal(temperature).setScale(2, RoundingMode.UP).floatValue();
 
             // вычисляем наличие дождя true/false

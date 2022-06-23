@@ -26,8 +26,9 @@ public class BookValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Book book = (Book) o;
 
-//        if (bookService.show(book.getTitle(), book.getAuthor(), book.getYear_of_writing()).isPresent()) {
-//            errors.rejectValue("title", "", "Такая книга с таким автором и годом написания уже существует");
-//        }
+        // поиск книги с таким же названием
+        if (bookService.findByTitle(book.getTitle()).isPresent()) {
+            errors.rejectValue("title", "", "Книга с таким названием уже существует");
+        }
     }
 }
