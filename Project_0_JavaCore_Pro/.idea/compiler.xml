@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Collections" />
         <module name="JavaPro" />
+        <module name="Project_0_JavaCore_Pro" />
       </profile>
     </annotationProcessing>
   </component>
