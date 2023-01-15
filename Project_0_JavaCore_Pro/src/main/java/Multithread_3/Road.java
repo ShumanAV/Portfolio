@@ -1,4 +1,4 @@
-package Training_Multithreading2_Lesson13;
+package Multithread_3;
 
 public class Road extends Stage {
 

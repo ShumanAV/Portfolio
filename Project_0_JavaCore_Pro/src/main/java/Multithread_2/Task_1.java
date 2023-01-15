@@ -1,4 +1,4 @@
-package Training_Multithreading1_Lesson12;
+package Multithread_2;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

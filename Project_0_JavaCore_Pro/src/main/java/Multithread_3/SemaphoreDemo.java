@@ -1,4 +1,4 @@
-package Training_Multithreading2_Lesson13;
+package Multithread_3;
 
 import java.util.concurrent.Semaphore;
 

@@ -1,4 +1,4 @@
-package Training_Multithreading1_Lesson12;
+package Multithread_2;
 
 public class Example_3_Sync {        //в качестве монитора выступает сам класс, т.к. метод synchronized статический
 
