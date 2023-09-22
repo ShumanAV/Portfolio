@@ -1,0 +1,39 @@
+package ru.shuman.Project_Aibolit_Server.util.validators;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+import ru.shuman.Project_Aibolit_Server.models.Role;
+import ru.shuman.Project_Aibolit_Server.services.RoleService;
+import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+
+@Component
+public class RoleIdValidator implements Validator {
+
+    private final RoleService roleService;
+
+    @Autowired
+    public RoleIdValidator(RoleService roleService) {
+        this.roleService = roleService;
+    }
+
+    @Override
+    public boolean supports(Class<?> aClass) {
+        return Role.class.equals(aClass);
+    }
+
+    @Override
+    public void validate(Object o, Errors errors) {
+        Role role = (Role) o;
+
+        String field = StandardMethods.searchNameFieldInTargetClass(errors, role.getClass());
+
+        if (role.getId() == null) {
+            errors.rejectValue(field == null ? "id": field, "", "У роли отсутствует id!");
+
+        } else if (roleService.findById(role.getId()).isEmpty()) {
+            errors.rejectValue(field == null ? "id": field, "", "Роли с таким id не существует!");
+        }
+    }
+}
