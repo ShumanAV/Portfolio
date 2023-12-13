@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.TypeDoc;
 import ru.shuman.Project_Aibolit_Server.services.TypeDocService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class TypeDocValidator implements Validator {
@@ -27,6 +27,6 @@ public class TypeDocValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeDoc typeDoc = (TypeDoc) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, typeDoc.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, typeDoc.getClass());
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Diary;
 import ru.shuman.Project_Aibolit_Server.services.DiaryService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class DiaryValidator implements Validator {
@@ -27,6 +27,6 @@ public class DiaryValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Diary diary = (Diary) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, diary.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, diary.getClass());
     }
 }

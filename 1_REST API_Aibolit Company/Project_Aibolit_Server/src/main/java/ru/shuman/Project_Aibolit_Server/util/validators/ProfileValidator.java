@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Profile;
 import ru.shuman.Project_Aibolit_Server.services.ProfileService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class ProfileValidator implements Validator {
@@ -27,11 +27,13 @@ public class ProfileValidator implements Validator {
         return Profile.class.equals(aClass);
     }
 
+    // Использование ProfileDetailsService в валидаторе не очень хорошая практика,
+    // нужно сделать отдельный ProfileService
     @Override
     public void validate(Object o, Errors errors) {
         Profile profile = (Profile) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, profile.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, profile.getClass());
 
         // Блок проверки наличия имени пользователя у профайла
         if (profile.getUsername() == null || profile.getUsername().equals("")) {

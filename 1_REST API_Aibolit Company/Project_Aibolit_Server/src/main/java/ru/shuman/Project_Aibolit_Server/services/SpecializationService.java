@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.Specialization;
 import ru.shuman.Project_Aibolit_Server.models.User;
 import ru.shuman.Project_Aibolit_Server.repositories.SpecializationRepository;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -64,6 +64,6 @@ public class SpecializationService {
     */
 
     public void setUsersForSpecialization(User user, Specialization specialization) {
-        StandardMethods.addObjectOneInListForObjectTwo(user, specialization, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(user, specialization, this);
     }
 }

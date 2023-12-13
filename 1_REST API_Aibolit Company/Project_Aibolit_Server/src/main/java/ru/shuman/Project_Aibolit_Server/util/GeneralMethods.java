@@ -1,5 +1,7 @@
 package ru.shuman.Project_Aibolit_Server.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -15,15 +17,17 @@ import java.util.List;
 import java.util.Optional;
 
 /*
-Класс StandardMethods содержит статические методы, которые используются многократно.
+Класс GeneralMethods содержит статические методы, которые используются многократно по коду.
  */
 
-public class StandardMethods {
+public class GeneralMethods {
+
+//    private static final Logger LOGGER = LogManager.getLogger(GeneralMethods.class);
 
     /*
     Метод выполняет проверку на наличие ошибок в bindingResult,
     в случае наличия ошибок формирует строку ошибок в виде StringBuilder и
-    выбрасывает исключение разных типов с данной строкой сообщения об ошибках,
+    выбрасывает исключение разных типов с сообщением об ошибках в виде данной строки,
     в зависимости от того, какой тип исключения поступит на вход,
     на входе тип исключений ограничен RuntimeException.
      */
@@ -58,12 +62,13 @@ public class StandardMethods {
     по умолчанию из валидатора, они оба переводятся в аналогичные классы DTO. Сделано это для того, чтобы упростить код и
     избежать зацикленности связей в моделях, в DTO этого нет.
 
-    Например, идет создание вызова CallingDTO, при этом осуществляется валидация по цепочке всех DTO,
-    с которыми есть связь у вызова, например, UserDTO, SpecializationDTO, ProfileDTO, RoleDTO и т.д.,
+    Например, идет создание вызова CallingDTO, при этом осуществляется валидация по цепочке всех дочерних сущностей DTO,
+    с которыми есть связь у вызова CallingDTO, например, UserDTO, SpecializationDTO, ProfileDTO, RoleDTO и т.д.,
     при валидации RoleDTO в соответствующем валидаторе при наличии ошибок необходимо указать
-    название поля, в котором ошибка, причем такое название поля, которое есть в вызове СallingDTO,
-    и в данном случае это будет поле с названием "user", т.к. данное поле имеет тип UserDTO, а он в свою очередь имеет
-    поле "profile" типа ProfileDTO, а оно в свою очередь имеет поле искомого типа "role" типа Role.
+    название поля, в котором ошибка, причем название поля из родительской сущности - СallingDTO, через которое
+    осуществляется связь RoleDTO и СallingDTO, и в данном случае это будет поле с названием "user",
+    т.к. данное поле имеет тип UserDTO, а он в свою очередь имеет
+    поле "profile" типа ProfileDTO, а оно в свою очередь имеет поле искомого типа "role" типа RoleDTO.
 
     На вход данный метод принимает объект errors типа Errors и тип искомого поля типа CLass - класс модели из валидатора.
 
@@ -168,10 +173,10 @@ public class StandardMethods {
     /*
     Метод формирует из названия класса модели аналогичное название класса DTO
 
-    На вход приходит класс модели, на выходе класс аналогичного класс DTO
+    На вход приходит класс модели, на выходе класс DTO аналогичный классу модели
      */
 
-    private static Class<?> formClassDTO(Class<?> aClass) {
+    public static Class<?> formClassDTO(Class<?> aClass) {
         final String PACKAGE_DTO = "ru.shuman.Project_Aibolit_Server.dto";
         final String DTO = "DTO";
         try {
@@ -191,8 +196,8 @@ public class StandardMethods {
     Объект сервисного класса второго объекта нужен для поиска в БД существующего объекта objectTwo с существующим списком
     объектов List<objectOne>.
     Существующий список объектов List<objectOne>, содержащихся в существующем объекте objectTwo из БД, записываем в
-    objectTwo из JSON, далее работаем с ним, проверяем содержится ли в нем уже objectOne, если содержится обновляем на
-    objectOne из JSON, перезаписывая его в списке, если не содержится, добавляем.
+    objectTwo пришедший из JSON, далее работаем с ним, проверяем содержится ли в нем уже объект objectOne,
+    если содержится обновляем на objectOne пришедший из JSON, перезаписывая его в списке, если не содержится, добавляем.
      */
     public static void addObjectOneInListForObjectTwo(Object objectOne, Object objectTwo, Object instanceOfServiceClassObjectTWO) {
 

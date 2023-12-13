@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.repositories.PatientRepository;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -25,7 +25,8 @@ public class PatientService {
 
     @Autowired
     public PatientService(PatientRepository patientRepository, PlaceStudyService placeStudyService,
-                          ParentService parentService, TypeDocService typeDocService, DocumentService documentService, AddressService addressService, BloodService bloodService, GenderService genderService) {
+                          ParentService parentService, TypeDocService typeDocService, DocumentService documentService,
+                          AddressService addressService, BloodService bloodService, GenderService genderService) {
         this.patientRepository = patientRepository;
         this.placeStudyService = placeStudyService;
         this.parentService = parentService;
@@ -150,10 +151,10 @@ public class PatientService {
     }
 
     public void setCallingsForPatient(Calling calling, Patient patient) {
-        StandardMethods.addObjectOneInListForObjectTwo(calling, patient, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(calling, patient, this);
     }
 
     public void setContractsForPatient(Contract contract, Patient patient) {
-        StandardMethods.addObjectOneInListForObjectTwo(contract, patient, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(contract, patient, this);
     }
 }

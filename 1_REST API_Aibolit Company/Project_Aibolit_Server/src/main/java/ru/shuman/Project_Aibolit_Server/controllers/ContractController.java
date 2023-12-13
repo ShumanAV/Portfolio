@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.ContractDTO;
 import ru.shuman.Project_Aibolit_Server.models.Contract;
 import ru.shuman.Project_Aibolit_Server.services.ContractService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.errors.ContractErrorResponse;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.ContractNotCreatedOrUpdatedException;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.ContractNotFound;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.ContractNotFoundException;
 import ru.shuman.Project_Aibolit_Server.util.validators.ContractIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.ContractValidator;
 
@@ -56,7 +56,7 @@ public class ContractController {
 
         contractIdValidator.validate(contract, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, ContractNotFound.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, ContractNotFoundException.class);
 
         ContractDTO contractDTO = convertToContractDTO(contractService.findById(contractId).get());
 
@@ -72,7 +72,7 @@ public class ContractController {
 
         contractValidator.validate(contract, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, ContractNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, ContractNotCreatedOrUpdatedException.class);
 
         contractService.create(contract);
 
@@ -88,7 +88,7 @@ public class ContractController {
         contractIdValidator.validate(contract, bindingResult);
         contractValidator.validate(contract, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, ContractNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, ContractNotCreatedOrUpdatedException.class);
 
         contractService.update(contract);
 
@@ -97,7 +97,7 @@ public class ContractController {
 
     // Метод обработчик исключения ContractNotFound
     @ExceptionHandler
-    private ResponseEntity<ContractErrorResponse> handleExceptionContractNotFound(ContractNotFound e) {
+    private ResponseEntity<ContractErrorResponse> handleExceptionContractNotFound(ContractNotFoundException e) {
         ContractErrorResponse response = new ContractErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

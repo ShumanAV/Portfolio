@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Address;
 import ru.shuman.Project_Aibolit_Server.services.AddressService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class AddressValidator implements Validator {
@@ -31,7 +31,7 @@ public class AddressValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Address address = (Address) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, address.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, address.getClass());
 
         if (address.getRegion() == null) {
             errors.rejectValue(field == null ? "region": field, "", "В адресе не выбран регион!");

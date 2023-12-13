@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.PriceDTO;
 import ru.shuman.Project_Aibolit_Server.models.Price;
 import ru.shuman.Project_Aibolit_Server.services.PriceService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.errors.PriceErrorResponse;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.PriceNotCreatedOrUpdatedException;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.PriceNotFound;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.PriceNotFoundException;
 import ru.shuman.Project_Aibolit_Server.util.validators.PriceIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.PriceValidator;
 
@@ -61,7 +61,7 @@ public class PriceController {
 
         priceIdValidator.validate(price, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotFound.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, PriceNotFoundException.class);
 
         PriceDTO priceDTO = convertToPriceDTO(priceService.findById(priceId).get());
 
@@ -77,7 +77,7 @@ public class PriceController {
 
         priceValidator.validate(price, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
 
         priceService.create(price);
 
@@ -94,7 +94,7 @@ public class PriceController {
         priceIdValidator.validate(price, bindingResult);
         priceValidator.validate(price, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
 
         priceService.update(price);
 
@@ -103,7 +103,7 @@ public class PriceController {
 
     // Метод обработчик исключения PriceNotFound
     @ExceptionHandler
-    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotFound(PriceNotFound e) {
+    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotFound(PriceNotFoundException e) {
         PriceErrorResponse response = new PriceErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

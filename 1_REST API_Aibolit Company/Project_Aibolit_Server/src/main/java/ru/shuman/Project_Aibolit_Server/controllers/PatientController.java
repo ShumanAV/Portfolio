@@ -9,11 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.PatientDTO;
 import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.services.PatientService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.errors.PatientErrorResponse;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.PatientNotCreatedOrUpdatedException;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.PatientNotFound;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.UserNotFound;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.PatientNotFoundException;
 import ru.shuman.Project_Aibolit_Server.util.validators.PatientIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.PatientValidator;
 
@@ -62,7 +61,7 @@ public class PatientController {
 
         patientIdValidator.validate(patient, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, PatientNotFound.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, PatientNotFoundException.class);
 
         PatientDTO patientDTO = convertToPatientDTO(patientService.findById(patientId).get());
 
@@ -78,7 +77,7 @@ public class PatientController {
 
         patientValidator.validate(patient, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, PatientNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, PatientNotCreatedOrUpdatedException.class);
 
         patientService.create(patient);
 
@@ -95,7 +94,7 @@ public class PatientController {
         patientIdValidator.validate(patient, bindingResult);
         patientValidator.validate(patient, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, PatientNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, PatientNotCreatedOrUpdatedException.class);
 
         patientService.update(patient);
 
@@ -115,7 +114,7 @@ public class PatientController {
 
     // Метод обработчик исключения PatientNotFound
     @ExceptionHandler
-    private ResponseEntity<PatientErrorResponse> handleExceptionPatientNotFound(PatientNotFound e) {
+    private ResponseEntity<PatientErrorResponse> handleExceptionPatientNotFound(PatientNotFoundException e) {
         PatientErrorResponse response = new PatientErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

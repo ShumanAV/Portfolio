@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Price;
 import ru.shuman.Project_Aibolit_Server.services.PriceService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class PriceValidator implements Validator {
@@ -27,6 +27,6 @@ public class PriceValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Price price = (Price) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, price.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, price.getClass());
     }
 }

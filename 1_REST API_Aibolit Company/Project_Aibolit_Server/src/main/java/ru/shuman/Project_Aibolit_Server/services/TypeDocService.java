@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.repositories.TypeDocRepository;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +34,7 @@ public class TypeDocService {
     }
 
     public void setDocumentsForTypeDoc(Document document, TypeDoc typeDoc) {
-        StandardMethods.addObjectOneInListForObjectTwo(document, typeDoc, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(document, typeDoc, this);
     }
 
     @Transactional

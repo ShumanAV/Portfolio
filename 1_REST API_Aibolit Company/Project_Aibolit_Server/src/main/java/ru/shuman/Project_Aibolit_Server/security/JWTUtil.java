@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,12 +16,13 @@ public class JWTUtil {
 
     private final String SUBJECT = "User details";
     private final String ISSUER = "Aibolit software";
+    private final int EXPIRATION_DATE_IN_MINUTES = 60 * 24 * 365;
 
     @Value("${jwt_secret}")
     private String secretKey;
 
     public String generateToken(String username) {
-        Date exparationDate = Date.from(ZonedDateTime.now().plusMinutes(60*24*365).toInstant());
+        Date exparationDate = Date.from(ZonedDateTime.now().plusMinutes(EXPIRATION_DATE_IN_MINUTES).toInstant());
 
         return JWT.create()
                 .withSubject(SUBJECT)

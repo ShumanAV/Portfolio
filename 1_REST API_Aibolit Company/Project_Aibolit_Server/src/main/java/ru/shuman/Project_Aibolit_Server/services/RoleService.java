@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.Profile;
 import ru.shuman.Project_Aibolit_Server.models.Role;
 import ru.shuman.Project_Aibolit_Server.repositories.RoleRepository;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +47,7 @@ public class RoleService {
      */
 
     public void setProfilesForRole(Profile profile, Role role) {
-        StandardMethods.addObjectOneInListForObjectTwo(profile, role, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(profile, role, this);
     }
 
     public List<Role> findAll() {

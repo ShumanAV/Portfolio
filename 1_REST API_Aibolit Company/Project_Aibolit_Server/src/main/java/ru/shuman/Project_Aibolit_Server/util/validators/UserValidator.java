@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.User;
 import ru.shuman.Project_Aibolit_Server.services.UserService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.Optional;
 
@@ -34,13 +34,11 @@ public class UserValidator implements Validator {
         return User.class.equals(aClass);
     }
 
-    // Использование PersonDetailsService в валидаторе не очень хорошая практика,
-    // нужно сделать отдельный PeopleService
     @Override
     public void validate(Object o, Errors errors) {
         User user = (User) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, user.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, user.getClass());
 
         // Блок проверки отсутствия пользователя с таким телефоном
         Optional<User> existingUser = userService.findByPhone(user.getPhone());

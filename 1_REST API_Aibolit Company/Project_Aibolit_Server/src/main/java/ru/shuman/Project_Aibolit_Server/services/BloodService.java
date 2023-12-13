@@ -7,7 +7,7 @@ import ru.shuman.Project_Aibolit_Server.models.Blood;
 import ru.shuman.Project_Aibolit_Server.models.Parent;
 import ru.shuman.Project_Aibolit_Server.models.Patient;
 import ru.shuman.Project_Aibolit_Server.repositories.BloodRepository;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,11 +28,11 @@ public class BloodService {
     }
 
     public void setPatientsForBlood(Patient patient, Blood blood) {
-        StandardMethods.addObjectOneInListForObjectTwo(patient, blood, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(patient, blood, this);
     }
 
     public void setParentsForBlood(Parent parent, Blood blood) {
-        StandardMethods.addObjectOneInListForObjectTwo(parent, blood, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(parent, blood, this);
     }
 
     @Transactional

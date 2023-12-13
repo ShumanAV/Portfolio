@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.TypeContract;
 import ru.shuman.Project_Aibolit_Server.services.TypeContractService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class TypeContractIdValidator implements Validator {
@@ -27,7 +27,7 @@ public class TypeContractIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeContract typeContract = (TypeContract) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, typeContract.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, typeContract.getClass());
 
         if (typeContract.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У типа договора отсутствует id!");

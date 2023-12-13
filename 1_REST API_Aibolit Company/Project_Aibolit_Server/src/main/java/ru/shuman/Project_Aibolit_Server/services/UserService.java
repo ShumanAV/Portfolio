@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.repositories.UserRepository;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -67,7 +67,7 @@ public class UserService {
     }
 
     /*
-    Метод public void register создает нового пользователя и профайл для него.
+    Метод register создает нового пользователя и профайл для него.
 
     В методе данный пользователь добавляется в список пользователей для объекта специализации из БД, для кэша.
     Устанавливается дата и время создания и изменения пользователя.
@@ -94,7 +94,7 @@ public class UserService {
     }
 
         /*
-    Метод public void update осуществляет изменение существующего пользователя в БД.
+    Метод update осуществляет изменение существующего пользователя в БД.
 
     В методе данный пользователь добавляется в список пользователей для объекта специализации из БД, для кэша.
     Устанавливает дату и время изменения пользователя.
@@ -111,21 +111,21 @@ public class UserService {
     Далее происходит сохранение обновленного пользователя.
      */
     @Transactional
-    public void update(User user) {
+    public void update(User updatedUser) {
 
-        specializationService.setUsersForSpecialization(user, user.getSpecialization());
+        specializationService.setUsersForSpecialization(updatedUser, updatedUser.getSpecialization());
 
-        user.setUpdatedAt(LocalDateTime.now());
+        updatedUser.setUpdatedAt(LocalDateTime.now());
 
-        Profile existingProfile = userRepository.findById(user.getId()).get().getProfile();
+        Profile existingProfile = userRepository.findById(updatedUser.getId()).get().getProfile();
 
-        if (user.isAccessToSystem()) {
+        if (updatedUser.isAccessToSystem()) {
 
-            user.getProfile().setUser(user);
+            updatedUser.getProfile().setUser(updatedUser);
             if (existingProfile != null) {
-                profileService.update(existingProfile, user.getProfile());
+                profileService.update(existingProfile, updatedUser.getProfile());
             } else {
-                profileService.create(user.getProfile());
+                profileService.create(updatedUser.getProfile());
             }
 
         } else {
@@ -135,14 +135,14 @@ public class UserService {
             }
         }
 
-        userRepository.save(user);
+        userRepository.save(updatedUser);
     }
 
     public void setCallingsForUser(Calling calling, User user) {
-        StandardMethods.addObjectOneInListForObjectTwo(calling, user, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(calling, user, this);
     }
 
     public void setContractsForUser(Contract contract, User user) {
-        StandardMethods.addObjectOneInListForObjectTwo(contract, user, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(contract, user, this);
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.TypeRelationshipWithPatient;
 import ru.shuman.Project_Aibolit_Server.services.TypeRelationshipWithPatientService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class TypeRelationshipWithPatientValidator implements Validator {
@@ -27,6 +27,6 @@ public class TypeRelationshipWithPatientValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeRelationshipWithPatient typeRelationship = (TypeRelationshipWithPatient) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, typeRelationship.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, typeRelationship.getClass());
     }
 }

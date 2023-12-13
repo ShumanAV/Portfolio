@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Document;
 import ru.shuman.Project_Aibolit_Server.services.DocumentService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class DocumentValidator implements Validator {
@@ -31,7 +31,7 @@ public class DocumentValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Document document = (Document) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, document.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, document.getClass());
 
         if (document.getTypeDoc() == null) {
             errors.rejectValue(field == null ? "typeDoc": field, "", "У документа не выбран тип документа!");
