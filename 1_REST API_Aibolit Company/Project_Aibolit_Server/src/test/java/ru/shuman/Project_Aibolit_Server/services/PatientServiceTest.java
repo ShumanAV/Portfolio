@@ -4,8 +4,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import ru.shuman.Project_Aibolit_Server.models.Patient;
+import ru.shuman.Project_Aibolit_Server.models.Region;
 import ru.shuman.Project_Aibolit_Server.repositories.PatientRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -165,6 +168,53 @@ class PatientServiceTest {
         String argument = captor.getValue();
 
         Assertions.assertEquals(checkInn, argument);
+    }
+
+    /**
+     * Метод тестирует метод findAll в сервисе PatientService, задаем поведение метода findAll в репозитории
+     * patientRepository, если запускаем метод findAll, он возвращает пустой лист, параметризированный Patient,
+     * запускаем метод в сервисе и сравниваем, то что возвращено и пустой лист
+     */
+
+    @Test
+    void findAllShouldReturnEmptyList() {
+        List<Patient> emptyList = new ArrayList<>();
+        when(patientRepository.findAll()).thenReturn(emptyList);
+
+        Assertions.assertEquals(emptyList, patientService.findAll());
+    }
+
+    /**
+     * Метод тестирует метод findAllByPublished в сервисе PatientService, задаем поведение метода findByPublished в репозитории
+     * patientRepository, если запускаем метод findByPublished, он возвращает пустой лист, параметризированный Patient,
+     * запускаем метод в сервисе и сравниваем, то что возвращено и пустой лист
+     */
+
+    @Test
+    void findAllByPublishedShouldReturnEmptyList() {
+        List<Patient> emptyList = new ArrayList<>();
+        when(patientRepository.findByPublished(true)).thenReturn(emptyList);
+
+        Assertions.assertEquals(emptyList, patientService.findAllByPublished(true));
+    }
+
+    /**
+     * Метод тестирует метод search в сервисе PatientService, задаем поведение методов:
+     * findByFirstnameStartingWith, findByLastnameStartingWith, findByPhoneContaining в репозитории
+     * patientRepository, если запускаем данные методы, он возвращает пустой лист, параметризированный Patient,
+     * запускаем метод в сервисе и сравниваем, то что возвращено и пустой лист
+     */
+
+    @Test
+    void searchShouldReturnEmptyList() {
+        List<Patient> emptyList = new ArrayList<>();
+
+        String textSearch = "Ivan";
+        when(patientRepository.findByFirstnameStartingWith(textSearch)).thenReturn(emptyList);
+        when(patientRepository.findByLastnameStartingWith(textSearch)).thenReturn(emptyList);
+        when(patientRepository.findByPhoneContaining(textSearch)).thenReturn(emptyList);
+
+        Assertions.assertEquals(emptyList, patientService.search(textSearch));
     }
 
 }
