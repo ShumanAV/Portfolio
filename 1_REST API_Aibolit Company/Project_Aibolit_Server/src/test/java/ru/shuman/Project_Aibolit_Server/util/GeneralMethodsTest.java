@@ -37,8 +37,6 @@ public class GeneralMethodsTest {
     @Mock
     private ParentService parentService;
     @Mock
-    private TypeDocService typeDocService;
-    @Mock
     private DocumentService documentService;
     @Mock
     private AddressService addressService;
@@ -61,7 +59,7 @@ public class GeneralMethodsTest {
 //        this.genderService = genderService;
 
 
-        this.patientService = new PatientService(patientRepository, placeStudyService, parentService, typeDocService,
+        this.patientService = new PatientService(patientRepository, placeStudyService, parentService,
                 documentService, addressService, bloodService, genderService);
     }
 

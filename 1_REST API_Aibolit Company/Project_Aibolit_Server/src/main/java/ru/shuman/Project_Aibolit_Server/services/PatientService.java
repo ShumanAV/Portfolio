@@ -17,7 +17,6 @@ public class PatientService {
     private final PatientRepository patientRepository;
     private final PlaceStudyService placeStudyService;
     private final ParentService parentService;
-    private final TypeDocService typeDocService;
     private final DocumentService documentService;
     private final AddressService addressService;
     private final BloodService bloodService;
@@ -25,12 +24,11 @@ public class PatientService {
 
     @Autowired
     public PatientService(PatientRepository patientRepository, PlaceStudyService placeStudyService,
-                          ParentService parentService, TypeDocService typeDocService, DocumentService documentService,
+                          ParentService parentService, DocumentService documentService,
                           AddressService addressService, BloodService bloodService, GenderService genderService) {
         this.patientRepository = patientRepository;
         this.placeStudyService = placeStudyService;
         this.parentService = parentService;
-        this.typeDocService = typeDocService;
         this.documentService = documentService;
         this.addressService = addressService;
         this.bloodService = bloodService;
