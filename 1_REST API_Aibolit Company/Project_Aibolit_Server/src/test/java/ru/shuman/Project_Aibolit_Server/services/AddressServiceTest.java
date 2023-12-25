@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import ru.shuman.Project_Aibolit_Server.models.Address;
+import ru.shuman.Project_Aibolit_Server.models.Region;
 import ru.shuman.Project_Aibolit_Server.repositories.AddressRepository;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -25,56 +25,72 @@ class AddressServiceTest {
 
     /**
      * Метод тестирует метод findById в сервисе AddressService, если мы в репозиторий AddressRepository
-     * передаем id адреса = 1, то он нам возвращает пустой объект класса Address в обертке Optional
+     * передаем id адреса = 0, то он нам возвращает пустой объект класса Address в обертке Optional
+     * Также проверяем выполнялся ли метод findById(0) в репозитории addressRepository
      */
     @Test
-    void findByIdShouldBeEmptyAddress() {
-        when(addressRepository.findById(1)).thenReturn(Optional.of(new Address()));
-        Optional<Address> address = addressService.findById(1);
+    void findByIdShouldReturnEmptyAddress() {
+        when(addressRepository.findById(0)).thenReturn(Optional.of(new Address()));
+        Optional<Address> address = addressService.findById(0);
         Assertions.assertEquals(Optional.of(new Address()), address);
 
-        verify(addressRepository).findById(1);
+        verify(addressRepository).findById(0);
     }
 
     /**
      * Метод тестирует метод findById в сервисе AddressService, если мы в репозиторий AddressRepository
-     * передаем id адреса = 2, то он нам возвращает пустой объект класса Optional
+     * передаем любой id, то он нам возвращает пустой объект Address в обертке Optional, далее отслеживаем, что
+     * был вызван метод findById с идентификатором addressId = 2
      */
     @Test
-    void findByIdShouldBeEmptyOptional () {
-        when(addressRepository.findById(anyInt())).thenReturn(Optional.of(new Address()));
-        Optional<Address> address = addressService.findById(2);
-        Assertions.assertEquals(Optional.of(new Address()), address);
+    void findByIdShouldReturnEmptyAddressAndCheckedId () {
 
-        verify(addressRepository).findById(2);
-    }
+        Optional<Address> emptyAddress = Optional.of(new Address());
+        when(addressRepository.findById(anyInt())).thenReturn(emptyAddress);
 
-    /**
-     * Метод тестирует метод findById в сервисе AddressService, если мы в репозиторий AddressRepository
-     * передаем любой id, то он нам возвращает пустой объект Address в обертке Optional, далее отслеживаем с каким
-     * параметром был вызван метод findById
-     */
-    @Test
-    void testCaptor () {
-        when(addressRepository.findById(anyInt())).thenReturn(Optional.of(new Address()));
-        Optional<Address> address = addressService.findById(2);
-        Assertions.assertEquals(Optional.of(new Address()), address);
+        Integer checkedId = 2;
+        Assertions.assertEquals(emptyAddress, addressService.findById(checkedId));
 
         ArgumentCaptor<Integer> captor = ArgumentCaptor.forClass(Integer.class);
-
         verify(addressRepository).findById(captor.capture());
-
-        Integer argument = captor.getValue();
-
-        Assertions.assertEquals(2, argument);
+        Integer checkedArgument = captor.getValue();
+        Assertions.assertEquals(checkedId, checkedArgument);
     }
 
-    @Test
-    void create() {
-        when(addressRepository.save(new Address())).thenReturn();
-    }
+
+    /**
+     * Метод тестирует метод create в сервисе AddressService, т.к. он void, проверяем факт запуска мока
+     * addressRepository и метода в нем save(emptyAddress), при запуске метода setAddressesForRegion сервиса
+     * regionService делаем чтобы ничего не происходило
+     */
 
     @Test
-    void update() {
+    void createShouldBeRunningAddressRepository() {
+        Address emptyAddress = new Address();
+        Region emptyRegion = new Region();
+
+        doNothing().when(regionService).setAddressesForRegion(emptyAddress, emptyRegion);
+        when(addressRepository.save(emptyAddress)).thenReturn(emptyAddress);
+        addressService.create(emptyAddress);
+
+        verify(addressRepository).save(emptyAddress);
+    }
+
+    /**
+     * Метод тестирует метод update в сервисе AddressService, т.к. он void, проверяем факт запуска мока
+     * addressRepository и метода в нем save(emptyAddress), при запуске метода setAddressesForRegion сервиса
+     * regionService делаем чтобы ничего не происходило
+     */
+
+    @Test
+    void updateShouldBeRunningAddressRepository() {
+        Address emptyAddress = new Address();
+        Region emptyRegion = new Region();
+
+        doNothing().when(regionService).setAddressesForRegion(emptyAddress, emptyRegion);
+        when(addressRepository.save(emptyAddress)).thenReturn(emptyAddress);
+        addressService.update(emptyAddress);
+
+        verify(addressRepository).save(emptyAddress);
     }
 }
