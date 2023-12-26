@@ -3,8 +3,7 @@ package ru.shuman.Project_Aibolit_Server.services;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import ru.shuman.Project_Aibolit_Server.models.Patient;
-import ru.shuman.Project_Aibolit_Server.models.Region;
+import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.repositories.PatientRepository;
 
 import java.util.ArrayList;
@@ -201,7 +200,7 @@ class PatientServiceTest {
     /**
      * Метод тестирует метод search в сервисе PatientService, задаем поведение методов:
      * findByFirstnameStartingWith, findByLastnameStartingWith, findByPhoneContaining в репозитории
-     * patientRepository, если запускаем данные методы, он возвращает пустой лист, параметризированный Patient,
+     * patientRepository, если запускаем данные методы, каждый из них возвращает пустой лист, параметризированный Patient,
      * запускаем метод в сервисе и сравниваем, то что возвращено и пустой лист
      */
 
@@ -215,6 +214,58 @@ class PatientServiceTest {
         when(patientRepository.findByPhoneContaining(textSearch)).thenReturn(emptyList);
 
         Assertions.assertEquals(emptyList, patientService.search(textSearch));
+    }
+
+    /**
+     * Метод тестирует метод search в сервисе PatientService, задаем поведение методов:
+     * findByFirstnameStartingWith, findByLastnameStartingWith, findByPhoneContaining в репозитории
+     * patientRepository, если запускаем данные методы, каждый из них возвращает лист с тремя записями,
+     * параметризированный Patient, запускаем метод в сервисе и сравниваем размер возвращенного списка,
+     * должно получиться 9 записей
+     */
+
+    @Test
+    void searchShouldReturnNotEmptyList() {
+        List<Patient> notEmptyList = new ArrayList<>();
+        notEmptyList.add(new Patient());
+        notEmptyList.add(new Patient());
+        notEmptyList.add(new Patient());
+
+        String textSearch = "Ivan";
+        when(patientRepository.findByFirstnameStartingWith(textSearch)).thenReturn(notEmptyList);
+        when(patientRepository.findByLastnameStartingWith(textSearch)).thenReturn(notEmptyList);
+        when(patientRepository.findByPhoneContaining(textSearch)).thenReturn(notEmptyList);
+
+        int sizeTotalOfList = 9;
+        Assertions.assertEquals(sizeTotalOfList, patientService.search(textSearch).size());
+    }
+
+    /**
+     * Метод тестирует метод create в сервисе PatientService, т.к. он void, проверяем факт запуска мока
+     * patientRepository и метода в нем save(emptyPatient), при сохранении пациента осуществляются запуски методов
+     * create следующих сервисов: PlaceStudyService, DocumentService, AddressService, поэтому при помощи их моков
+     * задаем поведение этим методам ничего не делать
+     */
+
+    @Test
+    void createShouldBeRunningPatientRepository() {
+        PlaceStudy emptyPlaceStudy = new PlaceStudy();
+        Document emptyDocument = new Document();
+        Address emptyAddress = new Address();
+
+        doNothing().when(placeStudyService).create(emptyPlaceStudy);
+        doNothing().when(documentService).create(emptyDocument);
+        doNothing().when(addressService).create(emptyAddress);
+
+        Patient emptyPatient = new Patient();
+        emptyPatient.setPlaceStudy(emptyPlaceStudy);
+        emptyPatient.setDocument(emptyDocument);
+        emptyPatient.setAddress(emptyAddress);
+
+        when(patientRepository.save(emptyPatient)).thenReturn(emptyPatient);
+        patientService.create(emptyPatient);
+
+        verify(patientRepository).save(emptyPatient);
     }
 
 }
