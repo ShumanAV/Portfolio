@@ -16,14 +16,14 @@ import static org.mockito.Mockito.*;
 
 class PatientServiceTest {
 
-    private PatientRepository patientRepository;
-    private PlaceStudyService placeStudyService;
-    private ParentService parentService;
-    private DocumentService documentService;
-    private AddressService addressService;
-    private BloodService bloodService;
-    private GenderService genderService;
-    private PatientService patientService;
+    private final PatientRepository patientRepository;
+    private final PlaceStudyService placeStudyService;
+    private final ParentService parentService;
+    private final DocumentService documentService;
+    private final AddressService addressService;
+    private final BloodService bloodService;
+    private final GenderService genderService;
+    private final PatientService patientService;
 
     private PatientServiceTest() {
         patientRepository = mock(PatientRepository.class);
