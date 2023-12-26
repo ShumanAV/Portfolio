@@ -98,17 +98,15 @@ public class PatientService {
             genderService.setPatientsForGender(patient, patient.getGender());
         }
 
-        if (patient.getParents() != null) {
-            int count = 0;
-            for (Parent parent : patient.getParents()) {
-                parentService.setPatientForParent(patient, parent, count);
-                if (parent.getId() == null) {
-                    parentService.create(parent);
-                } else {
-                    parentService.update(parent);
-                }
-                count += 1;
+        int count = 0;
+        for (Parent parent : patient.getParents()) {
+            parentService.setPatientForParent(patient, parent, count);
+            if (parent.getId() == null) {
+                parentService.create(parent);
+            } else {
+                parentService.update(parent);
             }
+            count += 1;
         }
 
         patientRepository.save(patient);

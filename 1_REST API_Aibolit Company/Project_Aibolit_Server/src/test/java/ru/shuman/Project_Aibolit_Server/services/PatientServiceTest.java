@@ -261,11 +261,46 @@ class PatientServiceTest {
         emptyPatient.setPlaceStudy(emptyPlaceStudy);
         emptyPatient.setDocument(emptyDocument);
         emptyPatient.setAddress(emptyAddress);
+        emptyPatient.setParents(new ArrayList<>());
 
         when(patientRepository.save(emptyPatient)).thenReturn(emptyPatient);
         patientService.create(emptyPatient);
 
         verify(patientRepository).save(emptyPatient);
+    }
+
+    /**
+     * Метод тестирует метод create в сервисе PatientService, при сохранении пациента осуществляются запуски методов
+     * create следующих сервисов: PlaceStudyService, DocumentService, AddressService, поэтому при помощи их моков
+     * задаем поведение этим методам ничего не делать, также при сохранении пациента должны заполняться следующие
+     * поля у пациента: CreatedAt, UpdatedAt, а также для кэша patient у следующих полей: placeStudy, document, address,
+     * поэтому проверяем не null ли они
+     */
+
+    @Test
+    void createCheckFieldsNotNull() {
+        PlaceStudy emptyPlaceStudy = new PlaceStudy();
+        Document emptyDocument = new Document();
+        Address emptyAddress = new Address();
+
+        doNothing().when(placeStudyService).create(emptyPlaceStudy);
+        doNothing().when(documentService).create(emptyDocument);
+        doNothing().when(addressService).create(emptyAddress);
+
+        Patient emptyPatient = new Patient();
+        emptyPatient.setPlaceStudy(emptyPlaceStudy);
+        emptyPatient.setDocument(emptyDocument);
+        emptyPatient.setAddress(emptyAddress);
+        emptyPatient.setParents(new ArrayList<>());
+
+        when(patientRepository.save(emptyPatient)).thenReturn(emptyPatient);
+        patientService.create(emptyPatient);
+
+        Assertions.assertNotNull(emptyPatient.getCreatedAt());
+        Assertions.assertNotNull(emptyPatient.getUpdatedAt());
+        Assertions.assertNotNull(emptyPatient.getPlaceStudy().getPatient());
+        Assertions.assertNotNull(emptyPatient.getDocument().getPatient());
+        Assertions.assertNotNull(emptyPatient.getAddress().getPatient());
     }
 
 }
