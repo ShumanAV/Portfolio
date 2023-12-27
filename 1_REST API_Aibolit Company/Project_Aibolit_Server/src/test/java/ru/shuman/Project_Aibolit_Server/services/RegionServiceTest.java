@@ -96,8 +96,6 @@ class RegionServiceTest {
 
     @Test
     void setAddressesForRegionShouldRunningGeneralMethods() {
-//        GeneralMethods mock = mock(GeneralMethods.class);
-//        mock.
         try (MockedStatic<GeneralMethods> mock = Mockito.mockStatic(GeneralMethods.class)) {
             mock.when(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any())).
                     thenAnswer((Answer<Void>) invocation -> null);

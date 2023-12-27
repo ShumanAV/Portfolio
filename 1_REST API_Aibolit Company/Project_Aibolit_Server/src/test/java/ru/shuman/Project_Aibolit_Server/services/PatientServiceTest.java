@@ -3,14 +3,17 @@ package ru.shuman.Project_Aibolit_Server.services;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.repositories.PatientRepository;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
@@ -278,7 +281,7 @@ class PatientServiceTest {
      */
 
     @Test
-    void createCheckFieldsNotNull() {
+    void createShouldFieldsNotNull() {
         PlaceStudy emptyPlaceStudy = new PlaceStudy();
         Document emptyDocument = new Document();
         Address emptyAddress = new Address();
@@ -301,6 +304,106 @@ class PatientServiceTest {
         Assertions.assertNotNull(emptyPatient.getPlaceStudy().getPatient());
         Assertions.assertNotNull(emptyPatient.getDocument().getPatient());
         Assertions.assertNotNull(emptyPatient.getAddress().getPatient());
+    }
+
+    /**
+     * Метод тестирует метод update в сервисе PatientService, т.к. он void, проверяем факт запуска мока
+     * patientRepository и метода в нем save(emptyPatient), при обновлении пациента осуществляются запуски методов
+     * update следующих сервисов: PlaceStudyService, DocumentService, AddressService, поэтому при помощи их моков
+     * задаем поведение этим методам ничего не делать
+     */
+
+    @Test
+    void updateShouldBeRunningPatientRepository() {
+        PlaceStudy emptyPlaceStudy = new PlaceStudy();
+        Document emptyDocument = new Document();
+        Address emptyAddress = new Address();
+
+        doNothing().when(placeStudyService).update(emptyPlaceStudy);
+        doNothing().when(documentService).update(emptyDocument);
+        doNothing().when(addressService).update(emptyAddress);
+
+        Patient emptyPatient = new Patient();
+        emptyPatient.setPlaceStudy(emptyPlaceStudy);
+        emptyPatient.setDocument(emptyDocument);
+        emptyPatient.setAddress(emptyAddress);
+        emptyPatient.setParents(new ArrayList<>());
+        when(patientRepository.save(emptyPatient)).thenReturn(emptyPatient);
+
+        patientService.update(emptyPatient);
+
+        verify(patientRepository).save(emptyPatient);
+    }
+
+    /**
+     * Метод тестирует метод update в сервисе PatientService, при сохранении пациента осуществляются запуски методов
+     * update следующих сервисов: PlaceStudyService, DocumentService, AddressService, поэтому при помощи их моков
+     * задаем поведение этим методам ничего не делать, также при обновлении пациента должны заполняться следующие
+     * поля у пациента: UpdatedAt, а также для кэша patient у следующих полей: placeStudy, document, address,
+     * поэтому проверяем не null ли они
+     */
+
+    @Test
+    void updateShouldFieldsNotNull() {
+        PlaceStudy emptyPlaceStudy = new PlaceStudy();
+        Document emptyDocument = new Document();
+        Address emptyAddress = new Address();
+
+        doNothing().when(placeStudyService).update(emptyPlaceStudy);
+        doNothing().when(documentService).update(emptyDocument);
+        doNothing().when(addressService).update(emptyAddress);
+
+        Patient emptyPatient = new Patient();
+        emptyPatient.setPlaceStudy(emptyPlaceStudy);
+        emptyPatient.setDocument(emptyDocument);
+        emptyPatient.setAddress(emptyAddress);
+        emptyPatient.setParents(new ArrayList<>());
+        when(patientRepository.save(emptyPatient)).thenReturn(emptyPatient);
+
+        patientService.update(emptyPatient);
+
+        Assertions.assertNotNull(emptyPatient.getUpdatedAt());
+        Assertions.assertNotNull(emptyPatient.getPlaceStudy().getPatient());
+        Assertions.assertNotNull(emptyPatient.getDocument().getPatient());
+        Assertions.assertNotNull(emptyPatient.getAddress().getPatient());
+    }
+
+    /**
+     * Метод тестирует метод setCallingsForPatient, который принимает на вход параметры типа Calling и Patient,
+     * если в метод setCallingsForPatient передаем новый пустой объект типа Calling и Patient, то проверяем, что был
+     * вызван метод GeneralMethods.addObjectOneInListForObjectTwo с любыми входными параметрами
+     */
+
+    @Test
+    void setCallingsForPatientShouldRunningGeneralMethods() {
+        try (MockedStatic<GeneralMethods> mock = Mockito.mockStatic(GeneralMethods.class)) {
+            mock.when(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any())).
+                    thenAnswer((Answer<Void>) invocation -> null);
+
+            patientService.setCallingsForPatient(new Calling(), new Patient());
+
+            mock.verify(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any()));
+        }
+    }
+
+    /**
+     * Метод тестирует метод setContractsForPatient, который принимает на вход параметры типа Contract и Patient,
+     * если в метод setContractsForPatient передаем новый пустой объект типа Contract и Patient, то проверяем, что был
+     * вызван метод GeneralMethods.addObjectOneInListForObjectTwo с любыми входными параметрами
+     */
+
+    @Test
+    void setContractsForPatientShouldRunningGeneralMethods() {
+        try (MockedStatic<GeneralMethods> mock = Mockito.mockStatic(GeneralMethods.class)) {
+            mock.when(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any())).
+                    thenAnswer((Answer<Void>) invocation -> null);
+            patientService.setContractsForPatient( new Contract(), new Patient());
+
+            ArgumentCaptor<Patient> captor = ArgumentCaptor.forClass(Patient.class);
+
+            mock.verify(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), captor.capture(), any()));
+            System.out.println(captor.getValue());
+        }
     }
 
 }
