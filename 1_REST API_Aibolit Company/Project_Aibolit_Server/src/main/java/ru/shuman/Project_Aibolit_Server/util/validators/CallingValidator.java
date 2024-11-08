@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Calling;
 import ru.shuman.Project_Aibolit_Server.services.CallingService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class CallingValidator implements Validator {
@@ -45,7 +45,7 @@ public class CallingValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Calling calling = (Calling) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, calling.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, calling.getClass());
 
         if (calling.getUser() == null) {
             errors.rejectValue(field == null ? "user": field, "", "Пользователь не выбран!");

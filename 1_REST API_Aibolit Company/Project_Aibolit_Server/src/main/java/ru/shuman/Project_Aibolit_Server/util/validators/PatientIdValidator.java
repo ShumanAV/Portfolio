@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Patient;
 import ru.shuman.Project_Aibolit_Server.services.PatientService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class PatientIdValidator implements Validator {
@@ -27,7 +27,7 @@ public class PatientIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Patient patient = (Patient) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, patient.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, patient.getClass());
 
         if (patient.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У пациента отсутствует id!");

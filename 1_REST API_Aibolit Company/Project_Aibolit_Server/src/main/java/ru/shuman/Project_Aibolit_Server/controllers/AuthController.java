@@ -14,7 +14,7 @@ import ru.shuman.Project_Aibolit_Server.dto.UserDTO;
 import ru.shuman.Project_Aibolit_Server.models.User;
 import ru.shuman.Project_Aibolit_Server.security.JWTUtil;
 import ru.shuman.Project_Aibolit_Server.services.UserService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.errors.AuthenticationErrorResponse;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.ProfileNotAuthenticatedException;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.ProfileOrUserNotCreatedOrUpdatedException;
@@ -45,8 +45,9 @@ public class AuthController {
     }
 
     /*
-    Метод public ResponseEntity<HttpStatus> performRegistration выполняет регистрацию юзера,
-    если у входящего юзера есть id, выполняется апдейт существующего юзера и профайла при наличии,
+    Метод performRegistration выполняет регистрацию юзера (он же врач).
+    Юзера могут создать нового в клиенте, либо изменить существующего.
+    Если у входящего юзера есть id, выполняется апдейт существующего юзера и профайла при наличии,
     если id нет, то выполняется создание нового юзера с профайлом при наличии.
 
     Метод принимает JSON с объектом типа UserDTO userDTO при помощи @RequestBody,
@@ -63,7 +64,7 @@ public class AuthController {
 
         userValidator.validate(user, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, ProfileOrUserNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, ProfileOrUserNotCreatedOrUpdatedException.class);
 
         userService.register(user);
 
@@ -71,7 +72,7 @@ public class AuthController {
     }
 
     /*
-    Метод public ResponseEntity<Map<String, String>> performLogin выполняет аутентификацию пользователя.
+    Метод performLogin выполняет аутентификацию пользователя.
 
     Метод принимает JSON с объектом типа AuthenticationDTO authenticationDTO с именем пользователя и паролем.
     В случае неправильного логина и пароля выбрасывает исключение

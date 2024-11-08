@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Profile;
 import ru.shuman.Project_Aibolit_Server.services.ProfileService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class ProfileIdValidator implements Validator {
@@ -27,7 +27,7 @@ public class ProfileIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Profile profile = (Profile) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, profile.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, profile.getClass());
 
         if (profile.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У профиля отсутствует id!");

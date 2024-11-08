@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.UserDTO;
 import ru.shuman.Project_Aibolit_Server.models.User;
 import ru.shuman.Project_Aibolit_Server.services.UserService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.validators.UserValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.UserIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.errors.UserErrorResponse;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.ProfileOrUserNotCreatedOrUpdatedException;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.UserNotFound;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.UserNotFoundException;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class UserController {
     }
 
     /*
-        Метод public ResponseEntity<List<UserDTO>> sendListUsers возвращает список юзеров.
+        Метод sendListUsers возвращает список юзеров.
 
         Метод принимает два параметра запроса:
         published и show_in_schedule, если они есть, и далее,
@@ -71,7 +71,7 @@ public class UserController {
     }
 
     /*
-    Метод public ResponseEntity<UserDTO> sendOneUser возвращает одного юзера по id.
+    Метод sendOneUser возвращает одного юзера по id.
 
     Метод принимает обязательный параметр запроса id юзера,
     создает при помощи @ModelAttribute(value = "user") пустой объект типа User user, в который помещаем полученный id,
@@ -90,7 +90,7 @@ public class UserController {
 
         userIdValidator.validate(user, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, UserNotFound.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, UserNotFoundException.class);
 
         UserDTO userDTO = convertToUserDTO(userService.findById(userId).get());
 
@@ -99,29 +99,30 @@ public class UserController {
     }
 
     /*
-    Метод public ResponseEntity<HttpStatus> update выполняет апдейт существующего входящего юзера.
+    Метод update выполняет апдейт существующего входящего юзера.
 
     Метод принимает JSON при помощи @RequestBody, в котором лежит объект типа UserDTO userDTO,
     при приеме объекта UserDTO userDTO осуществляется валидация в соответствии с аннотациями в UserDTO,
     далее валидируется в двух валидаторах userValidator и userValidatorId, причем валидаторы специально разделены на два,
-    для того чтобы проверку валидности id осуществялть в отдельном валидаторе, чтобы это не влияло на проверку
-    заполненного юзера.
+    для того чтобы проверку валидности id осуществлять в отдельном валидаторе, т.к. с клиента могут поступать новые
+    объекты (юзеры, пациенты, и т.д.) без id, но их поля нужно валидировать, а также иногда нужно валидировать отдельно
+    только id в обязательном порядке.
 
     Метод осуществляет апдейт существующего юзера и возвращает обертку со статусом ResponseEntity<HttpStatus>
      */
 
     @PatchMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody @Valid UserDTO userDTO,
+    public ResponseEntity<HttpStatus> update(@RequestBody @Valid UserDTO updatedUserDTO,
                                              BindingResult bindingResult) {
 
-        User user = convertToUser(userDTO);
+        User updatedUser = convertToUser(updatedUserDTO);
 
-        userValidator.validate(user, bindingResult);
-        userIdValidator.validate(user, bindingResult);
+        userValidator.validate(updatedUser, bindingResult);
+        userIdValidator.validate(updatedUser, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, ProfileOrUserNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, ProfileOrUserNotCreatedOrUpdatedException.class);
 
-        userService.update(user);
+        userService.update(updatedUser);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -139,7 +140,7 @@ public class UserController {
 
     // Метод обработчик исключения UserNotFound
     @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(UserNotFound e) {
+    private ResponseEntity<UserErrorResponse> handleException(UserNotFoundException e) {
         UserErrorResponse response = new UserErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

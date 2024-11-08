@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.Parent;
 import ru.shuman.Project_Aibolit_Server.models.TypeEmployment;
 import ru.shuman.Project_Aibolit_Server.repositories.TypeEmploymentRepository;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class TypeEmploymentService {
     }
 
     public void setParentsForTypeEmployment(Parent parent, TypeEmployment typeEmployment) {
-        StandardMethods.addObjectOneInListForObjectTwo(parent, typeEmployment, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(parent, typeEmployment, this);
     }
 
     @Transactional

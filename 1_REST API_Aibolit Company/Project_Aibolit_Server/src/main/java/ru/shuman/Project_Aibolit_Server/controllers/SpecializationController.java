@@ -6,18 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.shuman.Project_Aibolit_Server.dto.PriceDTO;
 import ru.shuman.Project_Aibolit_Server.dto.SpecializationDTO;
-import ru.shuman.Project_Aibolit_Server.models.Price;
 import ru.shuman.Project_Aibolit_Server.models.Specialization;
 import ru.shuman.Project_Aibolit_Server.services.SpecializationService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
-import ru.shuman.Project_Aibolit_Server.util.errors.PriceErrorResponse;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.errors.SpecializationErrorResponse;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.PriceNotCreatedOrUpdatedException;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.PriceNotFound;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.SpecializationNotCreatedOrUpdatedException;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.SpecializationNotFound;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.SpecializationNotFoundException;
 import ru.shuman.Project_Aibolit_Server.util.validators.SpecializationIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.SpecializationValidator;
 
@@ -69,7 +64,7 @@ public class SpecializationController {
 
         specializationIdValidator.validate(specialization, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, SpecializationNotFound.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, SpecializationNotFoundException.class);
 
         SpecializationDTO specializationDTO = convertToSpecializationDTO(specializationService.findById(specializationId).get());
 
@@ -85,7 +80,7 @@ public class SpecializationController {
 
         specializationValidator.validate(specialization, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
 
         specializationService.create(specialization);
 
@@ -102,7 +97,7 @@ public class SpecializationController {
         specializationIdValidator.validate(specialization, bindingResult);
         specializationValidator.validate(specialization, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
 
         specializationService.update(specialization);
 
@@ -111,7 +106,7 @@ public class SpecializationController {
 
     // Метод обработчик исключения SpecializationNotFound
     @ExceptionHandler
-    private ResponseEntity<SpecializationErrorResponse> handleExceptionSpecializationNotFound(SpecializationNotFound e) {
+    private ResponseEntity<SpecializationErrorResponse> handleExceptionSpecializationNotFound(SpecializationNotFoundException e) {
         SpecializationErrorResponse response = new SpecializationErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

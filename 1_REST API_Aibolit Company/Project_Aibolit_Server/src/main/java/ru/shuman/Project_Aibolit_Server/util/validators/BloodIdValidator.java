@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Blood;
 import ru.shuman.Project_Aibolit_Server.services.BloodService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class BloodIdValidator implements Validator {
@@ -27,7 +27,7 @@ public class BloodIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Blood blood = (Blood) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, blood.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, blood.getClass());
 
         if (blood.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У группы крови отсутствует id!");

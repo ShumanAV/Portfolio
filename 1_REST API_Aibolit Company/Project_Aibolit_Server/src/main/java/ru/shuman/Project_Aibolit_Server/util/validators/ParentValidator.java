@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Parent;
 import ru.shuman.Project_Aibolit_Server.services.ParentService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.Optional;
 
@@ -62,7 +62,7 @@ public class ParentValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Parent parent = (Parent) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, parent.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, parent.getClass());
 
         if (parent.getDocument() != null) {
             if (parent.getId() == null && parent.getDocument().getId() != null) {

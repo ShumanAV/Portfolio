@@ -44,8 +44,8 @@ public class ProfileService {
     }
 
     /*
-    Метод public void create создает новый профайл, точнее заполняет входящий профайл с формы данными:
-    пользователь, зашифрованный пароль, дата и время создания и изменения профайла, также для выявления
+    Метод create создает новый профайл, точнее заполняет входящий профайл с формы данными:
+    зашифрованный пароль, дата и время создания и изменения профайла, также для выявления
     наличия списка пользователей у роли и для кэша у роли добавляется в список пользователей данный пользователь.
      */
     @Transactional
@@ -63,27 +63,27 @@ public class ProfileService {
     }
 
     /*
-    Метод public void update обновляет входящий с формы профайл, точнее заполняет данный профайл данными:
+    Метод update обновляет входящий с формы профайл, точнее заполняет данный профайл данными:
     идентификатор, берется у существующего профайла из БД, если пароль у входящего профайла отличается от пароля в БД,
     то обновляется зашифрованный пароль, дата и время изменения профайла, также для выявления
-    наличия списка пользователей у роли и для кэша у роли добавляется в список пользователей данный пользователь.
+    наличия списка профайлов у роли и для кэша у роли добавляется в список профайлов данный профайл.
     Профайл сохраняется.
     */
     @Transactional
-    public void update(Profile existingProfile, Profile profile) {
+    public void update(Profile existingProfile, Profile updatedProfile) {
 
-        profile.setId(existingProfile.getId());
+        updatedProfile.setId(existingProfile.getId());
 
-        if (!existingProfile.getPassword().equals(profile.getPassword())) {
-            String encodedPassword = passwordEncoder.encode(profile.getPassword());
-            profile.setPassword(encodedPassword);
+        if (!existingProfile.getPassword().equals(updatedProfile.getPassword())) {
+            String encodedPassword = passwordEncoder.encode(updatedProfile.getPassword());
+            updatedProfile.setPassword(encodedPassword);
         }
 
-        profile.setUpdatedAt(LocalDateTime.now());
+        updatedProfile.setUpdatedAt(LocalDateTime.now());
 
-        roleService.setProfilesForRole(profile, profile.getRole());
+        roleService.setProfilesForRole(updatedProfile, updatedProfile.getRole());
 
-        profileRepository.save(profile);
+        profileRepository.save(updatedProfile);
     }
 
     // Метод удаляет входящий профайл

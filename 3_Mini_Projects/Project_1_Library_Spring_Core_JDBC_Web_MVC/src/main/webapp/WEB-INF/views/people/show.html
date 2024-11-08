@@ -1,43 +1,35 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>One person</title>
+    <title>Читатель</title>
 </head>
+
 <body>
-    <h1>Страница человека</h1>
-    <br>
-    <br>
 
-    <p th:text="${person.name} + ', ' + ${person.year_of_birth}"></p>
+<h2>Читатель</h2>
 
-    <div th:if="${books.isEmpty()}">
-        <p>Человек пока не взял ни одной книги</p>
-        <hr/>
-    </div>
+<p th:text="${person.getName() + ', '+ person.getYearOfBirth()}">Value</p>
+<br/>
 
-    <div th:if="${!books.isEmpty()}">
-        <hr/>
-        <b>Книги: </b>
-        <br/>
-        <div th:each="book : ${books}">
-            <p th:text="${book.title} + ', ' + ${book.author} + ', ' + ${book.yearOfWriting}">Book</p>
-        </div>
-        <hr/>
-    </div>
+<div th:if="${books.size() == 0}">
+    Человек пока не взял ни одной книги
+</div>
+<div th:if="${books.size() > 0}">
+    <h3>Книги:</h3>
+    <p th:each="book : ${books}" th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYearOfWriting()}"></p>
+</div>
 
-    <!--    <div style="color:black" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Year of birth Error</div>-->
+<hr/>
+<form th:method="GET" th:action="@{/people/{id}/edit(id=${person.getPersonId()})}">
+    <input type="submit" value="Редактировать"/>
+</form>
 
-    <form th:method="GET" th:action="@{/people/{id}/edit(id=${person.person_id})}" th:object="${person}">
-        <input type="submit" value="Редактировать"/>
-    </form>
-    <br/>
-    <form th:method="DELETE" th:action="@{/people/{id}(id=${person.person_id})}" th:object="${person}">
-        <input type="submit" value="Удалить"/>
-    </form>
-
-    <br/>
-    <a href="/people">Назад </a>
+<form th:method="DELETE" th:action="@{/people/{id}(id=${person.getPersonId()})}">
+    <input type="submit" value="Удалить"/>
+</form>
 
 </body>
+
 </html>

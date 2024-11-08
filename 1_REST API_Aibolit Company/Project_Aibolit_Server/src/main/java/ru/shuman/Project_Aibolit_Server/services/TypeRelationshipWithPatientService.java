@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.Parent;
 import ru.shuman.Project_Aibolit_Server.models.TypeRelationshipWithPatient;
 import ru.shuman.Project_Aibolit_Server.repositories.TypeRelationshipWithPatientRepository;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class TypeRelationshipWithPatientService {
     }
 
     public void setParentsForTypeRelationship(Parent parent, TypeRelationshipWithPatient typeRelationship) {
-        StandardMethods.addObjectOneInListForObjectTwo(parent, typeRelationship, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(parent, typeRelationship, this);
     }
 
     @Transactional

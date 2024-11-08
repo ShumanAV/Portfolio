@@ -6,7 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Specialization;
 import ru.shuman.Project_Aibolit_Server.services.SpecializationService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class SpecializationValidator implements Validator {
@@ -27,6 +27,6 @@ public class SpecializationValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Specialization specialization = (Specialization) o;
 
-        String field = StandardMethods.searchNameFieldInTargetClass(errors, specialization.getClass());
+        String field = GeneralMethods.searchNameFieldInTargetClass(errors, specialization.getClass());
     }
 }

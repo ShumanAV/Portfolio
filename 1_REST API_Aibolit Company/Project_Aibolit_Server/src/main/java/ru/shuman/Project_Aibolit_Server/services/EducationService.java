@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.Education;
 import ru.shuman.Project_Aibolit_Server.models.Parent;
 import ru.shuman.Project_Aibolit_Server.repositories.EducationRepository;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class EducationService {
     }
 
     public void setParentsForEducation(Parent parent, Education education) {
-        StandardMethods.addObjectOneInListForObjectTwo(parent, education, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(parent, education, this);
     }
 
     @Transactional

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.repositories.GenderRepository;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,11 +26,11 @@ public class GenderService {
     }
 
     public void setPatientsForGender(Patient patient, Gender gender) {
-        StandardMethods.addObjectOneInListForObjectTwo(patient, gender, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(patient, gender, this);
     }
 
     public void setParentsForGender(Parent parent, Gender gender) {
-        StandardMethods.addObjectOneInListForObjectTwo(parent, gender, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(parent, gender, this);
     }
 
     @Transactional

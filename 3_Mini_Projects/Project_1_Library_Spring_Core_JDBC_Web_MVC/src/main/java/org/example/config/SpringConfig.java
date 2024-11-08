@@ -12,32 +12,35 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 import javax.sql.DataSource;
 import java.util.Objects;
 
-// этот класс полностью идентичен конфигурационному файлу applicationContextMVC.xml
-// для того, чтобы подключить шаблолнизатор Thymeleaf вместо стандартного, мы имплеминтируем интерфейс WebMvcConfigurer
-// с реализацией метода configureViewResolvers, в котором задаем шаблонизатор Thymeleaf
 @Configuration
 @ComponentScan("org.example")
-@EnableWebMvc   //аналогично <mvc:annotation-driven/>, которая включает необх аннотации для spring mvc
+@EnableWebMvc
 @PropertySource("classpath:database.properties")
+
+//Для того, чтобы под себя настроить Spring MVC, в частности вместо стандартного шаблонизатора использовать Thymeleaf
+// реализуем интерфейс WebMvcConfigurer, вместе с данным интерфейсом реализуем метод configureViewResolvers()
 public class SpringConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
-    private final Environment environment;      //с англ "окружение", через него получаем доступ к свойствам, которые подгрузили из файла database.properties
 
+    //Environment - окружение, с помощью него получим доступ к данным в файле
+    private final Environment environment;
+
+    //Внедряем ApplicationContext и Environment
     @Autowired
     public SpringConfig(ApplicationContext applicationContext, Environment environment) {
         this.applicationContext = applicationContext;
         this.environment = environment;
     }
 
-    // используем ApplicationContext для настройки Thymeleaf, указываем где лежат шаблоны и в каком формате
+    //Настраиваем Thymeleaf, также задаем папку где будут лежать представления и формат представлений, также указываем кодировку
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
@@ -48,6 +51,7 @@ public class SpringConfig implements WebMvcConfigurer {
         return templateResolver;
     }
 
+    //Задаем конфигурацию наших представлений
     @Bean
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
@@ -56,6 +60,7 @@ public class SpringConfig implements WebMvcConfigurer {
         return templateEngine;
     }
 
+    //Передаем Spring MVC, что хотим использовать шаблонизатор Thymeleaf и кодировку
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
@@ -64,25 +69,20 @@ public class SpringConfig implements WebMvcConfigurer {
         registry.viewResolver(resolver);
     }
 
-    // создаем бин источника данных, указываем драйвер для БД, URL, username и пароль
+    //Создаем бин источника данных для создания бина JDBC Template
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(Objects.requireNonNull(environment.getProperty("psql_driver")));
-        dataSource.setUrl(environment.getProperty("psql_url"));
-        dataSource.setUsername(environment.getProperty("psql_username"));
-        dataSource.setPassword(environment.getProperty("psql_password"));
-//        dataSource.setDriverClassName("org.postgresql.Driver");
-//        dataSource.setUrl("jdbc:postgresql://localhost:5432/project_1_library?autoReconnect=true&useSSL=false");
-//        dataSource.setUsername("postgres");
-//        dataSource.setPassword("qwerty");
+        dataSource.setDriverClassName(Objects.requireNonNull(environment.getProperty("driver")));
+        dataSource.setUrl(environment.getProperty("url"));
+        dataSource.setUsername(environment.getProperty("username_db"));
+        dataSource.setPassword(environment.getProperty("password"));
         return dataSource;
     }
 
-    // создаем бин JdbcTemplate, который будет возвращать экземпляр JdbcTemplate с источником данных dataSource
+    //Создаем бин JDBCTemplate
     @Bean
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(dataSource());
     }
-
 }

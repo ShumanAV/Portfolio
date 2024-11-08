@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.Contract;
 import ru.shuman.Project_Aibolit_Server.models.TypeContract;
 import ru.shuman.Project_Aibolit_Server.repositories.TypeContractRepository;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,7 +28,7 @@ public class TypeContractService {
     }
 
     public void setContractsForTypeContract(Contract contract, TypeContract typeContract) {
-        StandardMethods.addObjectOneInListForObjectTwo(contract, typeContract, this);
+        GeneralMethods.addObjectOneInListForObjectTwo(contract, typeContract, this);
     }
 
     @Transactional

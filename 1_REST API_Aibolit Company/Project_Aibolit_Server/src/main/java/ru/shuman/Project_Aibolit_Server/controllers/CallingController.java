@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.CallingDTO;
 import ru.shuman.Project_Aibolit_Server.models.Calling;
 import ru.shuman.Project_Aibolit_Server.services.CallingService;
-import ru.shuman.Project_Aibolit_Server.util.StandardMethods;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.errors.CallingErrorResponse;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.CallingNotCreatedOrUpdatedException;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.CallingNotFound;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.CallingNotFoundException;
 import ru.shuman.Project_Aibolit_Server.util.validators.CallingIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.CallingValidator;
 
@@ -56,7 +56,7 @@ public class CallingController {
 
         callingIdValidator.validate(calling, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, CallingNotFound.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, CallingNotFoundException.class);
 
         CallingDTO callingDTO = convertToCallingDTO(callingService.findById(callingId).get());
 
@@ -71,7 +71,7 @@ public class CallingController {
 
         callingValidator.validate(calling, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, CallingNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, CallingNotCreatedOrUpdatedException.class);
 
         callingService.create(calling);
 
@@ -87,7 +87,7 @@ public class CallingController {
         callingIdValidator.validate(calling, bindingResult);
         callingValidator.validate(calling, bindingResult);
 
-        StandardMethods.collectStringAboutErrors(bindingResult, CallingNotCreatedOrUpdatedException.class);
+        GeneralMethods.collectStringAboutErrors(bindingResult, CallingNotCreatedOrUpdatedException.class);
 
         callingService.update(calling);
 
@@ -96,7 +96,7 @@ public class CallingController {
 
     // Метод обработчик исключения CallingNotFound
     @ExceptionHandler
-    private ResponseEntity<CallingErrorResponse> handleExceptionCallingNotFound(CallingNotFound e) {
+    private ResponseEntity<CallingErrorResponse> handleExceptionCallingNotFound(CallingNotFoundException e) {
         CallingErrorResponse response = new CallingErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
