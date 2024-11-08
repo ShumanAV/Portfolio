@@ -1,37 +1,35 @@
-package org.example.models;
+package org.example.Models;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
+/*
+Модель Человека
+ */
 public class Person {
-
-    private int person_id;
-
-    // вся ниже аннотация по валидации данных импортирована из зависимости org.hibernate.validator
+    private int personId;
     @NotEmpty(message = "Name should not be empty")
     @Size(min = 2, max = 100, message = "Name should be between 2 and 100 characters")
     private String name;
+    @Min(value = 1900, message = "Year of birth should be greater than 1900")
+    private int yearOfBirth;
 
-    @Min(value = 1900, message = "Age should be greater than 1900")
-    private int year_of_birth;
-
-    public Person(int person_id, String name, int year_of_birth) {
-        this.person_id = person_id;
-        this.name = name;
-        this.year_of_birth = year_of_birth;
-    }
-
-    // Пустой конструктор нужен для спринга (тот же @ModelAttribute создает объект с помощью пустого конструктора и с помощью
-    // сеттеров помещает в него значения
     public Person() {
-
     }
 
-    public int getPerson_id() {
-        return person_id;
+    public Person(int personId, String name, int yearOfBirth) {
+        this.personId = personId;
+        this.name = name;
+        this.yearOfBirth = yearOfBirth;
     }
 
-    public void setPerson_id(int person_id) {
-        this.person_id = person_id;
+    public int getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(int personId) {
+        this.personId = personId;
     }
 
     public String getName() {
@@ -42,11 +40,12 @@ public class Person {
         this.name = name;
     }
 
-    public int getYear_of_birth() {
-        return year_of_birth;
+    public int getYearOfBirth() {
+        return yearOfBirth;
     }
 
-    public void setYear_of_birth(int year_of_birth) {
-        this.year_of_birth = year_of_birth;
+    public void setYearOfBirth(int yearOfBirth) {
+        this.yearOfBirth = yearOfBirth;
     }
+
 }

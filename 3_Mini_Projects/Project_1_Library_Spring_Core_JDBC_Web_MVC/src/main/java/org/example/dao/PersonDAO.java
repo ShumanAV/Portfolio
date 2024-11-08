@@ -1,7 +1,7 @@
-package org.example.dao;
+package org.example.DAO;
 
-import org.example.models.Book;
-import org.example.models.Person;
+import org.example.Models.Book;
+import org.example.Models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,46 +12,67 @@ import java.util.Optional;
 
 @Component
 public class PersonDAO {
-
     private final JdbcTemplate jdbcTemplate;
 
+    /*
+    Внедрение зависимостей через конструктор
+     */
     @Autowired
     public PersonDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /*
+    Метод формирует и возвращает список всех читателей из БД
+     */
     public List<Person> index() {
-        return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(Person.class));
+        return jdbcTemplate.query("select * from person", new BeanPropertyRowMapper<>(Person.class));
     }
 
-    public void add(Person person) {
-        jdbcTemplate.update("INSERT INTO Person (name, year_of_birth) values (?, ?)",
-                person.getName(), person.getYear_of_birth());
+    /*
+    Метод ищет человека по его id и возвращает его
+     */
+    public Optional<Person> show(int personId) {
+        return jdbcTemplate.query("select * from person where person_id=?", new Object[]{personId}, new BeanPropertyRowMapper<>(Person.class)).
+                stream().findAny();
     }
 
-    public Person show(int id) {
-        return jdbcTemplate.query("SELECT * FROM Person WHERE person_id=?", new Object[]{id},
-                new BeanPropertyRowMapper<>(Person.class)).stream().findAny().orElse(null);
-    }
-
-    // для валидации уникальности ФИО
+    /*
+    Метод ищет человека по его имени и возвращает его
+     */
     public Optional<Person> show(String name) {
-        return jdbcTemplate.query("SELECT * FROM Person WHERE name=?", new Object[]{name},
-                new BeanPropertyRowMapper<>(Person.class)).stream().findAny();
+        return jdbcTemplate.query("select * from person where name=?", new Object[]{name}, new BeanPropertyRowMapper<>(Person.class)).
+                stream().findAny();
     }
 
-    public void update(int id, Person person) {
-        jdbcTemplate.update("UPDATE Person SET name=?, year_of_birth=? WHERE person_id=?",
-                person.getName(), person.getYear_of_birth(), id);
+    /*
+    Метод сохраняет в БД нового человека
+     */
+    public void save(Person person) {
+        jdbcTemplate.update("insert into person (name, year_of_birth) VALUES (?, ?)",
+                person.getName(), person.getYearOfBirth());
     }
 
-    public void delete(int id) {
-        jdbcTemplate.update("DELETE FROM Person WHERE person_id=?", id);
+    /*
+    Метод сохраняет измененные данные человека, человек ищется по его id, на вход также принимает измененного человека
+     */
+    public void update(int personId, Person updatedPerson) {
+        jdbcTemplate.update("update person set name=?, year_of_birth=? where person_id=?",
+                updatedPerson.getName(), updatedPerson.getYearOfBirth(), personId);
     }
 
-    public List<Book> getBooksByPersonId(int id) {
-        return jdbcTemplate.query("SELECT * FROM Book WHERE person_id = ?",
+    /*
+    Метод удаляет из БД человека по его id
+     */
+    public void delete(int personId) {
+        jdbcTemplate.update("delete from person where person_id=?", personId);
+    }
+
+    /*
+    Метод возвращает список книг которые закреплены за человеком при их наличии и возвращает данный список
+     */
+    public List<Book> getBooks(int id) {
+        return jdbcTemplate.query("select * from book where person_id=?",
                 new Object[]{id}, new BeanPropertyRowMapper<>(Book.class));
     }
-
 }

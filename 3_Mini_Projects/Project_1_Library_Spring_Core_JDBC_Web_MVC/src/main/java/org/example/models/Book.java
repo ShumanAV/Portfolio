@@ -1,36 +1,31 @@
-package org.example.models;
+package org.example.Models;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
+/*
+Модель Книги
+ */
 public class Book {
-
     private int bookId;
-
-    // вся ниже аннотация по валидации данных импортирована из зависимости org.hibernate.validator
     @NotEmpty(message = "Title should not be empty")
-    @Size(min = 2, max = 200, message = "Title should be between 2 and 200 characters")
+    @Size(min = 2, max = 100, message = "Title should be between 2 and 100 characters")
     private String title;
-
     @NotEmpty(message = "Author should not be empty")
     @Size(min = 2, max = 100, message = "Author should be between 2 and 100 characters")
     private String author;
-
     @Min(value = 0, message = "Year of writing should be greater than 0")
     private int yearOfWriting;
+
+    public Book() {
+    }
 
     public Book(int bookId, String title, String author, int yearOfWriting) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.yearOfWriting = yearOfWriting;
-    }
-
-    // Пустой конструктор нужен для спринга (тот же @ModelAttribute создает объект с помощью пустого конструктора и с помощью
-    // сеттеров помещает в него значения
-    public Book() {
-
     }
 
     public int getBookId() {
@@ -64,4 +59,5 @@ public class Book {
     public void setYearOfWriting(int yearOfWriting) {
         this.yearOfWriting = yearOfWriting;
     }
+
 }

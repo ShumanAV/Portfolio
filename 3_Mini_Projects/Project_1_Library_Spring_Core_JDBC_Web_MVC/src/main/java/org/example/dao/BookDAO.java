@@ -1,7 +1,7 @@
-package org.example.dao;
+package org.example.DAO;
 
-import org.example.models.Book;
-import org.example.models.Person;
+import org.example.Models.Book;
+import org.example.Models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,53 +15,77 @@ public class BookDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
+    /*
+    Внедрение зависимостей через конструктор
+     */
     @Autowired
     public BookDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /*
+    Метод формирует список всех книг из БД и возвращает его
+     */
     public List<Book> index() {
-        return jdbcTemplate.query("SELECT * FROM Book", new BeanPropertyRowMapper<>(Book.class));
+        return jdbcTemplate.query("select * from book", new BeanPropertyRowMapper<>(Book.class));
     }
 
-    public Optional<Book> show(String title, String author, int yearOfWriting) {
-        return jdbcTemplate.query("SELECT * FROM Book WHERE title=? and author=? and year_of_writing=?", new Object[]{title, author, yearOfWriting},
-                new BeanPropertyRowMapper<>(Book.class)).stream().findAny();
+    /*
+    Метод ищет в БД книгу по ее id и возвращает ее
+     */
+    public Optional<Book> show(int bookId) {
+        return jdbcTemplate.query("select * from book where book_id=?", new Object[]{bookId},
+                        new BeanPropertyRowMapper<>(Book.class)).stream().findAny();
     }
 
-    public Book show(int id) {
-        return jdbcTemplate.query("SELECT * FROM Book WHERE book_id=?", new Object[]{id},
-                new BeanPropertyRowMapper<>(Book.class)).stream().findAny().orElse(null);
+    /*
+    Метод ищет в БД книгу по ее названию и возвращает ее
+     */
+    public Optional<Book> show(String title) {
+        return jdbcTemplate.query("select * from book where title=?", new Object[]{title},
+                        new BeanPropertyRowMapper<>(Book.class)).stream().findAny();
     }
 
-    public void add(Book book) {
-        jdbcTemplate.update("INSERT INTO Book (title, author, year_of_writing) values (?, ?, ?)",
-                book.getTitle(), book.getAuthor(), book.getYearOfWriting());
+    /*
+    Метод сохраняет новую книгу в БД
+     */
+    public void save(Book book) {
+        jdbcTemplate.update("insert into book (person_id, title, author, year_of_writing) VALUES (?, ?, ?, ?)",
+                null, book.getTitle(), book.getAuthor(), book.getYearOfWriting());
     }
 
-    public void update(int id, Book book) {
-        jdbcTemplate.update("UPDATE Book SET title=?, author=?, year_of_writing=? WHERE book_id=?",
-                book.getTitle(), book.getAuthor(), book.getYearOfWriting(), id);
+    /*
+    Метод изменяет существующую книгу, книгу ищет по ее id, также на вход принимает измененную книгу
+     */
+    public void update(int bookId, Book updatedbook) {
+        jdbcTemplate.update("update book set title=?, author=?, year_of_writing=? where book_id=?",
+                updatedbook.getTitle(), updatedbook.getAuthor(), updatedbook.getYearOfWriting(), bookId);
     }
 
-    public void delete(int id) {
-        jdbcTemplate.update("DELETE FROM Book WHERE book_id=?", id);
+    /*
+    Метод удаляет книгу по ее id
+     */
+    public void delete(int bookId) {
+        jdbcTemplate.update("delete from book where book_id=?", bookId);
     }
 
-    // Получаем человека, которому принадлежит указанная книга с указанным id
-    public Optional<Person> getBookOwner(int id) {
-        return jdbcTemplate.query("SELECT Person.* FROM Person INNER JOIN Book ON Person.person_id = Book.person_id WHERE Book.book_id = ?", new Object[]{id},
-                new BeanPropertyRowMapper<>(Person.class)).stream().findAny();
+    /*
+    Метод закрепляет книгу за выбранным читателем, т.е. находит книгу по ее id и устанавливает в поле id читателя
+     */
+    public void assignBook(int bookId, int personId) {
+        jdbcTemplate.update("update book set person_id=? where book_id=?", personId, bookId);
     }
 
-    // Освобождаем книгу по id книги, когда человек возвращает ее
-    public void release(int id) {
-        jdbcTemplate.update("Update Book Set person_id = NULL WHERE book_id = ?", id);
+    /*
+    Метод освобождает книгу от читателя, в поле читателя устанавливает null
+     */
+    public void releaseBook(int bookId) {
+        jdbcTemplate.update("update book set person_id=? where book_id=?", null, bookId);
     }
 
-    // Назначаем книге c id человека selectedPerson
-    public void assign(int id, Person selectedPerson) {
-        jdbcTemplate.update("Update Book Set person_id = ? WHERE book_id = ?",
-                selectedPerson.getPerson_id(), id);
+    // Метод возвращает человека, который взял определенную книгу по ее id
+    public Person searchWhoTookThisBook(int bookId) {
+        return jdbcTemplate.query("select * from person where person_id = (select book.person_id from book where book_id=?)",
+                new Object[]{bookId}, new BeanPropertyRowMapper<>(Person.class)).stream().findAny().orElse(null);
     }
 }
