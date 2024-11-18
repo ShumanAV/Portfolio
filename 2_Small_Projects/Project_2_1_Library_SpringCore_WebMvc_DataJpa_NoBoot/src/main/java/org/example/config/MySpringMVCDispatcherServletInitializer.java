@@ -1,33 +1,35 @@
 package org.example.config;
 
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.FilterRegistration;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import java.util.EnumSet;
 
-public class MySpringMVCDispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+//Для использования класса AbstractAnnotationConfigDispatcherServletInitializer нужна зависимость javax.servlet-api
+public class MySpringMvcDispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return null;
     }
 
+    //Здесь указываем класс с конфигурацией
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[] {SpringConfig.class};
+        return new Class[]{SpringConfig.class};
     }
 
+    //Указываем для сервера Томкат, что все http запросы от пользователя отправлять на DispatcherServlet
     @Override
     protected String[] getServletMappings() {
-        return new String[] {"/"};
+        return new String[]{"/"};
     }
 
-    // ниже 2 метода подключают фильтр, который читает скрытое поле с методами
-    // данный метод запускает на старте спринг приложения и добавляем один фильтр hiddenHttpMethodFilter
+    //При загрузке регистрируем фильтр с русским языком и проверкой запросов на скрытые поля
     @Override
     public void onStartup(ServletContext aServletContext) throws ServletException {
         super.onStartup(aServletContext);
@@ -35,12 +37,13 @@ public class MySpringMVCDispatcherServletInitializer extends AbstractAnnotationC
         registerHiddenFieldFilter(aServletContext);
     }
 
-    // этот фильтр будет работать при всех адресах в нашем приложении
+    //Подключаем фильтр для просмотра всех запросов на предмет поля типа hidden с изменением типа метода запроса
     private void registerHiddenFieldFilter(ServletContext aContext) {
         aContext.addFilter("hiddenHttpMethodFilter",
-                new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null ,true, "/*");
+                new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null, true, "/*");
     }
 
+    //Регистрация фильтра с русским языком
     private void registerCharacterEncodingFilter(ServletContext aContext) {
         EnumSet<DispatcherType> dispatcherTypes = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD);
 
@@ -51,5 +54,4 @@ public class MySpringMVCDispatcherServletInitializer extends AbstractAnnotationC
         FilterRegistration.Dynamic characterEncoding = aContext.addFilter("characterEncoding", characterEncodingFilter);
         characterEncoding.addMappingForUrlPatterns(dispatcherTypes, true, "/*");
     }
-
 }

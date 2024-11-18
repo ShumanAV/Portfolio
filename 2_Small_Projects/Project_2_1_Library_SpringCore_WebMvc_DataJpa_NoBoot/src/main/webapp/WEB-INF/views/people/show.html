@@ -1,41 +1,36 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>One person</title>
+    <title>Читатель</title>
 </head>
+
 <body>
-    <h1>Страница человека</h1>
-    <br/>
-    <br/>
 
-    <p th:text="${person.fullName} + ', ' + ${person.yearOfBirth}"></p>
+<h2>Читатель</h2>
 
-    <div th:if="${books.isEmpty()}">
-        <p>Человек пока не взял ни одной книги</p>
-    </div>
+<p th:text="${person.getName() + ', '+ person.getYearOfBirth()}">Value</p>
+<br/>
 
-    <div th:if="${!books.isEmpty()}">
-        <hr/>
-        <b>Книги: </b>
-        <br/>
-        <div th:each="book : ${books}">
-            <p th:style="${book.expired ? 'color:red' : 'color:black'}" th:text="${book.title} + ', ' + ${book.author} + ', ' + ${book.yearOfWriting}">Book</p>
-        </div>
-    </div>
-    <hr/>
-    <br/>
+<div th:if="${books.isEmpty()}">
+    Человек пока не взял ни одной книги
+</div>
+<div th:if="${!books.isEmpty()}">
+    <h3>Книги:</h3>
+    <p th:each="book : ${books}" th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYearOfWriting()}"
+       th:style="${book.isExpired()} ? 'color:red' : 'color:black'"></p>
+</div>
 
-    <form th:method="GET" th:action="@{/people/{id}/edit(id=${person.id})}" th:object="${person}">
-        <input type="submit" value="Редактировать"/>
-    </form>
-    <br/>
-    <form th:method="DELETE" th:action="@{/people/{id}(id=${person.id})}" th:object="${person}">
-        <input type="submit" value="Удалить"/>
-    </form>
+<hr/>
+<form th:method="GET" th:action="@{/people/{id}/edit(id=${person.getPersonId()})}">
+    <input type="submit" value="Редактировать"/>
+</form>
 
-    <br/>
-    <a href="/people">Назад </a>
+<form th:method="DELETE" th:action="@{/people/{id}(id=${person.getPersonId()})}">
+    <input type="submit" value="Удалить"/>
+</form>
 
 </body>
+
 </html>

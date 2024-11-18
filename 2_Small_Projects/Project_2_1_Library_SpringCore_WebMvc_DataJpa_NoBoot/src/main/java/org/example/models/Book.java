@@ -1,46 +1,47 @@
 package org.example.models;
 
-import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
+
 import java.util.Date;
 
+/*
+Модель Книги
+ */
 @Entity
 @Table(name = "book")
 public class Book {
-
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_id")
     private int bookId;
-
-    // вся ниже аннотация по валидации данных импортирована из зависимости org.hibernate.validator
-    @NotEmpty(message = "Название книги не должно быть пустым")
-    @Size(min = 2, max = 200, message = "Название должно содержать количество символов от 2 до 200")
+    @NotEmpty(message = "Title should not be empty")
+    @Size(min = 2, max = 100, message = "Title should be between 2 and 100 characters")
     @Column(name = "title")
     private String title;
-
-    @NotEmpty(message = "Поле Автор не должно быть пустым")
-    @Size(min = 2, max = 100, message = "Поле Автор должно содержать количество символов от 2 до 100")
+    @NotEmpty(message = "Author should not be empty")
+    @Size(min = 2, max = 100, message = "Author should be between 2 and 100 characters")
     @Column(name = "author")
     private String author;
-
-    @Min(value = 0, message = "Год написания книги должен быть больше 0")
+    @Min(value = 0, message = "Year of writing should be greater than 0")
     @Column(name = "year_of_writing")
     private int yearOfWriting;
-
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "date_of_taken")
-    private Date dateOfTaken;
-
-    @ManyToOne()
+    @Column(name = "taken_at")
+    private Date takenAt;
+    @ManyToOne
     @JoinColumn(name = "person_id", referencedColumnName = "id")
-    private Person owner;
-
-    // Hibernate не будет замечать этого поля
+    private Person reader;
     @Transient
-    private Boolean expired;
+    private boolean expired;
+
+    /*
+    Пустой конструктор нужен для Spring
+    */
+    public Book() {
+    }
 
     public Book(String title, String author, int yearOfWriting) {
         this.title = title;
@@ -48,43 +49,38 @@ public class Book {
         this.yearOfWriting = yearOfWriting;
     }
 
-    // Пустой конструктор нужен для спринга (тот же @ModelAttribute создает объект с помощью пустого конструктора и с помощью
-    // сеттеров помещает в него значения
-    public Book() {
-    }
 
     @Override
     public String toString() {
         return "Book{" +
-                "bookId=" + bookId +
-                ", title='" + title + '\'' +
+                "title='" + title + '\'' +
                 ", author='" + author + '\'' +
                 ", yearOfWriting=" + yearOfWriting +
                 '}';
     }
 
-    public Boolean getExpired() {
+    public boolean isExpired() {
         return expired;
     }
 
-    public void setExpired(Boolean expired) {
+    public void setExpired(boolean expired) {
         this.expired = expired;
     }
 
-    public Date getDateOfTaken() {
-        return dateOfTaken;
+    public Date getTakenAt() {
+        return takenAt;
     }
 
-    public void setDateOfTaken(Date dateOfTaken) {
-        this.dateOfTaken = dateOfTaken;
+    public void setTakenAt(Date takenAt) {
+        this.takenAt = takenAt;
     }
 
-    public Person getOwner() {
-        return owner;
+    public Person getReader() {
+        return reader;
     }
 
-    public void setOwner(Person owner) {
-        this.owner = owner;
+    public void setReader(Person reader) {
+        this.reader = reader;
     }
 
     public int getBookId() {
@@ -118,4 +114,5 @@ public class Book {
     public void setYearOfWriting(int yearOfWriting) {
         this.yearOfWriting = yearOfWriting;
     }
+
 }
