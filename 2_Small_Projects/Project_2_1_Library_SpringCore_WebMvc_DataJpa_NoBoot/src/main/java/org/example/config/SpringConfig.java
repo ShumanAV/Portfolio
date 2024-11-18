@@ -9,6 +9,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -17,45 +19,51 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 import javax.sql.DataSource;
 import java.util.Objects;
 import java.util.Properties;
 
-// этот класс полностью идентичен конфигурационному файлу applicationContextMVC.xml
-// для того, чтобы подключить шаблолнизатор Thymeleaf вместо стандартного, мы имплементируем интерфейс WebMvcConfigurer
-// с реализацией метода configureViewResolvers, в котором задаем шаблонизатор Thymeleaf
 @Configuration
 @ComponentScan("org.example")
-@EnableWebMvc                                           //аналогично <mvc:annotation-driven/>, которая включает необх аннотации для spring mvc
-@PropertySource("classpath:hibernate.properties")       // подключаем файл с конфигурацией
-@EnableTransactionManagement                            //spring за нас будет открывать и закрывать транзакции
-@EnableJpaRepositories("org.example.repositories")      //  включаем поддержку JPA репозиториев
+
+//Эта аннотация равноценна тегу <mvc:annotation-driven/>
+@EnableWebMvc
+@PropertySource("classpath:hibernate.properties")
+//Включаем управление Spring'ом нашими транзакциями
+@EnableTransactionManagement
+//Включаем JPA репозитории и указываем папку где они лежат
+@EnableJpaRepositories("org.example.repositories")
+//Для того, чтобы под себя настроить Spring MVC, в частности вместо стандартного шаблонизатора использовать Thymeleaf
+// нужно реализовать интерфейс WebMvcConfigurer, вместе с данным интерфейсом мы реализуем метод configureViewResolvers()
 public class SpringConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
-    private final Environment environment;  //с англ "окружение", через него получаем доступ к свойствам, которые подгрузили из файла hibernate.properties
 
+    //Environment - окружение, с помощью него получим доступ к данным в файле
+    private final Environment environment;
+
+    //Внедряем ApplicationContext, за нас это сделает Spring
     @Autowired
     public SpringConfig(ApplicationContext applicationContext, Environment environment) {
         this.applicationContext = applicationContext;
         this.environment = environment;
     }
 
-    // используем ApplicationContext для настройки Thymeleaf, указываем, где лежат шаблоны и в каком формате
+    //Настраиваем Thymeleaf, также задаем папку где будут лежать представления и формат представлений
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
         templateResolver.setApplicationContext(applicationContext);
         templateResolver.setPrefix("/WEB-INF/views/");
         templateResolver.setSuffix(".html");
-        templateResolver.setCharacterEncoding("UTF-8");
         return templateResolver;
     }
 
+    //Задаем конфигурацию наших представлений
     @Bean
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
@@ -64,26 +72,29 @@ public class SpringConfig implements WebMvcConfigurer {
         return templateEngine;
     }
 
+    //Передаем Spring MVC что хотим использовать шаблонизатор Thymeleaf
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
         resolver.setTemplateEngine(templateEngine());
         resolver.setCharacterEncoding("UTF-8");
+
         registry.viewResolver(resolver);
     }
 
-    // создаем бин источника данных, указываем драйвер для БД, URL, username и пароль
+    //Создаем бин источника данных
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(Objects.requireNonNull(environment.getRequiredProperty("hibernate.driver-class")));
+        dataSource.setDriverClassName(Objects.requireNonNull(environment.getRequiredProperty("hibernate.driver_class")));
         dataSource.setUrl(environment.getRequiredProperty("hibernate.connection.url"));
         dataSource.setUsername(environment.getRequiredProperty("hibernate.connection.username"));
         dataSource.setPassword(environment.getRequiredProperty("hibernate.connection.password"));
+
         return dataSource;
     }
 
-    // забираем две конфигурации из файла hibernate.properties и помещаем их в спец объект Properties
+    //Забираем конфигурации из файла для hibernate и помещаем их в Properties и возвращаем его
     private Properties hibernateProperties() {
         Properties properties = new Properties();
         properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
@@ -92,8 +103,7 @@ public class SpringConfig implements WebMvcConfigurer {
         return properties;
     }
 
-    // для Spring Data JPA мы должны поменять session и sessionFactory на EntityManager и EntityManagerFactory, суть похожа, т.к. в стандарте JPA есть
-    // EntityManager и EntityManagerFactory, а в стандарте Hibernate есть и то и другое, ниже поменяем 2 метода
+    //Подключаем entityManagerFactory для Spring Data Jpa вместо sessionFactory
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
@@ -107,7 +117,7 @@ public class SpringConfig implements WebMvcConfigurer {
         return em;
     }
 
-    // создаем бин по работе с транзакциями, spring сам будет открывать и закрывать транзакции
+    //Подключаем entityManagerFactory для Spring Data Jpa вместо hibernateTransactionManager
     @Bean
     public PlatformTransactionManager transactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();

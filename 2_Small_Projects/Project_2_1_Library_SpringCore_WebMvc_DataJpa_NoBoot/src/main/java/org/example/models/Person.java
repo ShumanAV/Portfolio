@@ -1,46 +1,48 @@
 package org.example.models;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
+/*
+Модель Человека
+ */
 @Entity
 @Table(name = "person")
 public class Person {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
-
-    // вся ниже аннотация по валидации данных импортирована из зависимости org.hibernate.validator
-    @NotEmpty(message = "Имя не должно быть пустым")
-    @Size(min = 2, max = 100, message = "Имя должно содержать количество символов от 2 до 100")
-    @Column(name = "full_name")
-    private String fullName;
-
-    @Min(value = 1900, message = "Год рождения должен быть больше 1900")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int personId;
+    @NotEmpty(message = "Name should not be empty")
+    @Size(min = 2, max = 100, message = "Name should be between 2 and 100 characters")
+    @Column(name = "name")
+    private String name;
+    @Min(value = 1900, message = "Year of birth should be greater than 1900")
     @Column(name = "year_of_birth")
     private int yearOfBirth;
-
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "reader")
     private List<Book> books;
 
-    public Person(String fullName, int yearOfBirth) {
-        this.fullName = fullName;
-        this.yearOfBirth = yearOfBirth;
+    /*
+    Пустой конструктор нужен для Spring
+     */
+    public Person() {
     }
 
-    // Пустой конструктор нужен для спринга (тот же @ModelAttribute создает объект с помощью пустого конструктора и с помощью
-    // сеттеров пемощает в него значения
-    public Person() {
+    public Person(int personId, String name, int yearOfBirth) {
+        this.personId = personId;
+        this.name = name;
+        this.yearOfBirth = yearOfBirth;
     }
 
     @Override
     public String toString() {
         return "Person{" +
-                "id=" + id +
-                ", fullName='" + fullName + '\'' +
+                "name='" + name + '\'' +
                 ", yearOfBirth=" + yearOfBirth +
                 '}';
     }
@@ -53,20 +55,20 @@ public class Person {
         this.books = books;
     }
 
-    public int getId() {
-        return id;
+    public int getPersonId() {
+        return personId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setPersonId(int personId) {
+        this.personId = personId;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getName() {
+        return name;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getYearOfBirth() {
@@ -76,4 +78,5 @@ public class Person {
     public void setYearOfBirth(int yearOfBirth) {
         this.yearOfBirth = yearOfBirth;
     }
+
 }
