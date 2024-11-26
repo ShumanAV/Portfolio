@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login page</title>
+</head>
+<body>
+
+<!--    название полей должны быть именно такими, это нужно для Spring Security-->
+    <form name="f" method="post" action="/process_login">
+<!--    защита от csrf атак заключается в добавлении на страницу аутентификации токена, а thymeleaf автоматически добавит этот токен на остальные формы-->
+<!--    ключ _csrf.parameterName будет предоставлен нам Spring Security, он нам его передаст, а мы его с помощью таймлифа вставим, а в качестве значения-->
+<!--    _csrf.token, такое поле будет передано при отправке нашей формы аутентификации пользователю, в другие формы вставится автоматически,
+        обязательное требования для защиты от csrf при разлогировании использовать post а не Get запрос  -->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+        <label for="username">Введите имя пользователя: </label>
+        <input type="text" name="username" id="username"/>
+        <br/>
+
+        <label for="password">Введите пароль: </label>
+        <input type="password" name="password" id="password"/>
+        <br/>
+
+        <input type="submit" value="Login"/>
+
+        <div th:if="${param.error}" style="color: red">
+            Неправильные логин или пароль
+        </div>
+
+        <br/>
+        <br/>
+        <a href="/auth/registration">Регистрация</a>
+
+    </form>
+
+</body>
+</html>
