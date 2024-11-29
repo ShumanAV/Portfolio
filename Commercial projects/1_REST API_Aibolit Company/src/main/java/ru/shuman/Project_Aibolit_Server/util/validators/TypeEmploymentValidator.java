@@ -6,7 +6,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.TypeEmployment;
 import ru.shuman.Project_Aibolit_Server.services.TypeEmploymentService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class TypeEmploymentValidator implements Validator {
@@ -25,8 +24,5 @@ public class TypeEmploymentValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        TypeEmployment typeEmployment = (TypeEmployment) o;
-
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, typeEmployment.getClass());
     }
 }

@@ -1,36 +1,33 @@
 package ru.shuman.Project_Aibolit_Server.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import ru.shuman.Project_Aibolit_Server.models.Profile;
+import ru.shuman.Project_Aibolit_Server.models.User;
 
 import java.util.Collection;
 import java.util.Collections;
 
-public class ProfileDetails implements UserDetails {
+public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
 
-    private final Profile profile;
+    private final User user;
 
-    @Autowired
-    public ProfileDetails(Profile profile) {
-        this.profile = profile;
+    public UserDetails(User user) {
+        this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(profile.getRole().getName()));
+        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getName()));
     }
 
     @Override
     public String getPassword() {
-        return this.profile.getPassword();
+        return this.user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.profile.getUsername();
+        return this.user.getUsername();
     }
 
     @Override
@@ -53,7 +50,7 @@ public class ProfileDetails implements UserDetails {
         return true;
     }
 
-    public Profile getProfile() {
-        return profile;
+    public User getUser() {
+        return user;
     }
 }

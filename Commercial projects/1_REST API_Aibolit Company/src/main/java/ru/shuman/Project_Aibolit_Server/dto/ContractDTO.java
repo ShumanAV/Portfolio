@@ -22,7 +22,7 @@ public class ContractDTO {
 
     private LocalDateTime updatedAt;
 
-    private UserDTO user;
+    private DoctorDTO user;
 
     private PatientDTO patient;
 

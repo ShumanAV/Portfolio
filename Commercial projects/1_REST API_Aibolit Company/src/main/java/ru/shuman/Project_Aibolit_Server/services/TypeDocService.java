@@ -33,7 +33,7 @@ public class TypeDocService {
         return typeDocRepository.findByName(name);
     }
 
-    public void setDocumentsForTypeDoc(Document document, TypeDoc typeDoc) {
+    public void addDocumentAtListForTypeDoc(Document document, TypeDoc typeDoc) {
         GeneralMethods.addObjectOneInListForObjectTwo(document, typeDoc, this);
     }
 

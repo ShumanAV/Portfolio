@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Role;
 import ru.shuman.Project_Aibolit_Server.services.RoleService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class RoleIdValidator implements Validator {
@@ -27,7 +28,7 @@ public class RoleIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Role role = (Role) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, role.getClass());
+        String field = searchNameFieldInParentEntity(errors, role.getClass());
 
         if (role.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У роли отсутствует id!");

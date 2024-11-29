@@ -6,7 +6,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Gender;
 import ru.shuman.Project_Aibolit_Server.services.GenderService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class GenderValidator implements Validator {
@@ -25,8 +24,5 @@ public class GenderValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        Gender gender = (Gender) o;
-
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, gender.getClass());
     }
 }

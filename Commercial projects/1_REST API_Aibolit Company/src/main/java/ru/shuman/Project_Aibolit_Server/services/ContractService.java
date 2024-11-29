@@ -15,15 +15,15 @@ import java.util.Optional;
 public class ContractService {
 
     private final ContractRepository contractRepository;
-    private final UserService userService;
+    private final DoctorService doctorService;
     private final PatientService patientService;
     private final TypeContractService typeContractService;
 
     @Autowired
-    public ContractService(ContractRepository contractRepository, UserService userService, PatientService patientService,
+    public ContractService(ContractRepository contractRepository, DoctorService doctorService, PatientService patientService,
                            TypeContractService typeContractService) {
         this.contractRepository = contractRepository;
-        this.userService = userService;
+        this.doctorService = doctorService;
         this.patientService = patientService;
         this.typeContractService = typeContractService;
     }
@@ -42,16 +42,16 @@ public class ContractService {
         contract.setCreatedAt(LocalDateTime.now());
         contract.setUpdatedAt(LocalDateTime.now());
 
-        userService.setContractsForUser(contract, contract.getUser());
+        doctorService.addContractAtListForDoctor(contract, contract.getDoctor());
 
-        patientService.setContractsForPatient(contract, contract.getPatient());
+        patientService.addContractAtListForPatient(contract, contract.getPatient());
         if (contract.getPatient().getId() == null) {
             patientService.create(contract.getPatient());
         } else {
             patientService.update(contract.getPatient());
         }
 
-        typeContractService.setContractsForTypeContract(contract, contract.getTypeContract());
+        typeContractService.addContractAtListForTypeContract(contract, contract.getTypeContract());
 
         contractRepository.save(contract);
     }
@@ -61,16 +61,16 @@ public class ContractService {
 
         contract.setUpdatedAt(LocalDateTime.now());
 
-        userService.setContractsForUser(contract, contract.getUser());
+        doctorService.addContractAtListForDoctor(contract, contract.getDoctor());
 
-        patientService.setContractsForPatient(contract, contract.getPatient());
+        patientService.addContractAtListForPatient(contract, contract.getPatient());
         if (contract.getPatient().getId() == null) {
             patientService.create(contract.getPatient());
         } else {
             patientService.update(contract.getPatient());
         }
 
-        typeContractService.setContractsForTypeContract(contract, contract.getTypeContract());
+        typeContractService.addContractAtListForTypeContract(contract, contract.getTypeContract());
 
         contractRepository.save(contract);
     }

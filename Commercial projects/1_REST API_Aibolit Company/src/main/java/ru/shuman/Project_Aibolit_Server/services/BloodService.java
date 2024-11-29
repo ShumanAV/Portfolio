@@ -27,11 +27,11 @@ public class BloodService {
         return bloodRepository.findById(bloodId);
     }
 
-    public void setPatientsForBlood(Patient patient, Blood blood) {
+    public void addPatientAtListForBlood(Patient patient, Blood blood) {
         GeneralMethods.addObjectOneInListForObjectTwo(patient, blood, this);
     }
 
-    public void setParentsForBlood(Parent parent, Blood blood) {
+    public void addParentAtListForBlood(Parent parent, Blood blood) {
         GeneralMethods.addObjectOneInListForObjectTwo(parent, blood, this);
     }
 

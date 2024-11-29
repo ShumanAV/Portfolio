@@ -41,6 +41,6 @@ public class Specialization {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "specialization")
-    private List<User> users;
+    private List<Doctor> doctors;
 
 }

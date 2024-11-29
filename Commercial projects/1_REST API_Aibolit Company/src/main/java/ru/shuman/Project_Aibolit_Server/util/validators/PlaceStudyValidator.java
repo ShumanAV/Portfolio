@@ -6,7 +6,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.PlaceStudy;
 import ru.shuman.Project_Aibolit_Server.services.PlaceStudyService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class PlaceStudyValidator implements Validator {
@@ -25,8 +24,5 @@ public class PlaceStudyValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        PlaceStudy placeStudy = (PlaceStudy) o;
-
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, placeStudy.getClass());
     }
 }

@@ -26,7 +26,7 @@ public class TypeEmploymentService {
         return typeEmploymentRepository.findById(idTypeEmployment);
     }
 
-    public void setParentsForTypeEmployment(Parent parent, TypeEmployment typeEmployment) {
+    public void addParentAtListForTypeEmployment(Parent parent, TypeEmployment typeEmployment) {
         GeneralMethods.addObjectOneInListForObjectTwo(parent, typeEmployment, this);
     }
 

@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Parent;
 import ru.shuman.Project_Aibolit_Server.services.ParentService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class ParentIdValidator implements Validator {
@@ -27,7 +28,7 @@ public class ParentIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Parent parent = (Parent) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, parent.getClass());
+        String field = searchNameFieldInParentEntity(errors, parent.getClass());
 
         if (parent.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У родителя отсутствует id!");

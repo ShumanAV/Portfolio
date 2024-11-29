@@ -47,7 +47,7 @@ public class GeneralMethodsTest {
 
     private static PatientService patientService;
 
-    @Autowired
+//    @Autowired
     private GeneralMethodsTest () {
 //        this.patientRepository = patientRepository;
 //        this.placeStudyService = placeStudyService;
@@ -83,7 +83,7 @@ public class GeneralMethodsTest {
     @MethodSource("generateExceptions")
     public void collectStringAboutErrorsTestWithoutExceptions(Class<? extends RuntimeException> clazz) {
         Assertions.assertDoesNotThrow(() -> {
-            GeneralMethods.collectStringAboutErrors(bindingResultEmpty, clazz);
+            GeneralMethods.collectErrorsToString(bindingResultEmpty, clazz);
         });
     }
 
@@ -94,7 +94,7 @@ public class GeneralMethodsTest {
     public void collectStringAboutErrorsTest(Class<? extends RuntimeException> clazz) {
         // проверка на выброс исключения
         Assertions.assertThrows(clazz, () -> {
-            GeneralMethods.collectStringAboutErrors(bindingResultWithErrors, clazz);
+            GeneralMethods.collectErrorsToString(bindingResultWithErrors, clazz);
         });
     }
 
@@ -116,7 +116,7 @@ public class GeneralMethodsTest {
     @ParameterizedTest
     @MethodSource("generateFields")
     public void searchNameFieldInTargetClassTest(String fieldName, Class<?> searchableFieldType) {
-        Assertions.assertEquals(fieldName, GeneralMethods.searchNameFieldInTargetClass(errors, searchableFieldType));
+        Assertions.assertEquals(fieldName, GeneralMethods.searchNameFieldInParentEntity(errors, searchableFieldType));
     }
 
     // Метод тестирует метод searchNameFieldInTargetClass на возврат null в случае,
@@ -125,20 +125,20 @@ public class GeneralMethodsTest {
     // таргетного класса CallingDTO
     @Test
     public void searchNameFieldInTargetClassTestOnNull() {
-        Assertions.assertNull(GeneralMethods.searchNameFieldInTargetClass(errors, Contract.class));
-        Assertions.assertNull(GeneralMethods.searchNameFieldInTargetClass(errors, TypeContract.class));
+        Assertions.assertNull(GeneralMethods.searchNameFieldInParentEntity(errors, Contract.class));
+        Assertions.assertNull(GeneralMethods.searchNameFieldInParentEntity(errors, TypeContract.class));
     }
 
     // Метод генерирует имена полей и их типы - DTO на примере класса CallingDTO, а также его дочерних сущностей DTO
     public static Stream<Arguments> generateFields() {
         List<Arguments> out = new ArrayList<>();
 
-        out.add(Arguments.arguments("user", User.class));
+        out.add(Arguments.arguments("user", Doctor.class));
         out.add(Arguments.arguments("user", Specialization.class));
-        out.add(Arguments.arguments("user", Profile.class));
+        out.add(Arguments.arguments("user", User.class));
         out.add(Arguments.arguments("user", Role.class));
 
-        out.add(Arguments.arguments("diary", Diary.class));
+        out.add(Arguments.arguments("diary", Journal.class));
 
         out.add(Arguments.arguments("price", Price.class));
 
@@ -188,7 +188,7 @@ public class GeneralMethodsTest {
         out.add(Arguments.arguments(Patient.class, PatientDTO.class));
         out.add(Arguments.arguments(PlaceStudy.class,PlaceStudyDTO.class));
         out.add(Arguments.arguments(Price.class, PriceDTO.class));
-        out.add(Arguments.arguments(Profile.class, ProfileDTO.class));
+        out.add(Arguments.arguments(User.class, UserDTO.class));
         out.add(Arguments.arguments(Region.class, RegionDTO.class));
         out.add(Arguments.arguments(Role.class, RoleDTO.class));
         out.add(Arguments.arguments(Specialization.class, SpecializationDTO.class));
@@ -196,7 +196,7 @@ public class GeneralMethodsTest {
         out.add(Arguments.arguments(TypeDoc.class, TypeDocDTO.class));
         out.add(Arguments.arguments(TypeEmployment.class, TypeEmploymentDTO.class));
         out.add(Arguments.arguments(TypeRelationshipWithPatient.class, TypeRelationshipWithPatientDTO.class));
-        out.add(Arguments.arguments(User.class, UserDTO.class));
+        out.add(Arguments.arguments(Doctor.class, DoctorDTO.class));
 
         return out.stream();
     }

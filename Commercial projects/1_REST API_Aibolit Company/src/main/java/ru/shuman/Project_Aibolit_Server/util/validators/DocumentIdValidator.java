@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Document;
 import ru.shuman.Project_Aibolit_Server.services.DocumentService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class DocumentIdValidator implements Validator {
@@ -27,7 +28,7 @@ public class DocumentIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Document document = (Document) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, document.getClass());
+        String field = searchNameFieldInParentEntity(errors, document.getClass());
 
         if (document.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У документа отсутствует id!");

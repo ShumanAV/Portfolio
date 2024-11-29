@@ -6,27 +6,28 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Contract;
 import ru.shuman.Project_Aibolit_Server.services.ContractService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class ContractValidator implements Validator {
 
     private final ContractService contractService;
-    private final UserValidator userValidator;
-    private final UserIdValidator userIdValidator;
+    private final DoctorValidator doctorValidator;
+    private final DoctorIdValidator doctorIdValidator;
     private final PatientValidator patientValidator;
     private final PatientIdValidator patientIdValidator;
     private final TypeContractIdValidator typeContractIdValidator;
     private final TypeContractValidator typeContractValidator;
 
     @Autowired
-    public ContractValidator(ContractService contractService, PatientValidator patientValidator, UserValidator userValidator,
-                             UserIdValidator userIdValidator, PatientIdValidator patientIdValidator, TypeContractIdValidator typeContractIdValidator,
+    public ContractValidator(ContractService contractService, PatientValidator patientValidator, DoctorValidator doctorValidator,
+                             DoctorIdValidator doctorIdValidator, PatientIdValidator patientIdValidator, TypeContractIdValidator typeContractIdValidator,
                              TypeContractValidator typeContractValidator) {
         this.contractService = contractService;
         this.patientValidator = patientValidator;
-        this.userValidator = userValidator;
-        this.userIdValidator = userIdValidator;
+        this.doctorValidator = doctorValidator;
+        this.doctorIdValidator = doctorIdValidator;
         this.patientIdValidator = patientIdValidator;
         this.typeContractIdValidator = typeContractIdValidator;
         this.typeContractValidator = typeContractValidator;
@@ -41,13 +42,13 @@ public class ContractValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Contract contract = (Contract) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, contract.getClass());
+        String field = searchNameFieldInParentEntity(errors, contract.getClass());
 
-        if (contract.getUser() == null) {
+        if (contract.getDoctor() == null) {
             errors.rejectValue(field == null ? "user": field, "", "Пользователь в договоре не выбран!");
         } else {
-            userIdValidator.validate(contract.getUser(), errors);
-            userValidator.validate(contract.getUser(), errors);
+            doctorIdValidator.validate(contract.getDoctor(), errors);
+            doctorValidator.validate(contract.getDoctor(), errors);
         }
 
         if (contract.getPatient() == null) {

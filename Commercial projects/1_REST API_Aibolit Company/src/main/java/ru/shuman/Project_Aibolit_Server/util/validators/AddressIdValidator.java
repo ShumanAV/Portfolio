@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Address;
 import ru.shuman.Project_Aibolit_Server.services.AddressService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class AddressIdValidator implements Validator {
@@ -27,7 +28,7 @@ public class AddressIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Address address = (Address) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, address.getClass());
+        String field = searchNameFieldInParentEntity(errors, address.getClass());
 
         if (address.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У адреса отсутствует id!");

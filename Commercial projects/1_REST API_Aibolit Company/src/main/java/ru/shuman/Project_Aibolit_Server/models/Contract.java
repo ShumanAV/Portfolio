@@ -39,8 +39,8 @@ public class Contract {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @JoinColumn(name = "doctor_id", referencedColumnName = "id")
+    private Doctor doctor;
 
     @ManyToOne
     @JoinColumn(name = "patient_id", referencedColumnName = "id")

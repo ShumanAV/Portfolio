@@ -1,10 +1,10 @@
 package ru.shuman.Project_Aibolit_Server.util.errors;
 
-public class UserErrorResponse {
+public class DoctorErrorResponse {
     private String message;
     private long timestamp;
 
-    public UserErrorResponse(String message, long timestamp) {
+    public DoctorErrorResponse(String message, long timestamp) {
         this.message = message;
         this.timestamp = timestamp;
     }

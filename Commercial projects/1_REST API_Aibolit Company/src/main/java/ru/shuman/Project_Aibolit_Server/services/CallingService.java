@@ -15,17 +15,17 @@ import java.util.Optional;
 public class CallingService {
 
     private final CallingRepository callingRepository;
-    private final UserService userService;
-    private final DiaryService diaryService;
+    private final DoctorService doctorService;
+    private final JournalService journalService;
     private final PriceService priceService;
     private final PatientService patientService;
 
     @Autowired
-    public CallingService(CallingRepository callingRepository, UserService userService, DiaryService diaryService,
+    public CallingService(CallingRepository callingRepository, DoctorService doctorService, JournalService journalService,
                           PriceService priceService, PatientService patientService) {
         this.callingRepository = callingRepository;
-        this.userService = userService;
-        this.diaryService = diaryService;
+        this.doctorService = doctorService;
+        this.journalService = journalService;
         this.priceService = priceService;
         this.patientService = patientService;
     }
@@ -44,14 +44,14 @@ public class CallingService {
         calling.setCreatedAt(LocalDateTime.now());
         calling.setUpdatedAt(LocalDateTime.now());
 
-        userService.setCallingsForUser(calling, calling.getUser());
+        doctorService.addCallingAtListForDoctor(calling, calling.getDoctor());
 
-        calling.getDiary().setCalling(calling);
-        diaryService.create(calling.getDiary());
+        calling.getJournal().setCalling(calling);
+        journalService.create(calling.getJournal());
 
-        priceService.setCallingsForPrice(calling, calling.getPrice());
+        priceService.addCallingAtListForPrice(calling, calling.getPrice());
 
-        patientService.setCallingsForPatient(calling, calling.getPatient());
+        patientService.addCallingAtListForPatient(calling, calling.getPatient());
         if (calling.getPatient().getId() == null) {
             patientService.create(calling.getPatient());
         } else {
@@ -66,14 +66,14 @@ public class CallingService {
 
         calling.setUpdatedAt(LocalDateTime.now());
 
-        userService.setCallingsForUser(calling, calling.getUser());
+        doctorService.addCallingAtListForDoctor(calling, calling.getDoctor());
 
-        calling.getDiary().setCalling(calling);
-        diaryService.update(calling.getDiary());
+        calling.getJournal().setCalling(calling);
+        journalService.update(calling.getJournal());
 
-        priceService.setCallingsForPrice(calling, calling.getPrice());
+        priceService.addCallingAtListForPrice(calling, calling.getPrice());
 
-        patientService.setCallingsForPatient(calling, calling.getPatient());
+        patientService.addCallingAtListForPatient(calling, calling.getPatient());
         if (calling.getPatient().getId() == null) {
             patientService.create(calling.getPatient());
         } else {

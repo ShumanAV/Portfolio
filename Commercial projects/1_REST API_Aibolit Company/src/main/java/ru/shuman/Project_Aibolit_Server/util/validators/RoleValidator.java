@@ -25,8 +25,5 @@ public class RoleValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        Role role = (Role) o;
-
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, role.getClass());
     }
 }

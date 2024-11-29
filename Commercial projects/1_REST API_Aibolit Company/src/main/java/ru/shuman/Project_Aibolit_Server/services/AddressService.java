@@ -28,7 +28,7 @@ public class AddressService {
     @Transactional
     public void create(Address address) {
 
-        regionService.setAddressesForRegion(address, address.getRegion());
+        regionService.AddAddressAtListForRegion(address, address.getRegion());
 
         addressRepository.save(address);
     }
@@ -36,7 +36,7 @@ public class AddressService {
     @Transactional
     public void update(Address address) {
 
-        regionService.setAddressesForRegion(address, address.getRegion());
+        regionService.AddAddressAtListForRegion(address, address.getRegion());
 
         addressRepository.save(address);
     }

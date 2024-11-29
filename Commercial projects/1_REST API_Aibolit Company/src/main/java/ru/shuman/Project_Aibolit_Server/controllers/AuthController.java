@@ -10,63 +10,64 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.AuthenticationDTO;
-import ru.shuman.Project_Aibolit_Server.dto.UserDTO;
-import ru.shuman.Project_Aibolit_Server.models.User;
+import ru.shuman.Project_Aibolit_Server.dto.DoctorDTO;
+import ru.shuman.Project_Aibolit_Server.models.Doctor;
 import ru.shuman.Project_Aibolit_Server.security.JWTUtil;
-import ru.shuman.Project_Aibolit_Server.services.UserService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+import ru.shuman.Project_Aibolit_Server.services.DoctorService;
 import ru.shuman.Project_Aibolit_Server.util.errors.AuthenticationErrorResponse;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.ProfileNotAuthenticatedException;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.ProfileOrUserNotCreatedOrUpdatedException;
-import ru.shuman.Project_Aibolit_Server.util.validators.UserValidator;
-import ru.shuman.Project_Aibolit_Server.util.errors.UserErrorResponse;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.UserNotAuthenticatedException;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.UserOrDoctorNotCreatedOrUpdatedException;
+import ru.shuman.Project_Aibolit_Server.util.validators.DoctorValidator;
+import ru.shuman.Project_Aibolit_Server.util.errors.DoctorErrorResponse;
 
 import javax.validation.Valid;
 import java.util.Map;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserService userService;
-    private final UserValidator userValidator;
+    private final DoctorService doctorService;
+    private final DoctorValidator doctorValidator;
     private final ModelMapper modelMapper;
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthController(UserService userService, UserValidator userValidator, ModelMapper modelMapper,
+    public AuthController(DoctorService doctorService, DoctorValidator doctorValidator, ModelMapper modelMapper,
                           JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
-        this.userService = userService;
-        this.userValidator = userValidator;
+        this.doctorService = doctorService;
+        this.doctorValidator = doctorValidator;
         this.modelMapper = modelMapper;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
     }
 
     /*
-    Метод performRegistration выполняет регистрацию юзера (он же врач).
-    Юзера могут создать нового в клиенте, либо изменить существующего.
-    Если у входящего юзера есть id, выполняется апдейт существующего юзера и профайла при наличии,
-    если id нет, то выполняется создание нового юзера с профайлом при наличии.
+    Метод performRegistration выполняет регистрацию доктора (он же врач).
+    Доктора могут создать нового в клиенте, либо изменить существующего.
+    Если у входящего доктора есть id, выполняется апдейт существующего доктора и юзера при наличии доступа в систему,
+    если id нет, то выполняется создание нового доктора с юзером при наличии доступа в систему.
 
-    Метод принимает JSON с объектом типа UserDTO userDTO при помощи @RequestBody,
-    осуществляет валидацию данных в соответствии с аннотациями в UserDTO.
+    Метод принимает JSON с объектом типа DoctorDTO doctorDTO при помощи @RequestBody,
+    осуществляет валидацию данных в соответствии с аннотациями и валидатором.
 
-    Возвращает оболочку со статусом ResponseEntity<HttpStatus>
+    Возвращает обертку со статусом ResponseEntity<HttpStatus>
      */
 
     @PostMapping("/registration")
-    public ResponseEntity<HttpStatus> performRegistration(@RequestBody @Valid UserDTO userDTO,
+    public ResponseEntity<HttpStatus> performRegistration(@RequestBody @Valid DoctorDTO doctorDTO,
                                                           BindingResult bindingResult) {
 
-        User user = convertToUser(userDTO);
+        Doctor doctor = convertToDoctor(doctorDTO);
 
-        userValidator.validate(user, bindingResult);
+        doctorValidator.validate(doctor, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, ProfileOrUserNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, UserOrDoctorNotCreatedOrUpdatedException.class);
 
-        userService.register(user);
+        doctorService.register(doctor);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -75,8 +76,7 @@ public class AuthController {
     Метод performLogin выполняет аутентификацию пользователя.
 
     Метод принимает JSON с объектом типа AuthenticationDTO authenticationDTO с именем пользователя и паролем.
-    В случае неправильного логина и пароля выбрасывает исключение
-    throw new ProfileNotAuthenticatedException("Неправильный логин или пароль!").
+    В случае неправильного логина и пароля выбрасывает исключение UserNotAuthenticatedException
 
     В случае прохождения аутентификации формирует новый jwt токен и возвращает его в оболочке со статусом 200
     new ResponseEntity<>(Map.of("jwt-token", token), HttpStatus.OK).
@@ -93,7 +93,7 @@ public class AuthController {
         try {
             authenticationManager.authenticate(authInputToken);
         } catch (BadCredentialsException e) {
-            throw new ProfileNotAuthenticatedException("Неправильный логин или пароль!");
+            throw new UserNotAuthenticatedException("Неправильный логин или пароль!");
         }
 
         String token = jwtUtil.generateToken(authenticationDTO.getUsername());
@@ -101,9 +101,9 @@ public class AuthController {
         return new ResponseEntity<>(Map.of("jwt-token", token), HttpStatus.OK);
     }
 
-    // Метод обработчик исключения ProfileNotAuthenticatedException
+    // Метод обработчик исключения UserNotAuthenticatedException
     @ExceptionHandler
-    private ResponseEntity<AuthenticationErrorResponse> handleExceptionProfileNotAuthenticated(ProfileNotAuthenticatedException e) {
+    private ResponseEntity<AuthenticationErrorResponse> handleException(UserNotAuthenticatedException e) {
         AuthenticationErrorResponse response = new AuthenticationErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -112,10 +112,10 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения ProfileOrUserNotCreatedOrUpdatedException
+    // Метод обработчик исключения UserOrDoctorNotCreatedOrUpdatedException
     @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleExceptionProfileOrUserNotCreated(ProfileOrUserNotCreatedOrUpdatedException e) {
-        UserErrorResponse response = new UserErrorResponse(
+    private ResponseEntity<DoctorErrorResponse> handleException(UserOrDoctorNotCreatedOrUpdatedException e) {
+        DoctorErrorResponse response = new DoctorErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
         );
@@ -124,8 +124,8 @@ public class AuthController {
     }
 
     // Метод конверсии из DTO в модель
-    public User convertToUser(UserDTO userDTO) {
-        return this.modelMapper.map(userDTO, User.class);
+    public Doctor convertToDoctor(DoctorDTO doctorDTO) {
+        return this.modelMapper.map(doctorDTO, Doctor.class);
     }
 
 }

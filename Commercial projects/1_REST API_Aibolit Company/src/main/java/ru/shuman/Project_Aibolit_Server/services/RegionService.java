@@ -33,7 +33,7 @@ public class RegionService {
         return regionRepository.findByName(name);
     }
 
-    public void setAddressesForRegion(Address address, Region region) {
+    public void AddAddressAtListForRegion(Address address, Region region) {
         GeneralMethods.addObjectOneInListForObjectTwo(address, region, this);
     }
 

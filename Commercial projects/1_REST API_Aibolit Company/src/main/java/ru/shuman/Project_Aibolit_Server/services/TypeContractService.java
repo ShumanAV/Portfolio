@@ -27,7 +27,7 @@ public class TypeContractService {
         return typeContractRepository.findById(typeContractId);
     }
 
-    public void setContractsForTypeContract(Contract contract, TypeContract typeContract) {
+    public void addContractAtListForTypeContract(Contract contract, TypeContract typeContract) {
         GeneralMethods.addObjectOneInListForObjectTwo(contract, typeContract, this);
     }
 

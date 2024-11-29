@@ -1,14 +1,14 @@
 package ru.shuman.Project_Aibolit_Server.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.shuman.Project_Aibolit_Server.models.*;
+import ru.shuman.Project_Aibolit_Server.models.Doctor;
+import ru.shuman.Project_Aibolit_Server.models.User;
 import ru.shuman.Project_Aibolit_Server.repositories.UserRepository;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,133 +16,78 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ProfileService profileService;
-    private final SpecializationService specializationService;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
     @Autowired
-    public UserService(UserRepository userRepository, ProfileService profileService, SpecializationService specializationService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userRepository = userRepository;
-        this.profileService = profileService;
-        this.specializationService = specializationService;
+        this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
     }
 
-    // Метод осуществляет поиск пользователя по номеру телефона и возвращает его в оболочке Optional
-    public Optional<User> findByPhone(String phone) {
-        return userRepository.findByPhone(phone);
+    // Метод осуществляет поиск пользователя по имени пользователя (username) и возвращает пользователя в обертке Optional
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
-    // Метод осуществляет поиск пользователя по СНИЛСу и возвращает его в оболочке Optional
-    public Optional<User> findBySnils(String snils) {
-        return userRepository.findBySnils(snils);
-    }
-
-    // Метод осуществляет поиск пользователя по ИНН и возвращает его в оболочке Optional
-    public Optional<User> findByInn(String inn) {
-        return userRepository.findByInn(inn);
-    }
-
-    // Метод осуществляет поиск всех пользователей и возвращает их список
-    public List<User> findAll() {
-        return userRepository.findAll();
-    }
-
-    // Метод осуществляет поиск пользователей с published = True или False и возвращает их список
-    public List<User> findAllByPublished(boolean published) {
-        return userRepository.findByPublished(published);
-    }
-
-    // Метод осуществляет поиск пользователей с showInSchedule = True или False и возвращает их список
-    public List<User> findAllByShowInSchedule(boolean showInSchedule) {
-        return userRepository.findByShowInSchedule(showInSchedule);
-    }
-
-    // Метод осуществляет поиск пользователей с published = True или False и showInSchedule = True или False и возвращает их список
-    public List<User> findAllByPublishedAndShowInSchedule(boolean published, boolean showInSchedule) {
-        return userRepository.findByPublishedAndShowInSchedule(published, showInSchedule);
-    }
-
-    // Метод осуществляет поиск пользователя по id и возвращает его в оболочке Optional
+    // Метод осуществляет поиск пользователя по id пользователя и возвращает пользователя в обертке Optional
     public Optional<User> findById(Integer userId) {
         return userRepository.findById(userId);
     }
 
+    // Метод осуществляет поиск пользователя по доктору, точнее по его id и возвращает пользователя в обертке Optional
+    public Optional<User> findByUser(Doctor doctor) {
+        return userRepository.findByDoctor(doctor);
+    }
+
     /*
-    Метод register создает нового пользователя и профайл для него.
-
-    В методе данный пользователь добавляется в список пользователей для объекта специализации из БД, для кэша.
-    Устанавливается дата и время создания и изменения пользователя.
-
-    В случае если у пользователя есть доступ к системе, т.е. AccessToSystem = true создается новый профайл для данного пользователя.
-
-    Далее происходит сохранение пользователя при помощи userRepository.save(user),
-    точнее получаем для пользователя id из БД.
+    Метод create создает нового пользователя, точнее заполняет входящего пользователя с формы данными:
+    зашифрованный пароль, дата и время создания и изменения пользователя, также для выявления
+    наличия списка пользователей у роли и для кэша - у роли добавляется в список пользователей данный пользователь.
      */
     @Transactional
-    public void register(User user) {
+    public void create(User user) {
 
-        specializationService.setUsersForSpecialization(user, user.getSpecialization());
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
 
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
-        if (user.isAccessToSystem()) {
-            user.getProfile().setUser(user);
-            profileService.create(user.getProfile());
-        }
+        roleService.addUserAtListForRole(user, user.getRole());
 
         userRepository.save(user);
     }
 
-        /*
-    Метод update осуществляет изменение существующего пользователя в БД.
-
-    В методе данный пользователь добавляется в список пользователей для объекта специализации из БД, для кэша.
-    Устанавливает дату и время изменения пользователя.
-    Выполняет поиск профайла у данного пользователя.
-
-    Далее, в случае если у входящего пользователя есть доступ к системе, т.е. AccessToSystem = True,
-    если для данного пользователя уже есть профайл в БД, то происходит его изменение,
-    если профайла нет, то происходит создание и сохранение нового профайла,
-    точнее получение id для нового профайла.
-    Делается это без каскадирования, т.е. отдельно для профайла.
-
-    Если AccessToSystem = False, но при этом есть уже профайл в БД, происходит его удаление.
-
-    Далее происходит сохранение обновленного пользователя.
-     */
+    /*
+    Метод update обновляет входящего с формы пользователя, точнее заполняет данного пользователя данными:
+    идентификатор, берется у существующего пользователя из БД, если пароль у входящего пользователя отличается от пароля в БД,
+    то обновляется зашифрованный пароль, дата и время изменения пользователя, также для выявления
+    наличия списка пользователей у роли и для кэша - у роли добавляется в список пользователей данный пользователь.
+    Пользователь сохраняется.
+    */
     @Transactional
-    public void update(User updatedUser) {
+    public void update(User existingUser, User updatedUser) {
 
-        specializationService.setUsersForSpecialization(updatedUser, updatedUser.getSpecialization());
+        updatedUser.setId(existingUser.getId());
+
+        if (!existingUser.getPassword().equals(updatedUser.getPassword())) {
+            String encodedPassword = passwordEncoder.encode(updatedUser.getPassword());
+            updatedUser.setPassword(encodedPassword);
+        }
 
         updatedUser.setUpdatedAt(LocalDateTime.now());
 
-        Profile existingProfile = userRepository.findById(updatedUser.getId()).get().getProfile();
-
-        if (updatedUser.isAccessToSystem()) {
-
-            updatedUser.getProfile().setUser(updatedUser);
-            if (existingProfile != null) {
-                profileService.update(existingProfile, updatedUser.getProfile());
-            } else {
-                profileService.create(updatedUser.getProfile());
-            }
-
-        } else {
-
-            if (existingProfile != null) {
-                profileService.delete(existingProfile);
-            }
-        }
+        roleService.addUserAtListForRole(updatedUser, updatedUser.getRole());
 
         userRepository.save(updatedUser);
     }
 
-    public void setCallingsForUser(Calling calling, User user) {
-        GeneralMethods.addObjectOneInListForObjectTwo(calling, user, this);
+    // Метод удаляет входящего пользователя
+    @Transactional
+    public void delete(User user) {
+        userRepository.delete(user);
     }
 
-    public void setContractsForUser(Contract contract, User user) {
-        GeneralMethods.addObjectOneInListForObjectTwo(contract, user, this);
-    }
 }

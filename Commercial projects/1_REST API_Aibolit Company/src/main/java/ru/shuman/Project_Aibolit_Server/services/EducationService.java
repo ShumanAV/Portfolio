@@ -26,7 +26,7 @@ public class EducationService {
         return educationRepository.findById(educationId);
     }
 
-    public void setParentsForEducation(Parent parent, Education education) {
+    public void addParentAtListForEducation(Parent parent, Education education) {
         GeneralMethods.addObjectOneInListForObjectTwo(parent, education, this);
     }
 

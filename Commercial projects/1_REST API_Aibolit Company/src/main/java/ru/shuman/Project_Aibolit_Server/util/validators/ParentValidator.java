@@ -6,9 +6,10 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Parent;
 import ru.shuman.Project_Aibolit_Server.services.ParentService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.Optional;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class ParentValidator implements Validator {
@@ -62,7 +63,7 @@ public class ParentValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Parent parent = (Parent) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, parent.getClass());
+        String field = searchNameFieldInParentEntity(errors, parent.getClass());
 
         if (parent.getDocument() != null) {
             if (parent.getId() == null && parent.getDocument().getId() != null) {

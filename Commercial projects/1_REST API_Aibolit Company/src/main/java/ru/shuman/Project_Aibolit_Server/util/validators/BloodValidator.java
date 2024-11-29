@@ -6,7 +6,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Blood;
 import ru.shuman.Project_Aibolit_Server.services.BloodService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class BloodValidator implements Validator {
@@ -25,8 +24,5 @@ public class BloodValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        Blood blood = (Blood) o;
-
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, blood.getClass());
     }
 }

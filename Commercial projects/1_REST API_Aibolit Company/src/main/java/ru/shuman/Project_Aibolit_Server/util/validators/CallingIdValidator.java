@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Calling;
 import ru.shuman.Project_Aibolit_Server.services.CallingService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class CallingIdValidator implements Validator {
@@ -27,7 +28,7 @@ public class CallingIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Calling calling = (Calling) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, calling.getClass());
+        String field = searchNameFieldInParentEntity(errors, calling.getClass());
 
         if (calling.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У вызова отсутствует id!");

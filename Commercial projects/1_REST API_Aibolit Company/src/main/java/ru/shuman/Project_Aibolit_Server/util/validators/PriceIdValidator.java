@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Price;
 import ru.shuman.Project_Aibolit_Server.services.PriceService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class PriceIdValidator implements Validator {
@@ -27,7 +28,7 @@ public class PriceIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Price price = (Price) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, price.getClass());
+        String field = searchNameFieldInParentEntity(errors, price.getClass());
 
         if (price.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У прайса отсутствует id!");

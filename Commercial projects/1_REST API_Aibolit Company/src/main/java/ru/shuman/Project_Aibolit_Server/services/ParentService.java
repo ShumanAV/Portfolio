@@ -85,23 +85,23 @@ public class ParentService {
         addressService.create(parent.getAddress());
 
         if (parent.getTypeRelationshipWithPatient() != null) {
-            typeRelationshipWithPatientService.setParentsForTypeRelationship(parent, parent.getTypeRelationshipWithPatient());
+            typeRelationshipWithPatientService.addParentAtListForTypeRelationship(parent, parent.getTypeRelationshipWithPatient());
         }
 
         if (parent.getEducation() != null) {
-            educationService.setParentsForEducation(parent, parent.getEducation());
+            educationService.addParentAtListForEducation(parent, parent.getEducation());
         }
 
         if (parent.getBlood() != null) {
-            bloodService.setParentsForBlood(parent, parent.getBlood());
+            bloodService.addParentAtListForBlood(parent, parent.getBlood());
         }
 
         if (parent.getTypeEmployment() != null) {
-            typeEmploymentService.setParentsForTypeEmployment(parent, parent.getTypeEmployment());
+            typeEmploymentService.addParentAtListForTypeEmployment(parent, parent.getTypeEmployment());
         }
 
         if (parent.getGender() != null) {
-            genderService.setParentsForGender(parent, parent.getGender());
+            genderService.addParentAtListForGender(parent, parent.getGender());
         }
 
         parentRepository.save(parent);
@@ -120,29 +120,29 @@ public class ParentService {
 
 
         if (parent.getTypeRelationshipWithPatient() != null) {
-            typeRelationshipWithPatientService.setParentsForTypeRelationship(parent, parent.getTypeRelationshipWithPatient());
+            typeRelationshipWithPatientService.addParentAtListForTypeRelationship(parent, parent.getTypeRelationshipWithPatient());
         }
 
         if (parent.getEducation() != null) {
-            educationService.setParentsForEducation(parent, parent.getEducation());
+            educationService.addParentAtListForEducation(parent, parent.getEducation());
         }
 
         if (parent.getBlood() != null) {
-            bloodService.setParentsForBlood(parent, parent.getBlood());
+            bloodService.addParentAtListForBlood(parent, parent.getBlood());
         }
 
         if (parent.getTypeEmployment() != null) {
-            typeEmploymentService.setParentsForTypeEmployment(parent, parent.getTypeEmployment());
+            typeEmploymentService.addParentAtListForTypeEmployment(parent, parent.getTypeEmployment());
         }
 
         if (parent.getGender() != null) {
-            genderService.setParentsForGender(parent, parent.getGender());
+            genderService.addParentAtListForGender(parent, parent.getGender());
         }
 
         parentRepository.save(parent);
     }
 
-    public void setPatientForParent(Patient patient, Parent parent, int numberParent) {
+    public void addPatientAtListForParent(Patient patient, Parent parent, int numberParent) {
 
         if (patient.getParents() != null) {
 

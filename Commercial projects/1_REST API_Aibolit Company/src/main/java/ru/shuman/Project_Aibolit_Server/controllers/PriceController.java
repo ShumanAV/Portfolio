@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.PriceDTO;
 import ru.shuman.Project_Aibolit_Server.models.Price;
 import ru.shuman.Project_Aibolit_Server.services.PriceService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.errors.PriceErrorResponse;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.PriceNotCreatedOrUpdatedException;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.PriceNotFoundException;
@@ -19,6 +18,8 @@ import ru.shuman.Project_Aibolit_Server.util.validators.PriceValidator;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
 
 @RestController
 @RequestMapping("/prices")
@@ -61,7 +62,7 @@ public class PriceController {
 
         priceIdValidator.validate(price, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, PriceNotFoundException.class);
+        collectErrorsToString(bindingResult, PriceNotFoundException.class);
 
         PriceDTO priceDTO = convertToPriceDTO(priceService.findById(priceId).get());
 
@@ -77,7 +78,7 @@ public class PriceController {
 
         priceValidator.validate(price, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, PriceNotCreatedOrUpdatedException.class);
 
         priceService.create(price);
 
@@ -94,7 +95,7 @@ public class PriceController {
         priceIdValidator.validate(price, bindingResult);
         priceValidator.validate(price, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, PriceNotCreatedOrUpdatedException.class);
 
         priceService.update(price);
 

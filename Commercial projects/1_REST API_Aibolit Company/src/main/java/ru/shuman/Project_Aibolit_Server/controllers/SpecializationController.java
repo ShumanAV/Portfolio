@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.SpecializationDTO;
 import ru.shuman.Project_Aibolit_Server.models.Specialization;
 import ru.shuman.Project_Aibolit_Server.services.SpecializationService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.errors.SpecializationErrorResponse;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.SpecializationNotCreatedOrUpdatedException;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.SpecializationNotFoundException;
@@ -19,6 +18,8 @@ import ru.shuman.Project_Aibolit_Server.util.validators.SpecializationValidator;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
 
 @RestController
 @RequestMapping("/specializations")
@@ -64,7 +65,7 @@ public class SpecializationController {
 
         specializationIdValidator.validate(specialization, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, SpecializationNotFoundException.class);
+        collectErrorsToString(bindingResult, SpecializationNotFoundException.class);
 
         SpecializationDTO specializationDTO = convertToSpecializationDTO(specializationService.findById(specializationId).get());
 
@@ -80,7 +81,7 @@ public class SpecializationController {
 
         specializationValidator.validate(specialization, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
 
         specializationService.create(specialization);
 
@@ -97,7 +98,7 @@ public class SpecializationController {
         specializationIdValidator.validate(specialization, bindingResult);
         specializationValidator.validate(specialization, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
 
         specializationService.update(specialization);
 

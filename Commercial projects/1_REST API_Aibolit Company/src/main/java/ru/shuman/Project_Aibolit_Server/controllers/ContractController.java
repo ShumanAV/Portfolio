@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.ContractDTO;
 import ru.shuman.Project_Aibolit_Server.models.Contract;
 import ru.shuman.Project_Aibolit_Server.services.ContractService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.errors.ContractErrorResponse;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.ContractNotCreatedOrUpdatedException;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.ContractNotFoundException;
@@ -19,6 +18,8 @@ import ru.shuman.Project_Aibolit_Server.util.validators.ContractValidator;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
 
 @RestController
 @RequestMapping("/contracts")
@@ -56,7 +57,7 @@ public class ContractController {
 
         contractIdValidator.validate(contract, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, ContractNotFoundException.class);
+        collectErrorsToString(bindingResult, ContractNotFoundException.class);
 
         ContractDTO contractDTO = convertToContractDTO(contractService.findById(contractId).get());
 
@@ -72,7 +73,7 @@ public class ContractController {
 
         contractValidator.validate(contract, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, ContractNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, ContractNotCreatedOrUpdatedException.class);
 
         contractService.create(contract);
 
@@ -88,7 +89,7 @@ public class ContractController {
         contractIdValidator.validate(contract, bindingResult);
         contractValidator.validate(contract, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, ContractNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, ContractNotCreatedOrUpdatedException.class);
 
         contractService.update(contract);
 

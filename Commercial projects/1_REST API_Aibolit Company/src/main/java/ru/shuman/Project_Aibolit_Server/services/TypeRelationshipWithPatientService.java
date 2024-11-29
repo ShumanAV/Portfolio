@@ -26,7 +26,7 @@ public class TypeRelationshipWithPatientService {
         return typeRelationshipWithPatientRepository.findById(id);
     }
 
-    public void setParentsForTypeRelationship(Parent parent, TypeRelationshipWithPatient typeRelationship) {
+    public void addParentAtListForTypeRelationship(Parent parent, TypeRelationshipWithPatient typeRelationship) {
         GeneralMethods.addObjectOneInListForObjectTwo(parent, typeRelationship, this);
     }
 

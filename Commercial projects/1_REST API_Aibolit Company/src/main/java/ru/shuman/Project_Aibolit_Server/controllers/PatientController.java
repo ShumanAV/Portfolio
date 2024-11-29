@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.PatientDTO;
 import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.services.PatientService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.errors.PatientErrorResponse;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.PatientNotCreatedOrUpdatedException;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.PatientNotFoundException;
@@ -19,6 +18,8 @@ import ru.shuman.Project_Aibolit_Server.util.validators.PatientValidator;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
 
 @RestController
 @RequestMapping("/patients")
@@ -61,7 +62,7 @@ public class PatientController {
 
         patientIdValidator.validate(patient, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, PatientNotFoundException.class);
+        collectErrorsToString(bindingResult, PatientNotFoundException.class);
 
         PatientDTO patientDTO = convertToPatientDTO(patientService.findById(patientId).get());
 
@@ -77,7 +78,7 @@ public class PatientController {
 
         patientValidator.validate(patient, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, PatientNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, PatientNotCreatedOrUpdatedException.class);
 
         patientService.create(patient);
 
@@ -94,7 +95,7 @@ public class PatientController {
         patientIdValidator.validate(patient, bindingResult);
         patientValidator.validate(patient, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, PatientNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, PatientNotCreatedOrUpdatedException.class);
 
         patientService.update(patient);
 

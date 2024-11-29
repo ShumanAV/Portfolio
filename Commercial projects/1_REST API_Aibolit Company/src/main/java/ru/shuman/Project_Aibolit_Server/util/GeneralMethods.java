@@ -1,7 +1,5 @@
 package ru.shuman.Project_Aibolit_Server.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -32,7 +30,7 @@ public class GeneralMethods {
     на входе тип исключений ограничен RuntimeException.
      */
 
-    public static void collectStringAboutErrors(BindingResult bindingResult, Class<? extends RuntimeException> exception) {
+    public static void collectErrorsToString(BindingResult bindingResult, Class<? extends RuntimeException> exception) {
 
         try {
             if (bindingResult.hasErrors()) {
@@ -44,7 +42,7 @@ public class GeneralMethods {
                     errorMsg.append(error.getField())
                             .append(" - ")
                             .append(error.getDefaultMessage() == null ? error.getCode() : error.getDefaultMessage())
-                            .append(";");
+                            .append("; ");
                 }
                 throw exception.getConstructor(String.class).newInstance(errorMsg.toString());
             }
@@ -55,7 +53,8 @@ public class GeneralMethods {
     }
 
     /*
-    Данный метод осуществляет поиск имени поля в таргетном классе errors искомого типа, из которого запускается данный метод,
+    Данный метод осуществляет поиск названия поля для указания ошибки в валидаторе в родительской сущности
+    (ниже описан пример для понимания), в таргетном классе errors искомого типа, из которого запускается данный метод,
     либо такого типа, который в последовательности связей классов DTO через поля содержит искомый тип.
 
     Для удобства, если таргетный класс это не класс DTO, а класс модели и searchableFieldType тоже класс модели приходит
@@ -63,12 +62,12 @@ public class GeneralMethods {
     избежать зацикленности связей в моделях, в DTO этого нет.
 
     Например, идет создание вызова CallingDTO, при этом осуществляется валидация по цепочке всех дочерних сущностей DTO,
-    с которыми есть связь у вызова CallingDTO, например, UserDTO, SpecializationDTO, ProfileDTO, RoleDTO и т.д.,
+    с которыми есть связь у вызова CallingDTO, например, UserDTO, SpecializationDTO, UserDTO, RoleDTO и т.д.,
     при валидации RoleDTO в соответствующем валидаторе при наличии ошибок необходимо указать
     название поля, в котором ошибка, причем название поля из родительской сущности - СallingDTO, через которое
     осуществляется связь RoleDTO и СallingDTO, и в данном случае это будет поле с названием "user",
     т.к. данное поле имеет тип UserDTO, а он в свою очередь имеет
-    поле "profile" типа ProfileDTO, а оно в свою очередь имеет поле искомого типа "role" типа RoleDTO.
+    поле "user" типа UserDTO, а оно в свою очередь имеет поле искомого типа "role" типа RoleDTO.
 
     На вход данный метод принимает объект errors типа Errors и тип искомого поля типа CLass - класс модели из валидатора.
 
@@ -78,7 +77,7 @@ public class GeneralMethods {
     преобразования SpecializationDTO, в этом случае метод возвращает null.
      */
 
-    public static String searchNameFieldInTargetClass(Errors errors, Class<?> searchableFieldType) {
+    public static String searchNameFieldInParentEntity(Errors errors, Class<?> searchableFieldType) {
 
         final String PACKAGE_DTO = "ru.shuman.Project_Aibolit_Server.dto";
 
@@ -189,7 +188,12 @@ public class GeneralMethods {
 
     /*
     Метод добавляет первый объект Модели objectOne в List<objectOne> для второго объекта Модели objectTwo, делается это
-    для актуализации кэша при сохранении или обновлении объектов в БД.
+    для актуализации кэша при сохранении или обновлении объектов в БД, когда отношение objectOne к objectTwo -
+    многие к одному.
+
+    Пример для понимания, добавляем новый вызов врача, указываем для вызова существующий прайс, т.к. тип отношения
+    прайса к вывозам 1 ко многим, то у вызова будет уже выбранный прайс, а вот у прайса в списке вызовов не будет этого
+    нового вызова, вот в таких случаях когда отношение многие к одному мы и добавляем в список новый объект.
 
     На вход поступает два объекта Моделей objectOne и objectTwo, а также объект сервисного класса второго объекта objectTwo.
 
@@ -203,33 +207,33 @@ public class GeneralMethods {
 
         try {
             // найдем геттер в objectOne возвращающий ObjectTwo
-            Method getterObjectOne = objectOne.getClass().getMethod(formNameMethodGetter(objectOne, objectTwo));
+            Method getterObjectOne = objectOne.getClass().getMethod(searchGetterName(objectOne, objectTwo));
 
             // найдем getter в ObjectTwo возвращающий List<objectOne>
-            Method getterObjectTwo = objectTwo.getClass().getMethod(formNameMethodGetter(objectTwo, objectOne));
+            Method getterObjectTwo = objectTwo.getClass().getMethod(searchGetterName(objectTwo, objectOne));
 
             // найдем setter в ObjectTwo устанавливающий List<objectOne>
-            Method setterObjectTwo = objectTwo.getClass().getMethod(formNameMethodSetter(objectTwo, objectOne), List.class);
+            Method setterObjectTwo = objectTwo.getClass().getMethod(searchSetterName(objectTwo, objectOne), List.class);
 
             // проверим при помощи геттера не равно ли null поле типа ObjectTwo в objectOne
             if (getterObjectOne.invoke(objectOne) != null) {
 
                 // найдем метод getId() для ObjectOne и objectTwo
-                Method getIdObjectOne = objectOne.getClass().getMethod(formNameMethodGetId(objectOne));
-                Method getIdObjectTwo = objectTwo.getClass().getMethod(formNameMethodGetId(objectTwo));
+                Method getIdObjectOne = objectOne.getClass().getMethod(searchGetIdName(objectOne));
+                Method getIdObjectTwo = objectTwo.getClass().getMethod(searchGetIdName(objectTwo));
 
                 // получим id для объекта ObjectTwo
                 Object idObjectTwo = getIdObjectTwo.invoke(objectTwo);
 
                 // получим метод findById из сервисного класса objectTwo
-                final String FIND_BY_ID = "findById";
-                Method findById = instanceOfServiceClassObjectTWO.getClass().getMethod(FIND_BY_ID, idObjectTwo.getClass());
+                final String findById = "findById";
+                Method findByIdServiceObjectTwo = instanceOfServiceClassObjectTWO.getClass().getMethod(findById, idObjectTwo.getClass());
 
                 // проверим не равен ли id для ObjectTwo null
                 if (idObjectTwo != null) {
 
                     // получаем существующий объект ObjectTwo из БД по id со списком объектов List<ObjectOne>
-                    Optional<?> existingObjectTwo = (Optional<?>) findById.invoke(instanceOfServiceClassObjectTWO, idObjectTwo);
+                    Optional<?> existingObjectTwo = (Optional<?>) findByIdServiceObjectTwo.invoke(instanceOfServiceClassObjectTWO, idObjectTwo);
 
                     // проверяем не пустой ли существующий объект ObjectTwo из БД
                     if (existingObjectTwo.isPresent()) {
@@ -268,18 +272,18 @@ public class GeneralMethods {
     }
 
     /*
-    Метод формирует название метода геттера, который содержится в первом объекте objectOne Модели и возвращает второй объект
-    objectTwo, второй Модели
+    Метод находит и возвращает название метода геттера, который содержится в первом объекте objectOne Модели и возвращает
+    второй объект objectTwo, второй Модели
 
     На вход поступает два объекта Моделей objectOne и objectTwo
 
     Геттер находим по типу возвращаемого значения, в случае если тип возвращаемого значения List<objectTwo>, сначала
-    проверяем, что тип возвращаемого значения это List и далее проверяем что дженерик листа это класс объекта objectTwo,
+    проверяем, что тип возвращаемого значения это List и далее проверяем, что дженерик листа это класс объекта objectTwo,
     также проверяем, что название метода начинается с "get".
 
      При нахождении нужного геттера, возвращаем имя этого метода, return null указан в качестве заглушки
      */
-    private static String formNameMethodGetter(Object objectOne, Object objectTwo) {
+    private static String searchGetterName(Object objectOne, Object objectTwo) {
         final String startNameMethod = "get";
         for (Method method : objectOne.getClass().getDeclaredMethods()) {
             if ((method.getReturnType().equals(objectTwo.getClass()) ||
@@ -293,20 +297,20 @@ public class GeneralMethods {
     }
 
     /*
-    Метод формирует название метода сеттера, который содержится в первом объекте objectOne Модели и возвращает второй объект
-    objectTwo, второй Модели
+    Метод находит и возвращает название метода сеттера, который содержится в первом объекте objectOne Модели и возвращает
+    второй объект objectTwo, второй Модели
 
     На вход поступает два объекта Моделей objectOne и objectTwo
 
     Сеттер находим по типу входного значения, в нашем случае, тип входного значения всегда только List<objectTwo>,
     т.к. данный метод предназначен только для связи один ко многим, сначала проверяем, что тип возвращаемого значения
     это List и далее проверяем, что дженерик этого листа это класс объекта objectTwo,
-    также проверяем, что название метода начинается с "get", и чтобы не было иксепшена в начале проверяем, что в данном
-    методе количество типов входящих параметров более 0, геттеры сюда не попадают, т.к. у них 0
+    также проверяем, что название метода начинается с "set", и чтобы не было иксепшена в начале проверяем, что в данном
+    методе количество типов входящих параметров более 0, геттеры сюда не попадают их стразу отсекаем, т.к. у них 0
 
      При нахождении нужного сеттера, возвращаем имя этого метода, return null указан в качестве заглушки
      */
-    private static String formNameMethodSetter(Object objectOne, Object objectTwo) {
+    private static String searchSetterName(Object objectOne, Object objectTwo) {
         final String startMethodName = "set";
         for (Method method : objectOne.getClass().getDeclaredMethods()) {
             if (method.getParameterTypes().length > 0 &&
@@ -320,7 +324,7 @@ public class GeneralMethods {
     }
 
     /*
-    Метод формирует название метода getId у объекта Модели
+    Метод находит и возвращает название метода getId у объекта Модели
 
     Т.к. есть Модели, у которых в качестве id выступает не только идентификатор типа int, но и типа String, поэтому
     имя поля идентификатора может быть любым, поэтому поиск осуществляется по полям класса входящего объекта о,
@@ -329,7 +333,7 @@ public class GeneralMethods {
     При нахождении идентификатора, формируется название метода из приставки "get" + большая первая буква имени поля
     идентификатора + остальная часть имени поля, и возвращаем название этого метода, return null указан в качестве заглушки
      */
-    private static String formNameMethodGetId(Object o) {
+    private static String searchGetIdName(Object o) {
 
         final String annotationId = "Id";
         final String startNameMethodGetId = "get";
