@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.PlaceStudy;
 import ru.shuman.Project_Aibolit_Server.services.PlaceStudyService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class PlaceStudyIdValidator implements Validator {
@@ -27,7 +28,7 @@ public class PlaceStudyIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         PlaceStudy placeStudy = (PlaceStudy) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, placeStudy.getClass());
+        String field = searchNameFieldInParentEntity(errors, placeStudy.getClass());
 
         if (placeStudy.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У места учебы пациента отсутствует id!");

@@ -16,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.shuman.Project_Aibolit_Server.services.ProfileDetailsService;
+import ru.shuman.Project_Aibolit_Server.services.UserDetailsService;
 import ru.shuman.Project_Aibolit_Server.util.RESTAuthenticationEntryPoint;
 import ru.shuman.Project_Aibolit_Server.util.errors.AuthenticationErrorResponse;
 
@@ -26,13 +26,13 @@ import javax.servlet.http.HttpServletResponse;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final ProfileDetailsService profileDetailsService;
+    private final UserDetailsService userDetailsService;
 //    private final RESTAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final JWTFilter jwtFilter;
 
     @Autowired
-    public SecurityConfig(ProfileDetailsService profileDetailsService, RESTAuthenticationEntryPoint restAuthenticationEntryPoint, JWTFilter jwtFilter) {
-        this.profileDetailsService = profileDetailsService;
+    public SecurityConfig(UserDetailsService userDetailsService, RESTAuthenticationEntryPoint restAuthenticationEntryPoint, JWTFilter jwtFilter) {
+        this.userDetailsService = userDetailsService;
 //        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
         this.jwtFilter = jwtFilter;
     }
@@ -82,7 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // Настраиваем аутентификацию
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(profileDetailsService)
+        auth.userDetailsService(userDetailsService)
                 .passwordEncoder(getPasswordEncoder());
     }
 
@@ -100,9 +100,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    // Метод обработчик исключения ProfileNotAuthenticatedException
+    // Метод обработчик исключения JWTVerificationException
     @ExceptionHandler
-    private ResponseEntity<AuthenticationErrorResponse> handleExceptionProfileNotAuthenticated(JWTVerificationException e) {
+    private ResponseEntity<AuthenticationErrorResponse> handleException(JWTVerificationException e) {
         AuthenticationErrorResponse response = new AuthenticationErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

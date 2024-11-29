@@ -25,11 +25,11 @@ public class GenderService {
         return genderRepository.findById(genderId);
     }
 
-    public void setPatientsForGender(Patient patient, Gender gender) {
+    public void addPatientAtListForGender(Patient patient, Gender gender) {
         GeneralMethods.addObjectOneInListForObjectTwo(patient, gender, this);
     }
 
-    public void setParentsForGender(Parent parent, Gender gender) {
+    public void addParentAtListForGender(Parent parent, Gender gender) {
         GeneralMethods.addObjectOneInListForObjectTwo(parent, gender, this);
     }
 

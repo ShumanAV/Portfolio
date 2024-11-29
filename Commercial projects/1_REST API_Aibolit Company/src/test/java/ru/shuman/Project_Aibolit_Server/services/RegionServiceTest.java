@@ -3,7 +3,6 @@ package ru.shuman.Project_Aibolit_Server.services;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.BDDMockito;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -100,7 +99,7 @@ class RegionServiceTest {
             mock.when(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any())).
                     thenAnswer((Answer<Void>) invocation -> null);
 
-            regionService.setAddressesForRegion(new Address(), new Region());
+            regionService.AddAddressAtListForRegion(new Address(), new Region());
 
             mock.verify(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any()));
         }

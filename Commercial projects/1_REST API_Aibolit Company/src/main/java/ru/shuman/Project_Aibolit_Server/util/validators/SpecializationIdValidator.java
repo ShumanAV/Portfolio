@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Specialization;
 import ru.shuman.Project_Aibolit_Server.services.SpecializationService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class SpecializationIdValidator implements Validator {
@@ -27,7 +28,7 @@ public class SpecializationIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Specialization specialization = (Specialization) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, specialization.getClass());
+        String field = searchNameFieldInParentEntity(errors, specialization.getClass());
 
         if (specialization.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У специализации отсутствует id!");

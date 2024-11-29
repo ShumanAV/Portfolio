@@ -28,7 +28,7 @@ public class DocumentService {
     @Transactional
     public void create(Document document) {
 
-        typeDocService.setDocumentsForTypeDoc(document, document.getTypeDoc());
+        typeDocService.addDocumentAtListForTypeDoc(document, document.getTypeDoc());
 
         documentRepository.save(document);
     }
@@ -36,7 +36,7 @@ public class DocumentService {
     @Transactional
     public void update(Document document) {
 
-        typeDocService.setDocumentsForTypeDoc(document, document.getTypeDoc());
+        typeDocService.addDocumentAtListForTypeDoc(document, document.getTypeDoc());
 
         documentRepository.save(document);
     }

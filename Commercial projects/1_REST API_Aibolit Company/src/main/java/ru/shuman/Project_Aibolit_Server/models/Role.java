@@ -32,6 +32,6 @@ public class Role {
     private String runame;
 
     @OneToMany(mappedBy = "role")
-    private List<Profile> profiles;
+    private List<User> users;
 
 }

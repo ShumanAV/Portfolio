@@ -6,7 +6,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.TypeContract;
 import ru.shuman.Project_Aibolit_Server.services.TypeContractService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 @Component
 public class TypeContractValidator implements Validator {
@@ -25,8 +24,5 @@ public class TypeContractValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
-        TypeContract typeContract = (TypeContract) o;
-
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, typeContract.getClass());
     }
 }

@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.TypeDoc;
 import ru.shuman.Project_Aibolit_Server.services.TypeDocService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class TypeDocIdValidator implements Validator {
@@ -27,7 +28,7 @@ public class TypeDocIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeDoc typeDoc = (TypeDoc) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, typeDoc.getClass());
+        String field = searchNameFieldInParentEntity(errors, typeDoc.getClass());
 
         if (typeDoc.getName() == null || typeDoc.getName().equals("")) {
             errors.rejectValue(field == null ? "name" : field, "", "У типа документа отсутствует наименование!");

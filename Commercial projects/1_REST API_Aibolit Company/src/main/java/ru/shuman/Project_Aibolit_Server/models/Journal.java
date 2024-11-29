@@ -1,6 +1,5 @@
 package ru.shuman.Project_Aibolit_Server.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,7 +7,6 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -17,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "diary")
-public class Diary {
+public class Journal {
 
     @Id
     @Column(name = "id")
@@ -48,7 +46,7 @@ public class Diary {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToOne(mappedBy = "diary")
+    @OneToOne(mappedBy = "journal")
     private Calling calling;
 
 }

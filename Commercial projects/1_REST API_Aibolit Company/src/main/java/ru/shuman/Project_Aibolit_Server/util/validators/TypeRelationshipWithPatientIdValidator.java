@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.TypeRelationshipWithPatient;
 import ru.shuman.Project_Aibolit_Server.services.TypeRelationshipWithPatientService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class TypeRelationshipWithPatientIdValidator implements Validator {
@@ -27,7 +28,7 @@ public class TypeRelationshipWithPatientIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeRelationshipWithPatient typeRelationship = (TypeRelationshipWithPatient) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, typeRelationship.getClass());
+        String field = searchNameFieldInParentEntity(errors, typeRelationship.getClass());
 
         if (typeRelationship.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У типа отношений родителя с пациентом отсутствует id!");

@@ -6,27 +6,23 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.User;
 import ru.shuman.Project_Aibolit_Server.services.UserService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.Optional;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class UserValidator implements Validator {
 
     private final UserService userService;
-    private final SpecializationValidator specializationValidator;
-    private final SpecializationIdValidator specializationIdValidator;
-    private final ProfileValidator profileValidator;
-    private final ProfileIdValidator profileIdValidator;
+    private final RoleIdValidator roleIdValidator;
+    private final RoleValidator roleValidator;
 
     @Autowired
-    public UserValidator(UserService userService, SpecializationValidator specializationValidator,
-                         SpecializationIdValidator specializationIdValidator, ProfileValidator profileValidator, ProfileIdValidator profileIdValidator) {
+    public UserValidator(UserService userService, RoleIdValidator roleIdValidator, RoleValidator roleValidator) {
         this.userService = userService;
-        this.specializationValidator = specializationValidator;
-        this.specializationIdValidator = specializationIdValidator;
-        this.profileValidator = profileValidator;
-        this.profileIdValidator = profileIdValidator;
+        this.roleIdValidator = roleIdValidator;
+        this.roleValidator = roleValidator;
     }
 
     @Override
@@ -38,55 +34,36 @@ public class UserValidator implements Validator {
     public void validate(Object o, Errors errors) {
         User user = (User) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, user.getClass());
+        String field = searchNameFieldInParentEntity(errors, user.getClass());
 
-        // Блок проверки отсутствия пользователя с таким телефоном
-        Optional<User> existingUser = userService.findByPhone(user.getPhone());
-        if (existingUser.isPresent() && user.getId() != existingUser.get().getId()) {
-            errors.rejectValue(field == null ? "phone": field, "", "Пользователь с таким номером телефона уже существует!");
-        }
-
-        // Блок проверки отсутствия пользователя с таким СНИЛС
-        existingUser = userService.findBySnils(user.getSnils());
-        if (existingUser.isPresent() && user.getId() != existingUser.get().getId()) {
-            errors.rejectValue(field == null ? "snils": field, "", "Пользователь с таким номером СНИЛС уже существует!");
-        }
-
-        // Блок проверки отсутствия пользователя с таким ИНН
-        existingUser = userService.findByInn(user.getInn());
-        if (existingUser.isPresent() && user.getId() != existingUser.get().getId()) {
-            errors.rejectValue(field == null ? "inn": field, "", "Пользователь с таким номером ИНН уже существует!");
-        }
-
-        // Блог проверки наличия специализации у пользователя
-        if (user.getSpecialization() == null) {
-            errors.rejectValue(field == null ? "specialization": field, "", "Поле специализация не заполнено!");
-
-        } else {
-            // Блог проверки наличия Id специализации у пользователя
-            specializationIdValidator.validate(user.getSpecialization(), errors);
-            specializationValidator.validate(user.getSpecialization(), errors);
-        }
-
-        // Блок проверки профиля пользователя
-        if (user.isAccessToSystem()) {
-
-            // Блок проверки наличия профайла у пользователя
-            if (user.getProfile() == null) {
-                errors.rejectValue(field == null ? "profile": field, "", "У пользователя есть доступ к системе, но отсутствует профиль!");
-            } else {
-                if (user.getProfile().getId() != null) {
-                    profileIdValidator.validate(user.getProfile(), errors);
-                }
-                profileValidator.validate(user.getProfile(), errors);
-            }
+        // Блок проверки наличия имени пользователя у профайла
+        if (user.getUsername() == null || user.getUsername().equals("")) {
+            errors.rejectValue(field == null ? "username": field, "", "Имя пользователя не заполнено!");
 
         } else {
 
-            // Блок проверки отсутствия профайла у пользователя в случае отсутствия доступа к системе
-            if (user.getProfile() != null) {
-                errors.rejectValue(field == null ? "profile": field, "", "У данного пользователя нет доступа к системе, но при этом есть профайл, его не должно быть!");
+            // Блок проверки отсутствия пользователя с таким же именем пользователя в профайле
+            Optional<User> existingUser = userService.findByUsername(user.getUsername());
+            if (existingUser.isPresent() &&
+                    user.getId() != existingUser.get().getId()) {
+                errors.rejectValue(field == null ? "username": field, "", "Пользователь с таким именем пользователя уже существует!");
             }
         }
+
+        // Блок проверки наличия пароля
+        if (user.getPassword() == null || user.getPassword().equals("")) {
+            errors.rejectValue(field == null ? "password": field, "", "Пароль пользователя не заполнен!");
+        }
+
+        // Блок проверки наличия роли у профайла
+        if (user.getRole() == null) {
+            errors.rejectValue(field == null ? "role": field, "", "У пользователя не выбрана роль!");
+
+        } else {
+            // Блок проверки наличия Id у роли
+            roleIdValidator.validate(user.getRole(), errors);
+            roleValidator.validate(user.getRole(), errors);
+        }
+
     }
 }

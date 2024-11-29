@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.Specialization;
-import ru.shuman.Project_Aibolit_Server.models.User;
+import ru.shuman.Project_Aibolit_Server.models.Doctor;
 import ru.shuman.Project_Aibolit_Server.repositories.SpecializationRepository;
 import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
@@ -57,13 +57,13 @@ public class SpecializationService {
     }
 
     /*
-    Метод private void setUsersForSpecialization осуществляет поиск в БД выбранной специализации со списком пользователей,
-    при наличии, и добавление в этот список данного пользователя, если список пользователей равен null, то создается
+    Метод осуществляет поиск в БД выбранной специализации со списком докторов,
+    при наличии, и добавление в этот список данного доктора, если список докторов равен null, то создается
     new ArrayList<>().
-    Делается это как для кэша, так и с целью выявления наличия списка пользователей у данной специализации и добавление нового.
+    Делается это как для кэша, так и с целью выявления наличия списка докторов у данной специализации и добавление нового.
     */
 
-    public void setUsersForSpecialization(User user, Specialization specialization) {
-        GeneralMethods.addObjectOneInListForObjectTwo(user, specialization, this);
+    public void addDoctorAtListForSpecialization(Doctor doctor, Specialization specialization) {
+        GeneralMethods.addObjectOneInListForObjectTwo(doctor, specialization, this);
     }
 }

@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.TypeEmployment;
 import ru.shuman.Project_Aibolit_Server.services.TypeEmploymentService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class TypeEmploymentIdValidator implements Validator {
@@ -27,7 +28,7 @@ public class TypeEmploymentIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeEmployment typeEmployment = (TypeEmployment) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, typeEmployment.getClass());
+        String field = searchNameFieldInParentEntity(errors, typeEmployment.getClass());
 
         if (typeEmployment.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У типа занятости родителя отсутствует id!");

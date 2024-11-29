@@ -6,37 +6,38 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.shuman.Project_Aibolit_Server.dto.UserDTO;
-import ru.shuman.Project_Aibolit_Server.models.User;
-import ru.shuman.Project_Aibolit_Server.services.UserService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
-import ru.shuman.Project_Aibolit_Server.util.validators.UserValidator;
-import ru.shuman.Project_Aibolit_Server.util.validators.UserIdValidator;
-import ru.shuman.Project_Aibolit_Server.util.errors.UserErrorResponse;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.ProfileOrUserNotCreatedOrUpdatedException;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.UserNotFoundException;
+import ru.shuman.Project_Aibolit_Server.dto.DoctorDTO;
+import ru.shuman.Project_Aibolit_Server.models.Doctor;
+import ru.shuman.Project_Aibolit_Server.services.DoctorService;
+import ru.shuman.Project_Aibolit_Server.util.validators.DoctorValidator;
+import ru.shuman.Project_Aibolit_Server.util.validators.DoctorIdValidator;
+import ru.shuman.Project_Aibolit_Server.util.errors.DoctorErrorResponse;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.UserOrDoctorNotCreatedOrUpdatedException;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.DoctorNotFoundException;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class DoctorController {
 
-    private final UserService userService;
+    private final DoctorService doctorService;
     private final ModelMapper modelMapper;
-    private final UserValidator userValidator;
-    private final UserIdValidator userIdValidator;
+    private final DoctorValidator doctorValidator;
+    private final DoctorIdValidator doctorIdValidator;
 
     @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper, UserValidator userValidator,
-                          UserIdValidator userIdValidator) {
-        this.userService = userService;
+    public DoctorController(DoctorService doctorService, ModelMapper modelMapper, DoctorValidator doctorValidator,
+                            DoctorIdValidator doctorIdValidator) {
+        this.doctorService = doctorService;
         this.modelMapper = modelMapper;
-        this.userValidator = userValidator;
-        this.userIdValidator = userIdValidator;
+        this.doctorValidator = doctorValidator;
+        this.doctorIdValidator = doctorIdValidator;
     }
 
     /*
@@ -51,23 +52,23 @@ public class UserController {
      */
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> sendListUsers(@RequestParam(value = "published", required = false) Boolean published,
-                                                       @RequestParam(value = "show_in_schedule", required = false) Boolean showInSchedule) {
+    public ResponseEntity<List<DoctorDTO>> sendListUsers(@RequestParam(value = "published", required = false) Boolean published,
+                                                         @RequestParam(value = "show_in_schedule", required = false) Boolean showInSchedule) {
 
-        List<User> users = new ArrayList<>();
+        List<Doctor> doctors = new ArrayList<>();
         if (published == null && showInSchedule == null ) {
-            users = userService.findAll();
+            doctors = doctorService.findAll();
         } else if (published != null && showInSchedule == null) {
-            users = userService.findAllByPublished(published);
+            doctors = doctorService.findAllByPublished(published);
         } else if (published == null && showInSchedule != null) {
-            users = userService.findAllByShowInSchedule(showInSchedule);
+            doctors = doctorService.findAllByShowInSchedule(showInSchedule);
         } else if (published != null && showInSchedule != null) {
-            users = userService.findAllByPublishedAndShowInSchedule(published, showInSchedule);
+            doctors = doctorService.findAllByPublishedAndShowInSchedule(published, showInSchedule);
         }
 
-        List<UserDTO> userDTOList = users.stream().map(this::convertToUserDTO).collect(Collectors.toList());
+        List<DoctorDTO> doctorDTOList = doctors.stream().map(this::convertToUserDTO).collect(Collectors.toList());
 
-        return new ResponseEntity<>(userDTOList, HttpStatus.OK);
+        return new ResponseEntity<>(doctorDTOList, HttpStatus.OK);
     }
 
     /*
@@ -82,19 +83,19 @@ public class UserController {
      */
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> sendOneUser(@PathVariable(value = "id") int userId,
-                                               @ModelAttribute(value = "user") User user,
-                                               BindingResult bindingResult) {
+    public ResponseEntity<DoctorDTO> sendOneUser(@PathVariable(value = "id") int userId,
+                                                 @ModelAttribute(value = "user") Doctor doctor,
+                                                 BindingResult bindingResult) {
 
-        user.setId(userId);
+        doctor.setId(userId);
 
-        userIdValidator.validate(user, bindingResult);
+        doctorIdValidator.validate(doctor, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, UserNotFoundException.class);
+        collectErrorsToString(bindingResult, DoctorNotFoundException.class);
 
-        UserDTO userDTO = convertToUserDTO(userService.findById(userId).get());
+        DoctorDTO doctorDTO = convertToUserDTO(doctorService.findById(userId).get());
 
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+        return new ResponseEntity<>(doctorDTO, HttpStatus.OK);
 
     }
 
@@ -112,25 +113,25 @@ public class UserController {
      */
 
     @PatchMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody @Valid UserDTO updatedUserDTO,
+    public ResponseEntity<HttpStatus> update(@RequestBody @Valid DoctorDTO updatedDoctorDTO,
                                              BindingResult bindingResult) {
 
-        User updatedUser = convertToUser(updatedUserDTO);
+        Doctor updatedDoctor = convertToUser(updatedDoctorDTO);
 
-        userValidator.validate(updatedUser, bindingResult);
-        userIdValidator.validate(updatedUser, bindingResult);
+        doctorValidator.validate(updatedDoctor, bindingResult);
+        doctorIdValidator.validate(updatedDoctor, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, ProfileOrUserNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, UserOrDoctorNotCreatedOrUpdatedException.class);
 
-        userService.update(updatedUser);
+        doctorService.update(updatedDoctor);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения ProfileOrUserNotCreatedOrUpdatedException
+    // Метод обработчик исключения UserOrDoctorNotCreatedOrUpdatedException
     @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleExceptionProfileOrUserNotCreated(ProfileOrUserNotCreatedOrUpdatedException e) {
-        UserErrorResponse response = new UserErrorResponse(
+    private ResponseEntity<DoctorErrorResponse> handleException(UserOrDoctorNotCreatedOrUpdatedException e) {
+        DoctorErrorResponse response = new DoctorErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
         );
@@ -140,8 +141,8 @@ public class UserController {
 
     // Метод обработчик исключения UserNotFound
     @ExceptionHandler
-    private ResponseEntity<UserErrorResponse> handleException(UserNotFoundException e) {
-        UserErrorResponse response = new UserErrorResponse(
+    private ResponseEntity<DoctorErrorResponse> handleException(DoctorNotFoundException e) {
+        DoctorErrorResponse response = new DoctorErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
         );
@@ -150,12 +151,12 @@ public class UserController {
     }
 
     // Метод конвертации из DTO в модель
-    private User convertToUser(UserDTO userDTO) {
-        return modelMapper.map(userDTO, User.class);
+    private Doctor convertToUser(DoctorDTO doctorDTO) {
+        return modelMapper.map(doctorDTO, Doctor.class);
     }
 
     // Метод конвертации из модели в DTO
-    private UserDTO convertToUserDTO(User user) {
-        return modelMapper.map(user, UserDTO.class);
+    private DoctorDTO convertToUserDTO(Doctor doctor) {
+        return modelMapper.map(doctor, DoctorDTO.class);
     }
 }

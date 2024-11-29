@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Region;
 import ru.shuman.Project_Aibolit_Server.services.RegionService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class RegionValidator implements Validator {
@@ -27,7 +28,7 @@ public class RegionValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Region region = (Region) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, region.getClass());
+        String field = searchNameFieldInParentEntity(errors, region.getClass());
 
         if (region.getCode() == null || region.getCode().equals("")) {
             errors.rejectValue(field == null ? "code": field, "", "У региона отсутствует код!");

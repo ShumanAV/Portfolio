@@ -69,7 +69,7 @@ class AddressServiceTest {
         Address emptyAddress = new Address();
         Region emptyRegion = new Region();
 
-        doNothing().when(regionService).setAddressesForRegion(emptyAddress, emptyRegion);
+        doNothing().when(regionService).AddAddressAtListForRegion(emptyAddress, emptyRegion);
         when(addressRepository.save(emptyAddress)).thenReturn(emptyAddress);
         addressService.create(emptyAddress);
 
@@ -87,7 +87,7 @@ class AddressServiceTest {
         Address emptyAddress = new Address();
         Region emptyRegion = new Region();
 
-        doNothing().when(regionService).setAddressesForRegion(emptyAddress, emptyRegion);
+        doNothing().when(regionService).AddAddressAtListForRegion(emptyAddress, emptyRegion);
         when(addressRepository.save(emptyAddress)).thenReturn(emptyAddress);
         addressService.update(emptyAddress);
 

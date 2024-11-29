@@ -29,9 +29,9 @@ public class CallingDTO {
 
     private LocalDateTime updatedAt;
 
-    private UserDTO user;
+    private DoctorDTO user;
 
-    private DiaryDTO diary;
+    private JournalDTO diary;
 
     private PriceDTO price;
 

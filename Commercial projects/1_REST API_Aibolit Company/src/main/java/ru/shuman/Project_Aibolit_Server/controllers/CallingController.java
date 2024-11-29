@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.CallingDTO;
 import ru.shuman.Project_Aibolit_Server.models.Calling;
 import ru.shuman.Project_Aibolit_Server.services.CallingService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import ru.shuman.Project_Aibolit_Server.util.errors.CallingErrorResponse;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.CallingNotCreatedOrUpdatedException;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.CallingNotFoundException;
@@ -19,6 +18,8 @@ import ru.shuman.Project_Aibolit_Server.util.validators.CallingValidator;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
 
 @RestController
 @RequestMapping("/callings")
@@ -56,7 +57,7 @@ public class CallingController {
 
         callingIdValidator.validate(calling, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, CallingNotFoundException.class);
+        collectErrorsToString(bindingResult, CallingNotFoundException.class);
 
         CallingDTO callingDTO = convertToCallingDTO(callingService.findById(callingId).get());
 
@@ -71,7 +72,7 @@ public class CallingController {
 
         callingValidator.validate(calling, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, CallingNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, CallingNotCreatedOrUpdatedException.class);
 
         callingService.create(calling);
 
@@ -87,7 +88,7 @@ public class CallingController {
         callingIdValidator.validate(calling, bindingResult);
         callingValidator.validate(calling, bindingResult);
 
-        GeneralMethods.collectStringAboutErrors(bindingResult, CallingNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, CallingNotCreatedOrUpdatedException.class);
 
         callingService.update(calling);
 

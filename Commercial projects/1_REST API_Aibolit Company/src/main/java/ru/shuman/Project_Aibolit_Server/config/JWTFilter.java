@@ -9,26 +9,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.shuman.Project_Aibolit_Server.security.JWTUtil;
-import ru.shuman.Project_Aibolit_Server.services.ProfileDetailsService;
+import ru.shuman.Project_Aibolit_Server.services.UserDetailsService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 
 @Component
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
-    private final ProfileDetailsService profileDetailsService;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    public JWTFilter(JWTUtil jwtUtil, ProfileDetailsService profileDetailsService) {
+    public JWTFilter(JWTUtil jwtUtil, UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
-        this.profileDetailsService = profileDetailsService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -45,7 +43,7 @@ public class JWTFilter extends OncePerRequestFilter {
             } else {
                 try {
                     String username = jwtUtil.validateTokenAndRetrieveClaim(jwt);
-                    UserDetails userDetails = profileDetailsService.loadUserByUsername(username);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(userDetails,
@@ -56,7 +54,7 @@ public class JWTFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
                 } catch (JWTVerificationException e) {
-//                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Неверный или устаревший JWT токен!");
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Неверный или устаревший JWT токен!");
                 }
             }
         }

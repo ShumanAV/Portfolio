@@ -16,7 +16,7 @@ public class JWTUtil {
 
     private final String SUBJECT = "User details";
     private final String ISSUER = "Aibolit software";
-    private final int EXPIRATION_DATE_IN_MINUTES = 60 * 24 * 365;
+    private final int EXPIRATION_DATE_IN_MINUTES = 60;
 
     @Value("${jwt_secret}")
     private String secretKey;

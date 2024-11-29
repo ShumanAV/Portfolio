@@ -35,7 +35,7 @@ public class PriceService {
         return priceRepository.findByPublished(published);
     }
 
-    public void setCallingsForPrice(Calling calling, Price price) {
+    public void addCallingAtListForPrice(Calling calling, Price price) {
         GeneralMethods.addObjectOneInListForObjectTwo(calling, price, this);
     }
 

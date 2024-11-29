@@ -380,7 +380,7 @@ class PatientServiceTest {
             mock.when(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any())).
                     thenAnswer((Answer<Void>) invocation -> null);
 
-            patientService.setCallingsForPatient(new Calling(), new Patient());
+            patientService.addCallingAtListForPatient(new Calling(), new Patient());
 
             mock.verify(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any()));
         }
@@ -397,7 +397,7 @@ class PatientServiceTest {
         try (MockedStatic<GeneralMethods> mock = Mockito.mockStatic(GeneralMethods.class)) {
             mock.when(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any())).
                     thenAnswer((Answer<Void>) invocation -> null);
-            patientService.setContractsForPatient( new Contract(), new Patient());
+            patientService.addContractAtListForPatient( new Contract(), new Patient());
 
             ArgumentCaptor<Patient> captor = ArgumentCaptor.forClass(Patient.class);
 

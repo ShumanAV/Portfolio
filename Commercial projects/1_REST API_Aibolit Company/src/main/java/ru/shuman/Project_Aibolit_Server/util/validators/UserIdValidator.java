@@ -6,7 +6,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.User;
 import ru.shuman.Project_Aibolit_Server.services.UserService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class UserIdValidator implements Validator {
@@ -27,14 +28,13 @@ public class UserIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         User user = (User) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, user.getClass());
+        String field = searchNameFieldInParentEntity(errors, user.getClass());
 
-        // Блок проверки наличия и валидности id у пользователя при его наличии
         if (user.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У пользователя отсутствует id!");
 
         } else if (userService.findById(user.getId()).isEmpty()) {
-            errors.rejectValue(field == null ? "id" : field, "", "Пользователя с таким id не существует!");
+            errors.rejectValue(field == null ? "id": field, "", "Пользователя с таким id не существует!");
         }
     }
 }

@@ -48,12 +48,12 @@ public class Calling {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @JoinColumn(name = "doctor_id", referencedColumnName = "id")
+    private Doctor doctor;
 
     @OneToOne
-    @JoinColumn(name = "diary_id", referencedColumnName = "id")
-    private Diary diary;
+    @JoinColumn(name = "journal_id", referencedColumnName = "id")
+    private Journal journal;
 
     @ManyToOne
     @JoinColumn(name = "price_id", referencedColumnName = "id")

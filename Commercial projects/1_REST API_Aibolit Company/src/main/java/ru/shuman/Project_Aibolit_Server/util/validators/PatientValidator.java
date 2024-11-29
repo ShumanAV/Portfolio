@@ -7,9 +7,10 @@ import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Parent;
 import ru.shuman.Project_Aibolit_Server.models.Patient;
 import ru.shuman.Project_Aibolit_Server.services.PatientService;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.util.Optional;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFieldInParentEntity;
 
 @Component
 public class PatientValidator implements Validator {
@@ -56,7 +57,7 @@ public class PatientValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Patient patient = (Patient) o;
 
-        String field = GeneralMethods.searchNameFieldInTargetClass(errors, patient.getClass());
+        String field = searchNameFieldInParentEntity(errors, patient.getClass());
 
         Optional<Patient> existingPatient = patientService.findByPhone(patient.getPhone());
         if (existingPatient.isPresent() && patient.getId() != existingPatient.get().getId()) {

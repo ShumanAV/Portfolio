@@ -91,16 +91,16 @@ public class PatientService {
         addressService.create(patient.getAddress());
 
         if (patient.getBlood() != null) {
-            bloodService.setPatientsForBlood(patient, patient.getBlood());
+            bloodService.addPatientAtListForBlood(patient, patient.getBlood());
         }
 
         if (patient.getGender() != null) {
-            genderService.setPatientsForGender(patient, patient.getGender());
+            genderService.addPatientAtListForGender(patient, patient.getGender());
         }
 
         int count = 0;
         for (Parent parent : patient.getParents()) {
-            parentService.setPatientForParent(patient, parent, count);
+            parentService.addPatientAtListForParent(patient, parent, count);
             if (parent.getId() == null) {
                 parentService.create(parent);
             } else {
@@ -127,16 +127,16 @@ public class PatientService {
         addressService.update(patient.getAddress());
 
         if (patient.getBlood() != null) {
-            bloodService.setPatientsForBlood(patient, patient.getBlood());
+            bloodService.addPatientAtListForBlood(patient, patient.getBlood());
         }
 
         if (patient.getGender() != null) {
-            genderService.setPatientsForGender(patient, patient.getGender());
+            genderService.addPatientAtListForGender(patient, patient.getGender());
         }
 
         int numberParent = 0;
         for (Parent parent : patient.getParents()) {
-            parentService.setPatientForParent(patient, parent, numberParent);
+            parentService.addPatientAtListForParent(patient, parent, numberParent);
             if (parent.getId() == null) {
                 parentService.create(parent);
             } else {
@@ -148,11 +148,11 @@ public class PatientService {
         patientRepository.save(patient);
     }
 
-    public void setCallingsForPatient(Calling calling, Patient patient) {
+    public void addCallingAtListForPatient(Calling calling, Patient patient) {
         GeneralMethods.addObjectOneInListForObjectTwo(calling, patient, this);
     }
 
-    public void setContractsForPatient(Contract contract, Patient patient) {
+    public void addContractAtListForPatient(Contract contract, Patient patient) {
         GeneralMethods.addObjectOneInListForObjectTwo(contract, patient, this);
     }
 }
