@@ -16,13 +16,13 @@ import java.util.Optional;
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
-    private final UserService userService;
+    private final ProfileService profileService;
     private final SpecializationService specializationService;
 
     @Autowired
-    public DoctorService(DoctorRepository doctorRepository, UserService userService, SpecializationService specializationService) {
+    public DoctorService(DoctorRepository doctorRepository, ProfileService profileService, SpecializationService specializationService) {
         this.doctorRepository = doctorRepository;
-        this.userService = userService;
+        this.profileService = profileService;
         this.specializationService = specializationService;
     }
 
@@ -62,8 +62,8 @@ public class DoctorService {
     }
 
     // Метод осуществляет поиск врача по id и возвращает его в обертке Optional
-    public Optional<Doctor> findById(Integer userId) {
-        return doctorRepository.findById(userId);
+    public Optional<Doctor> findById(Integer doctorId) {
+        return doctorRepository.findById(doctorId);
     }
 
     /*
@@ -85,8 +85,8 @@ public class DoctorService {
         doctor.setUpdatedAt(LocalDateTime.now());
 
         if (doctor.isAccessToSystem()) {
-            doctor.getUser().setDoctor(doctor);
-            userService.create(doctor.getUser());
+            doctor.getProfile().setDoctor(doctor);
+            profileService.create(doctor.getProfile());
         }
 
         doctorRepository.save(doctor);
@@ -115,21 +115,21 @@ public class DoctorService {
 
         updatedDoctor.setUpdatedAt(LocalDateTime.now());
 
-        User existingUser = doctorRepository.findById(updatedDoctor.getId()).get().getUser();
+        Profile existingProfile = doctorRepository.findById(updatedDoctor.getId()).get().getProfile();
 
         if (updatedDoctor.isAccessToSystem()) {
 
-            updatedDoctor.getUser().setDoctor(updatedDoctor);
-            if (existingUser != null) {
-                userService.update(existingUser, updatedDoctor.getUser());
+            updatedDoctor.getProfile().setDoctor(updatedDoctor);
+            if (existingProfile != null) {
+                profileService.update(existingProfile, updatedDoctor.getProfile());
             } else {
-                userService.create(updatedDoctor.getUser());
+                profileService.create(updatedDoctor.getProfile());
             }
 
         } else {
 
-            if (existingUser != null) {
-                userService.delete(existingUser);
+            if (existingProfile != null) {
+                profileService.delete(existingProfile);
             }
         }
 

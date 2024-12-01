@@ -107,7 +107,7 @@ public class SpecializationController {
 
     // Метод обработчик исключения SpecializationNotFound
     @ExceptionHandler
-    private ResponseEntity<SpecializationErrorResponse> handleExceptionSpecializationNotFound(SpecializationNotFoundException e) {
+    private ResponseEntity<SpecializationErrorResponse> handleException(SpecializationNotFoundException e) {
         SpecializationErrorResponse response = new SpecializationErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -118,7 +118,7 @@ public class SpecializationController {
 
     // Метод обработчик исключения SpecializationNotCreatedOrUpdatedException
     @ExceptionHandler
-    private ResponseEntity<SpecializationErrorResponse> handleExceptionSpecializationNotCreatedException(SpecializationNotCreatedOrUpdatedException e) {
+    private ResponseEntity<SpecializationErrorResponse> handleException(SpecializationNotCreatedOrUpdatedException e) {
         SpecializationErrorResponse response = new SpecializationErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -128,12 +128,12 @@ public class SpecializationController {
     }
 
     // Метод конверсии из DTO в модель
-    public Specialization convertToSpecialization(SpecializationDTO specializationDTO) {
+    private Specialization convertToSpecialization(SpecializationDTO specializationDTO) {
         return this.modelMapper.map(specializationDTO, Specialization.class);
     }
 
     // Метод конверсии из модели в DTO
-    public SpecializationDTO convertToSpecializationDTO(Specialization specialization) {
+    private SpecializationDTO convertToSpecializationDTO(Specialization specialization) {
         return this.modelMapper.map(specialization, SpecializationDTO.class);
     }
 }

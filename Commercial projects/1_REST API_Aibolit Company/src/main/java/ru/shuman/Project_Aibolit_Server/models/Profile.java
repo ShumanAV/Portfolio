@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @ToString
 
 @Entity
-@Table(name = "_user")
-public class User {
+@Table(name = "profile")
+public class Profile {
 
     @Id
     @Column(name = "id")
@@ -39,7 +39,7 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "profile")
     private Doctor doctor;
 
     @ManyToOne

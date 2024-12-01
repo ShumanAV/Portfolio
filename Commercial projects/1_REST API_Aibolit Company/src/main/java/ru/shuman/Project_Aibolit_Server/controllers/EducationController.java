@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.shuman.Project_Aibolit_Server.dto.EducationDTO;
-import ru.shuman.Project_Aibolit_Server.dto.GenderDTO;
 import ru.shuman.Project_Aibolit_Server.models.Education;
-import ru.shuman.Project_Aibolit_Server.models.Gender;
 import ru.shuman.Project_Aibolit_Server.services.EducationService;
 import ru.shuman.Project_Aibolit_Server.util.validators.EducationIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.EducationValidator;
@@ -41,7 +39,7 @@ public class EducationController {
 
         List<Education> educations = educationService.findAll();
 
-        List<EducationDTO> educationDTOList = educations.stream().map(this::convertToGenderDTO).collect(Collectors.toList());
+        List<EducationDTO> educationDTOList = educations.stream().map(this::convertToEducationDTO).collect(Collectors.toList());
 
         return new ResponseEntity<>(educationDTOList, HttpStatus.OK);
     }
@@ -118,12 +116,12 @@ public class EducationController {
 //    }
 
     // Метод конверсии из DTO в модель
-    public Education convertToGender(EducationDTO educationDTO) {
+    private Education convertToEducation(EducationDTO educationDTO) {
         return this.modelMapper.map(educationDTO, Education.class);
     }
 
     // Метод конверсии из модели в DTO
-    public EducationDTO convertToGenderDTO(Education education) {
+    private EducationDTO convertToEducationDTO(Education education) {
         return this.modelMapper.map(education, EducationDTO.class);
     }
 }

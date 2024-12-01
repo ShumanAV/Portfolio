@@ -29,7 +29,7 @@ public class CallingDTO {
 
     private LocalDateTime updatedAt;
 
-    private DoctorDTO user;
+    private DoctorDTO doctorDTO;
 
     private JournalDTO diary;
 

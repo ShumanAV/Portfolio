@@ -117,12 +117,12 @@ public class BloodController {
 //    }
 
     // Метод конверсии из DTO в модель
-    public Blood convertToBlood(BloodDTO bloodDTO) {
+    private Blood convertToBlood(BloodDTO bloodDTO) {
         return this.modelMapper.map(bloodDTO, Blood.class);
     }
 
     // Метод конверсии из модели в DTO
-    public BloodDTO convertToBloodDTO(Blood blood) {
+    private BloodDTO convertToBloodDTO(Blood blood) {
         return this.modelMapper.map(blood, BloodDTO.class);
     }
 }

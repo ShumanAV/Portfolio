@@ -97,7 +97,7 @@ public class CallingController {
 
     // Метод обработчик исключения CallingNotFound
     @ExceptionHandler
-    private ResponseEntity<CallingErrorResponse> handleExceptionCallingNotFound(CallingNotFoundException e) {
+    private ResponseEntity<CallingErrorResponse> handleException(CallingNotFoundException e) {
         CallingErrorResponse response = new CallingErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -108,7 +108,7 @@ public class CallingController {
 
     // Метод обработчик исключения CallingNotCreatedOrUpdatedException
     @ExceptionHandler
-    private ResponseEntity<CallingErrorResponse> handleExceptionCallingNotCreated(CallingNotCreatedOrUpdatedException e) {
+    private ResponseEntity<CallingErrorResponse> handleException(CallingNotCreatedOrUpdatedException e) {
         CallingErrorResponse response = new CallingErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -118,12 +118,12 @@ public class CallingController {
     }
 
     // Метод конверсии из DTO в модель
-    public Calling convertToCalling(CallingDTO callingDTO) {
+    private Calling convertToCalling(CallingDTO callingDTO) {
         return this.modelMapper.map(callingDTO, Calling.class);
     }
 
     // Метод конверсии из модели в DTO
-    public CallingDTO convertToCallingDTO(Calling calling) {
+    private CallingDTO convertToCallingDTO(Calling calling) {
         return this.modelMapper.map(calling, CallingDTO.class);
     }
 }

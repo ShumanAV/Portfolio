@@ -26,7 +26,8 @@ public class RegionController {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public RegionController(RegionService regionService, RegionIdValidator regionIdValidator, RegionValidator regionValidator, ModelMapper modelMapper) {
+    public RegionController(RegionService regionService, RegionIdValidator regionIdValidator,
+                            RegionValidator regionValidator, ModelMapper modelMapper) {
         this.regionService = regionService;
         this.regionIdValidator = regionIdValidator;
         this.regionValidator = regionValidator;
@@ -115,12 +116,12 @@ public class RegionController {
 //    }
 
     // Метод конверсии из DTO в модель
-    public Region convertToRegion(RegionDTO regionDTO) {
+    private Region convertToRegion(RegionDTO regionDTO) {
         return this.modelMapper.map(regionDTO, Region.class);
     }
 
     // Метод конверсии из модели в DTO
-    public RegionDTO convertToRegionDTO(Region region) {
+    private RegionDTO convertToRegionDTO(Region region) {
         return this.modelMapper.map(region, RegionDTO.class);
     }
 }

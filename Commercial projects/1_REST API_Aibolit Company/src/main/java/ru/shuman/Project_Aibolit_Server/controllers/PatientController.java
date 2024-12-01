@@ -31,7 +31,8 @@ public class PatientController {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public PatientController(PatientValidator patientValidator, PatientIdValidator patientIdValidator, PatientService patientService, ModelMapper modelMapper) {
+    public PatientController(PatientValidator patientValidator, PatientIdValidator patientIdValidator,
+                             PatientService patientService, ModelMapper modelMapper) {
         this.patientValidator = patientValidator;
         this.patientIdValidator = patientIdValidator;
         this.patientService = patientService;
@@ -115,7 +116,7 @@ public class PatientController {
 
     // Метод обработчик исключения PatientNotFound
     @ExceptionHandler
-    private ResponseEntity<PatientErrorResponse> handleExceptionPatientNotFound(PatientNotFoundException e) {
+    private ResponseEntity<PatientErrorResponse> handleException(PatientNotFoundException e) {
         PatientErrorResponse response = new PatientErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -126,7 +127,7 @@ public class PatientController {
 
     // Метод обработчик исключения PatientNotCreatedOrUpdatedException
     @ExceptionHandler
-    private ResponseEntity<PatientErrorResponse> handleExceptionPatientNotCreated(PatientNotCreatedOrUpdatedException e) {
+    private ResponseEntity<PatientErrorResponse> handleException(PatientNotCreatedOrUpdatedException e) {
         PatientErrorResponse response = new PatientErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -136,12 +137,12 @@ public class PatientController {
     }
 
     // Метод конверсии из DTO в модель
-    public Patient convertToPatient(PatientDTO patientDTO) {
+    private Patient convertToPatient(PatientDTO patientDTO) {
         return this.modelMapper.map(patientDTO, Patient.class);
     }
 
     // Метод конверсии из модели в DTO
-    public PatientDTO convertToPatientDTO(Patient patient) {
+    private PatientDTO convertToPatientDTO(Patient patient) {
         return this.modelMapper.map(patient, PatientDTO.class);
     }
 }
