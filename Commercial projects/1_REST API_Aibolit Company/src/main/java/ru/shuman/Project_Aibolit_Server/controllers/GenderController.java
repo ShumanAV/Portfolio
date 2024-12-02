@@ -104,7 +104,7 @@ public class GenderController {
     public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int genderId,
                                              @RequestBody @Valid GenderDTO genderDTO,
                                              BindingResult bindingResult) {
-
+        genderDTO.setId(genderId);
         Gender gender = convertToGender(genderDTO);
 
         genderIdValidator.validate(gender, bindingResult);

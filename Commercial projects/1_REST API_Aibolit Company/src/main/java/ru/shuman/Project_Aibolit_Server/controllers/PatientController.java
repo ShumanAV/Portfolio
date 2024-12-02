@@ -30,6 +30,9 @@ public class PatientController {
     private final PatientService patientService;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public PatientController(PatientValidator patientValidator, PatientIdValidator patientIdValidator,
                              PatientService patientService, ModelMapper modelMapper) {
@@ -39,6 +42,10 @@ public class PatientController {
         this.modelMapper = modelMapper;
     }
 
+    /*
+    Метод возвращает список пациентов в обертке ResponseEntity, в URL может быть параметр запроса published,
+    список формируется с учетом этого
+     */
     @GetMapping
     public ResponseEntity<List<PatientDTO>> sendListPatients(@RequestParam(value = "published", required = false) Boolean published) {
 
@@ -54,6 +61,10 @@ public class PatientController {
         return new ResponseEntity<>(patientDTOList, HttpStatus.OK);
     }
 
+    /*
+    Метод возвращает одного пациента по id, id берем из URL, создаем нового пустого пациента при помощи @ModelAttribute,
+    в него записываем id
+     */
     @GetMapping("/{id}")
     public ResponseEntity<PatientDTO> sendOnePatient(@PathVariable(value = "id") int patientId,
                                                      @ModelAttribute(value = "patient") Patient patient,
@@ -71,6 +82,10 @@ public class PatientController {
 
     }
 
+    /*
+    Метод создает нового пациента, на вход поступает объект PatientDTO в виде json, принимаем его, валидируем его,
+    в случае отсутствия ошибок при валидации создаем нового пациента, возвращаем код 200 в обертке ResponseEntity
+     */
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid PatientDTO patientDTO,
                                              BindingResult bindingResult) {
@@ -86,11 +101,16 @@ public class PatientController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /*
+    Метод изменяет существующего пациента, в URL передается id и в виде json объект PatientDTO с новыми данными
+    для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращаем код 200 в обертке ResponseEntity
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int patientId,
                                              @RequestBody @Valid PatientDTO patientDTO,
                                              BindingResult bindingResult) {
 
+        patientDTO.setId(patientId);
         Patient patient = convertToPatient(patientDTO);
 
         patientIdValidator.validate(patient, bindingResult);
@@ -103,6 +123,10 @@ public class PatientController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /*
+    Метод ищет пациентов по строке текста, строка текста передается в виде параметра запроса,
+    возвращает список найденных пациентов в обертке ResponseEntity
+     */
     @GetMapping("/search")
     public ResponseEntity<List<PatientDTO>> search(@RequestParam(value = "text_search", required = true) String textSearch) {
 
@@ -114,7 +138,7 @@ public class PatientController {
 
     }
 
-    // Метод обработчик исключения PatientNotFound
+    // Метод обработчик исключения PatientNotFoundException
     @ExceptionHandler
     private ResponseEntity<PatientErrorResponse> handleException(PatientNotFoundException e) {
         PatientErrorResponse response = new PatientErrorResponse(
