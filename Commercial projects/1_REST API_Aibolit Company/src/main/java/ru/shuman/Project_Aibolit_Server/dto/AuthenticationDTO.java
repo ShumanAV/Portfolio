@@ -16,7 +16,6 @@ public class AuthenticationDTO {
     @Email(message = "Поле имя пользователя должно быть в формате емэйла ххх@xxx.xx")
     private String username;
 
-    @Size(min = 6, max = 100, message = "Пароль должен быть не менее 6 и не более 100 символов")
     private String password;
 
 }

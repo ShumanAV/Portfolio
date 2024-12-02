@@ -28,7 +28,8 @@ public class RoleController {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public RoleController(RoleService roleService, RoleIdValidator roleIdValidator, RoleValidator roleValidator, ModelMapper modelMapper) {
+    public RoleController(RoleService roleService, RoleIdValidator roleIdValidator, RoleValidator roleValidator,
+                          ModelMapper modelMapper) {
         this.roleService = roleService;
         this.roleIdValidator = roleIdValidator;
         this.roleValidator = roleValidator;
@@ -117,12 +118,12 @@ public class RoleController {
 //    }
 
     // Метод конверсии из DTO в модель
-    public Role convertToRole(RoleDTO roleDTO) {
+    private Role convertToRole(RoleDTO roleDTO) {
         return this.modelMapper.map(roleDTO, Role.class);
     }
 
     // Метод конверсии из модели в DTO
-    public RoleDTO convertToRoleDTO(Role role) {
+    private RoleDTO convertToRoleDTO(Role role) {
         return this.modelMapper.map(role, RoleDTO.class);
     }
 }

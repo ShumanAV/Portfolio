@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.reflections.Reflections;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -133,10 +132,10 @@ public class GeneralMethodsTest {
     public static Stream<Arguments> generateFields() {
         List<Arguments> out = new ArrayList<>();
 
-        out.add(Arguments.arguments("user", Doctor.class));
-        out.add(Arguments.arguments("user", Specialization.class));
-        out.add(Arguments.arguments("user", User.class));
-        out.add(Arguments.arguments("user", Role.class));
+        out.add(Arguments.arguments("doctor", Doctor.class));
+        out.add(Arguments.arguments("doctor", Specialization.class));
+        out.add(Arguments.arguments("doctor", Profile.class));
+        out.add(Arguments.arguments("doctor", Role.class));
 
         out.add(Arguments.arguments("diary", Journal.class));
 
@@ -188,7 +187,7 @@ public class GeneralMethodsTest {
         out.add(Arguments.arguments(Patient.class, PatientDTO.class));
         out.add(Arguments.arguments(PlaceStudy.class,PlaceStudyDTO.class));
         out.add(Arguments.arguments(Price.class, PriceDTO.class));
-        out.add(Arguments.arguments(User.class, UserDTO.class));
+        out.add(Arguments.arguments(Profile.class, ProfileDTO.class));
         out.add(Arguments.arguments(Region.class, RegionDTO.class));
         out.add(Arguments.arguments(Role.class, RoleDTO.class));
         out.add(Arguments.arguments(Specialization.class, SpecializationDTO.class));

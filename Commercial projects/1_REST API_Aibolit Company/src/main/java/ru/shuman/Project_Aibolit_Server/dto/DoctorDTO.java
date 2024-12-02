@@ -49,5 +49,5 @@ public class DoctorDTO {
 
     private SpecializationDTO specialization;
 
-    private UserDTO user;
+    private ProfileDTO profileDTO;
 }

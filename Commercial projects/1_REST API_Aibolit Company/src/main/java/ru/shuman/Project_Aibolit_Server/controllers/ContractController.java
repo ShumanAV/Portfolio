@@ -98,7 +98,7 @@ public class ContractController {
 
     // Метод обработчик исключения ContractNotFound
     @ExceptionHandler
-    private ResponseEntity<ContractErrorResponse> handleExceptionContractNotFound(ContractNotFoundException e) {
+    private ResponseEntity<ContractErrorResponse> handleException(ContractNotFoundException e) {
         ContractErrorResponse response = new ContractErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -109,7 +109,7 @@ public class ContractController {
 
     // Метод обработчик исключения ContractNotCreatedOrUpdatedException
     @ExceptionHandler
-    private ResponseEntity<ContractErrorResponse> handleExceptionContractNotCreated(ContractNotCreatedOrUpdatedException e) {
+    private ResponseEntity<ContractErrorResponse> handleException(ContractNotCreatedOrUpdatedException e) {
         ContractErrorResponse response = new ContractErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -119,12 +119,12 @@ public class ContractController {
     }
 
     // Метод конверсии из DTO в модель
-    public Contract convertToContract(ContractDTO contractDTO) {
+    private Contract convertToContract(ContractDTO contractDTO) {
         return this.modelMapper.map(contractDTO, Contract.class);
     }
 
     // Метод конверсии из модели в DTO
-    public ContractDTO convertToContractDTO(Contract contract) {
+    private ContractDTO convertToContractDTO(Contract contract) {
         return this.modelMapper.map(contract, ContractDTO.class);
     }
 }

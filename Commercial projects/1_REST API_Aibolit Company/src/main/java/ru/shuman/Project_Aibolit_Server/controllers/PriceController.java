@@ -31,7 +31,8 @@ public class PriceController {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public PriceController(PriceService priceService, PriceIdValidator priceIdValidator, PriceValidator priceValidator, ModelMapper modelMapper) {
+    public PriceController(PriceService priceService, PriceIdValidator priceIdValidator, PriceValidator priceValidator,
+                           ModelMapper modelMapper) {
         this.priceService = priceService;
         this.priceIdValidator = priceIdValidator;
         this.priceValidator = priceValidator;
@@ -104,7 +105,7 @@ public class PriceController {
 
     // Метод обработчик исключения PriceNotFound
     @ExceptionHandler
-    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotFound(PriceNotFoundException e) {
+    private ResponseEntity<PriceErrorResponse> handleException(PriceNotFoundException e) {
         PriceErrorResponse response = new PriceErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -115,7 +116,7 @@ public class PriceController {
 
     // Метод обработчик исключения PriceNotCreatedOrUpdatedException
     @ExceptionHandler
-    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotCreated(PriceNotCreatedOrUpdatedException e) {
+    private ResponseEntity<PriceErrorResponse> handleException(PriceNotCreatedOrUpdatedException e) {
         PriceErrorResponse response = new PriceErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -125,12 +126,12 @@ public class PriceController {
     }
 
     // Метод конверсии из DTO в модель
-    public Price convertToPrice(PriceDTO priceDTO) {
+    private Price convertToPrice(PriceDTO priceDTO) {
         return this.modelMapper.map(priceDTO, Price.class);
     }
 
     // Метод конверсии из модели в DTO
-    public PriceDTO convertToPriceDTO(Price price) {
+    private PriceDTO convertToPriceDTO(Price price) {
         return this.modelMapper.map(price, PriceDTO.class);
     }
 }

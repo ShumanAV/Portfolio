@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.shuman.Project_Aibolit_Server.dto.EducationDTO;
 import ru.shuman.Project_Aibolit_Server.dto.TypeContractDTO;
-import ru.shuman.Project_Aibolit_Server.models.Education;
 import ru.shuman.Project_Aibolit_Server.models.TypeContract;
 import ru.shuman.Project_Aibolit_Server.services.TypeContractService;
 import ru.shuman.Project_Aibolit_Server.util.validators.TypeContractIdValidator;
@@ -37,7 +35,7 @@ public class TypeContractController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TypeContractDTO>> sendListTypeContracts() {
+    public ResponseEntity<List<TypeContractDTO>> sendListTypesContracts() {
 
         List<TypeContract> typeContracts = typeContractService.findAll();
 
@@ -118,12 +116,12 @@ public class TypeContractController {
 //    }
 
     // Метод конверсии из DTO в модель
-    public TypeContract convertToTypeContract(TypeContractDTO typeContractDTO) {
+    private TypeContract convertToTypeContract(TypeContractDTO typeContractDTO) {
         return this.modelMapper.map(typeContractDTO, TypeContract.class);
     }
 
     // Метод конверсии из модели в DTO
-    public TypeContractDTO convertToTypeContractDTO(TypeContract typeContract) {
+    private TypeContractDTO convertToTypeContractDTO(TypeContract typeContract) {
         return this.modelMapper.map(typeContract, TypeContractDTO.class);
     }
 }

@@ -26,7 +26,8 @@ public class TypeDocController {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public TypeDocController(TypeDocService typeDocService, TypeDocIdValidator typeDocIdValidator, TypeDocValidator typeDocValidator, ModelMapper modelMapper) {
+    public TypeDocController(TypeDocService typeDocService, TypeDocIdValidator typeDocIdValidator,
+                             TypeDocValidator typeDocValidator, ModelMapper modelMapper) {
         this.typeDocService = typeDocService;
         this.typeDocIdValidator = typeDocIdValidator;
         this.typeDocValidator = typeDocValidator;
@@ -34,7 +35,7 @@ public class TypeDocController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TypeDocDTO>> sendListTypeDocs() {
+    public ResponseEntity<List<TypeDocDTO>> sendListTypesDocs() {
 
         List<TypeDoc> typeDocs = typeDocService.findAll();
 
@@ -115,12 +116,12 @@ public class TypeDocController {
 //    }
 
     // Метод конверсии из DTO в модель
-    public TypeDoc convertToTypeDoc(TypeDocDTO typeDocDTO) {
+    private TypeDoc convertToTypeDoc(TypeDocDTO typeDocDTO) {
         return this.modelMapper.map(typeDocDTO, TypeDoc.class);
     }
 
     // Метод конверсии из модели в DTO
-    public TypeDocDTO convertToTypeDocDTO(TypeDoc typeDoc) {
+    private TypeDocDTO convertToTypeDocDTO(TypeDoc typeDoc) {
         return this.modelMapper.map(typeDoc, TypeDocDTO.class);
     }
 }

@@ -118,12 +118,12 @@ public class PlaceStudyController {
 //    }
 
     // Метод конверсии из DTO в модель
-    public PlaceStudy convertToPlaceStudy(PlaceStudyDTO placeStudyDTO) {
+    private PlaceStudy convertToPlaceStudy(PlaceStudyDTO placeStudyDTO) {
         return this.modelMapper.map(placeStudyDTO, PlaceStudy.class);
     }
 
     // Метод конверсии из модели в DTO
-    public PlaceStudyDTO convertToPlaceStudyDTO(PlaceStudy placeStudy) {
+    private PlaceStudyDTO convertToPlaceStudyDTO(PlaceStudy placeStudy) {
         return this.modelMapper.map(placeStudy, PlaceStudyDTO.class);
     }
 }

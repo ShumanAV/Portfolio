@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.shuman.Project_Aibolit_Server.dto.RoleDTO;
 import ru.shuman.Project_Aibolit_Server.dto.TypeEmploymentDTO;
-import ru.shuman.Project_Aibolit_Server.models.Role;
 import ru.shuman.Project_Aibolit_Server.models.TypeEmployment;
 import ru.shuman.Project_Aibolit_Server.services.TypeEmploymentService;
 import ru.shuman.Project_Aibolit_Server.util.validators.TypeEmploymentIdValidator;
@@ -38,11 +36,12 @@ public class TypeEmploymentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TypeEmploymentDTO>> sendListTypeEmployments() {
+    public ResponseEntity<List<TypeEmploymentDTO>> sendListTypesEmployment() {
 
         List<TypeEmployment> typeEmployments = typeEmploymentService.findAll();
 
-        List<TypeEmploymentDTO> typeEmploymentDTOList = typeEmployments.stream().map(this::convertToTypeEmploymentDTO).collect(Collectors.toList());
+        List<TypeEmploymentDTO> typeEmploymentDTOList = typeEmployments.stream()
+                .map(this::convertToTypeEmploymentDTO).collect(Collectors.toList());
 
         return new ResponseEntity<>(typeEmploymentDTOList, HttpStatus.OK);
     }
@@ -119,12 +118,12 @@ public class TypeEmploymentController {
 //    }
 
     // Метод конверсии из DTO в модель
-    public TypeEmployment convertToTypeEmployment(TypeEmploymentDTO typeEmploymentDTO) {
+    private TypeEmployment convertToTypeEmployment(TypeEmploymentDTO typeEmploymentDTO) {
         return this.modelMapper.map(typeEmploymentDTO, TypeEmployment.class);
     }
 
     // Метод конверсии из модели в DTO
-    public TypeEmploymentDTO convertToTypeEmploymentDTO(TypeEmployment typeEmployment) {
+    private TypeEmploymentDTO convertToTypeEmploymentDTO(TypeEmployment typeEmployment) {
         return this.modelMapper.map(typeEmployment, TypeEmploymentDTO.class);
     }
 }

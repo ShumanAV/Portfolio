@@ -2,32 +2,33 @@ package ru.shuman.Project_Aibolit_Server.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import ru.shuman.Project_Aibolit_Server.models.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import ru.shuman.Project_Aibolit_Server.models.Profile;
 
 import java.util.Collection;
 import java.util.Collections;
 
-public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
+public class ProfileDetails implements UserDetails {
 
-    private final User user;
+    private final Profile profile;
 
-    public UserDetails(User user) {
-        this.user = user;
+    public ProfileDetails(Profile profile) {
+        this.profile = profile;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getName()));
+        return Collections.singletonList(new SimpleGrantedAuthority(profile.getRole().getName()));
     }
 
     @Override
     public String getPassword() {
-        return this.user.getPassword();
+        return this.profile.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.user.getUsername();
+        return this.profile.getUsername();
     }
 
     @Override
@@ -50,7 +51,7 @@ public class UserDetails implements org.springframework.security.core.userdetail
         return true;
     }
 
-    public User getUser() {
-        return user;
+    public Profile getProfile() {
+        return profile;
     }
 }

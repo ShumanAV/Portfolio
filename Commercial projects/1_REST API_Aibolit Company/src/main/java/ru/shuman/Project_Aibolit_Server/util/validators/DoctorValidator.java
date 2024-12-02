@@ -17,17 +17,17 @@ public class DoctorValidator implements Validator {
     private final DoctorService doctorService;
     private final SpecializationValidator specializationValidator;
     private final SpecializationIdValidator specializationIdValidator;
-    private final UserValidator userValidator;
-    private final UserIdValidator userIdValidator;
+    private final ProfileValidator profileValidator;
+    private final ProfileIdValidator profileIdValidator;
 
     @Autowired
     public DoctorValidator(DoctorService doctorService, SpecializationValidator specializationValidator,
-                           SpecializationIdValidator specializationIdValidator, UserValidator userValidator, UserIdValidator userIdValidator) {
+                           SpecializationIdValidator specializationIdValidator, ProfileValidator profileValidator, ProfileIdValidator profileIdValidator) {
         this.doctorService = doctorService;
         this.specializationValidator = specializationValidator;
         this.specializationIdValidator = specializationIdValidator;
-        this.userValidator = userValidator;
-        this.userIdValidator = userIdValidator;
+        this.profileValidator = profileValidator;
+        this.profileIdValidator = profileIdValidator;
     }
 
     @Override
@@ -42,26 +42,26 @@ public class DoctorValidator implements Validator {
         String field = searchNameFieldInParentEntity(errors, doctor.getClass());
 
         // Блок проверки отсутствия пользователя с таким телефоном
-        Optional<Doctor> existingUser = doctorService.findByPhone(doctor.getPhone());
-        if (existingUser.isPresent() && doctor.getId() != existingUser.get().getId()) {
+        Optional<Doctor> existingDoctor = doctorService.findByPhone(doctor.getPhone());
+        if (existingDoctor.isPresent() && doctor.getId() != existingDoctor.get().getId()) {
             errors.rejectValue(field == null ? "phone": field, "", "Доктор с таким номером телефона уже существует!");
         }
 
         // Блок проверки отсутствия пользователя с таким СНИЛС
-        existingUser = doctorService.findBySnils(doctor.getSnils());
-        if (existingUser.isPresent() && doctor.getId() != existingUser.get().getId()) {
+        existingDoctor = doctorService.findBySnils(doctor.getSnils());
+        if (existingDoctor.isPresent() && doctor.getId() != existingDoctor.get().getId()) {
             errors.rejectValue(field == null ? "snils": field, "", "Доктор с таким номером СНИЛС уже существует!");
         }
 
         // Блок проверки отсутствия пользователя с таким ИНН
-        existingUser = doctorService.findByInn(doctor.getInn());
-        if (existingUser.isPresent() && doctor.getId() != existingUser.get().getId()) {
+        existingDoctor = doctorService.findByInn(doctor.getInn());
+        if (existingDoctor.isPresent() && doctor.getId() != existingDoctor.get().getId()) {
             errors.rejectValue(field == null ? "inn": field, "", "Доктор с таким номером ИНН уже существует!");
         }
 
         // Блог проверки наличия специализации у пользователя
         if (doctor.getSpecialization() == null) {
-            errors.rejectValue(field == null ? "specialization": field, "", "Поле специализация не заполнено!");
+            errors.rejectValue(field == null ? "specialization": field, "", "У доктора не заполнено поле специализация!");
 
         } else {
             // Блог проверки наличия Id специализации у пользователя
@@ -73,20 +73,20 @@ public class DoctorValidator implements Validator {
         if (doctor.isAccessToSystem()) {
 
             // Блок проверки наличия профайла у пользователя
-            if (doctor.getUser() == null) {
-                errors.rejectValue(field == null ? "user": field, "", "У доктора есть доступ к системе, но отсутствует профиль!");
+            if (doctor.getProfile() == null) {
+                errors.rejectValue(field == null ? "profile": field, "", "У доктора есть доступ к системе, но отсутствует профиль!");
             } else {
-                if (doctor.getUser().getId() != null) {
-                    userIdValidator.validate(doctor.getUser(), errors);
+                if (doctor.getProfile().getId() != null) {
+                    profileIdValidator.validate(doctor.getProfile(), errors);
                 }
-                userValidator.validate(doctor.getUser(), errors);
+                profileValidator.validate(doctor.getProfile(), errors);
             }
 
         } else {
 
             // Блок проверки отсутствия профайла у пользователя в случае отсутствия доступа к системе
-            if (doctor.getUser() != null) {
-                errors.rejectValue(field == null ? "user": field, "", "У данного доктора нет доступа к системе, но при этом есть профайл, его не должно быть!");
+            if (doctor.getProfile() != null) {
+                errors.rejectValue(field == null ? "profile": field, "", "У данного доктора нет доступа к системе, но при этом есть профиль, его не должно быть!");
             }
         }
     }

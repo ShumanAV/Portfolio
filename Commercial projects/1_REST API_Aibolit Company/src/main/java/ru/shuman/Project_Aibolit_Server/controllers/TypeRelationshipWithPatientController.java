@@ -36,7 +36,7 @@ public class TypeRelationshipWithPatientController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TypeRelationshipWithPatientDTO>> sendListBlood() {
+    public ResponseEntity<List<TypeRelationshipWithPatientDTO>> sendListTypesRelationshipWithPatient() {
 
         List<TypeRelationshipWithPatient> relationshipList = relationshipService.findAll();
 
@@ -117,12 +117,12 @@ public class TypeRelationshipWithPatientController {
 //    }
 
     // Метод конверсии из DTO в модель
-    public TypeRelationshipWithPatient convertToRelationship(TypeRelationshipWithPatientDTO dto) {
+    private TypeRelationshipWithPatient convertToRelationship(TypeRelationshipWithPatientDTO dto) {
         return this.modelMapper.map(dto, TypeRelationshipWithPatient.class);
     }
 
     // Метод конверсии из модели в DTO
-    public TypeRelationshipWithPatientDTO convertToRelationshipDTO(TypeRelationshipWithPatient relationship) {
+    private TypeRelationshipWithPatientDTO convertToRelationshipDTO(TypeRelationshipWithPatient relationship) {
         return this.modelMapper.map(relationship, TypeRelationshipWithPatientDTO.class);
     }
 }

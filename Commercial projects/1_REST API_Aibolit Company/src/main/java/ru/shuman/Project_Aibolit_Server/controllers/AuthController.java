@@ -15,12 +15,13 @@ import ru.shuman.Project_Aibolit_Server.models.Doctor;
 import ru.shuman.Project_Aibolit_Server.security.JWTUtil;
 import ru.shuman.Project_Aibolit_Server.services.DoctorService;
 import ru.shuman.Project_Aibolit_Server.util.errors.AuthenticationErrorResponse;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.UserNotAuthenticatedException;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.UserOrDoctorNotCreatedOrUpdatedException;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.ProfileNotAuthenticatedException;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.ProfileOrDoctorNotCreatedOrUpdatedException;
 import ru.shuman.Project_Aibolit_Server.util.validators.DoctorValidator;
 import ru.shuman.Project_Aibolit_Server.util.errors.DoctorErrorResponse;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.Map;
 
 import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
@@ -48,8 +49,9 @@ public class AuthController {
     /*
     Метод performRegistration выполняет регистрацию доктора (он же врач).
     Доктора могут создать нового в клиенте, либо изменить существующего.
-    Если у входящего доктора есть id, выполняется апдейт существующего доктора и юзера при наличии доступа в систему,
-    если id нет, то выполняется создание нового доктора с юзером при наличии доступа в систему.
+    Если у входящего доктора есть id, выполняется апдейт существующего доктора и профиля при наличии доступа в систему,
+    если id нет, то выполняется создание нового доктора с профилем (логин и пароль для входа в систему)
+    при наличии доступа в систему.
 
     Метод принимает JSON с объектом типа DoctorDTO doctorDTO при помощи @RequestBody,
     осуществляет валидацию данных в соответствии с аннотациями и валидатором.
@@ -65,7 +67,7 @@ public class AuthController {
 
         doctorValidator.validate(doctor, bindingResult);
 
-        collectErrorsToString(bindingResult, UserOrDoctorNotCreatedOrUpdatedException.class);
+        collectErrorsToString(bindingResult, ProfileOrDoctorNotCreatedOrUpdatedException.class);
 
         doctorService.register(doctor);
 
@@ -76,14 +78,14 @@ public class AuthController {
     Метод performLogin выполняет аутентификацию пользователя.
 
     Метод принимает JSON с объектом типа AuthenticationDTO authenticationDTO с именем пользователя и паролем.
-    В случае неправильного логина и пароля выбрасывает исключение UserNotAuthenticatedException
+    В случае неправильного логина и пароля выбрасывает исключение ProfileNotAuthenticatedException
 
     В случае прохождения аутентификации формирует новый jwt токен и возвращает его в оболочке со статусом 200
     new ResponseEntity<>(Map.of("jwt-token", token), HttpStatus.OK).
      */
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> performLogin(@RequestBody AuthenticationDTO authenticationDTO) {
+    public ResponseEntity<Map<String, String>> performLogin(@RequestBody @Valid AuthenticationDTO authenticationDTO) {
 
         UsernamePasswordAuthenticationToken authInputToken = new UsernamePasswordAuthenticationToken(
                 authenticationDTO.getUsername(),
@@ -93,17 +95,20 @@ public class AuthController {
         try {
             authenticationManager.authenticate(authInputToken);
         } catch (BadCredentialsException e) {
-            throw new UserNotAuthenticatedException("Неправильный логин или пароль!");
+            throw new ProfileNotAuthenticatedException("Неправильный логин или пароль!");
         }
 
         String token = jwtUtil.generateToken(authenticationDTO.getUsername());
 
-        return new ResponseEntity<>(Map.of("jwt-token", token), HttpStatus.OK);
+        Map<String, String> map = new HashMap<>();
+        map.put("jwt-token", token);
+
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    // Метод обработчик исключения UserNotAuthenticatedException
+    // Метод обработчик исключения ProfileNotAuthenticatedException
     @ExceptionHandler
-    private ResponseEntity<AuthenticationErrorResponse> handleException(UserNotAuthenticatedException e) {
+    private ResponseEntity<AuthenticationErrorResponse> handleException(ProfileNotAuthenticatedException e) {
         AuthenticationErrorResponse response = new AuthenticationErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -112,9 +117,9 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения UserOrDoctorNotCreatedOrUpdatedException
+    // Метод обработчик исключения ProfileOrDoctorNotCreatedOrUpdatedException
     @ExceptionHandler
-    private ResponseEntity<DoctorErrorResponse> handleException(UserOrDoctorNotCreatedOrUpdatedException e) {
+    private ResponseEntity<DoctorErrorResponse> handleException(ProfileOrDoctorNotCreatedOrUpdatedException e) {
         DoctorErrorResponse response = new DoctorErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -124,7 +129,7 @@ public class AuthController {
     }
 
     // Метод конверсии из DTO в модель
-    public Doctor convertToDoctor(DoctorDTO doctorDTO) {
+    private Doctor convertToDoctor(DoctorDTO doctorDTO) {
         return this.modelMapper.map(doctorDTO, Doctor.class);
     }
 

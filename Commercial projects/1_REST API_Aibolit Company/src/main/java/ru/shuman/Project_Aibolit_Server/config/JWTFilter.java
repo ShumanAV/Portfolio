@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.shuman.Project_Aibolit_Server.security.JWTUtil;
-import ru.shuman.Project_Aibolit_Server.services.UserDetailsService;
+import ru.shuman.Project_Aibolit_Server.services.ProfileDetailsService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -21,12 +21,12 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
+    private final ProfileDetailsService profileDetailsService;
 
     @Autowired
-    public JWTFilter(JWTUtil jwtUtil, UserDetailsService userDetailsService) {
+    public JWTFilter(JWTUtil jwtUtil, ProfileDetailsService profileDetailsService) {
         this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
+        this.profileDetailsService = profileDetailsService;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class JWTFilter extends OncePerRequestFilter {
             } else {
                 try {
                     String username = jwtUtil.validateTokenAndRetrieveClaim(jwt);
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    UserDetails userDetails = profileDetailsService.loadUserByUsername(username);
 
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(userDetails,

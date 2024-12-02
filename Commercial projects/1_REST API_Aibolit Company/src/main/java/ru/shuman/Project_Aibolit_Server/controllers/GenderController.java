@@ -116,12 +116,12 @@ public class GenderController {
 //    }
 
     // Метод конверсии из DTO в модель
-    public Gender convertToGender(GenderDTO genderDTO) {
+    private Gender convertToGender(GenderDTO genderDTO) {
         return this.modelMapper.map(genderDTO, Gender.class);
     }
 
     // Метод конверсии из модели в DTO
-    public GenderDTO convertToGenderDTO(Gender gender) {
+    private GenderDTO convertToGenderDTO(Gender gender) {
         return this.modelMapper.map(gender, GenderDTO.class);
     }
 }
