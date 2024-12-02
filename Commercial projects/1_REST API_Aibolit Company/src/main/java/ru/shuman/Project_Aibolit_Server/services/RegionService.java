@@ -16,38 +16,69 @@ public class RegionService {
 
     private final RegionRepository regionRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public RegionService(RegionRepository regionRepository) {
         this.regionRepository = regionRepository;
     }
 
+    /*
+    Метод формирует и возвращает список всех регионов
+     */
+    public List<Region> findAll() {
+        return regionRepository.findAll();
+    }
+
+    /*
+    Метод ищет регион по коду региона и возвращает его в обертке Optional
+     */
+    public Optional<Region> findByCode(Integer code) {
+        return regionRepository.findByCode(code);
+    }
+
+    /*
+    Метод ищет регион по String id и возвращает его в обертке Optional
+     */
     public Optional<Region> findById(String regionId) {
         return regionRepository.findById(regionId);
     }
 
+    /*
+    Метод ищет регион по id и возвращает его в обертке Optional
+     */
     public Optional<Region> findById(Integer regionId) {
         return regionRepository.findById(regionId);
     }
 
+    /*
+    Метод ищет регион по названию и возвращает его в обертке Optional
+     */
     public Optional<Region> findByName(String name) {
         return regionRepository.findByName(name);
     }
 
-    public void AddAddressAtListForRegion(Address address, Region region) {
-        GeneralMethods.addObjectOneInListForObjectTwo(address, region, this);
-    }
-
+    /*
+    Метод сохраняет новый регион в БД
+     */
     @Transactional
     public void create(Region region) {
         regionRepository.save(region);
     }
 
+    /*
+    Метод сохраняет измененный регион в БД
+     */
     @Transactional
     public void update(Region region) {
         regionRepository.save(region);
     }
 
-    public List<Region> findAll() {
-        return regionRepository.findAll();
+    /*
+    Метод добавляет адрес в лист региона, делается это для кэша
+     */
+    public void AddAddressAtListForRegion(Address address, Region region) {
+        GeneralMethods.addObjectOneInListForObjectTwo(address, region, this);
     }
 }
