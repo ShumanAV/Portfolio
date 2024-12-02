@@ -21,29 +21,54 @@ public class GenderService {
         this.genderRepository = genderRepository;
     }
 
+    /*
+    Метод формирует и возвращает список всех гендеров
+     */
+    public List<Gender> findAll() {
+        return genderRepository.findAll();
+    }
+
+    /*
+    Метод ищет гендер по названию и возвращает его в обертке Optional
+     */
+    public Optional<Gender> findByName(String name) {
+        return genderRepository.findByName(name);
+    }
+
+    /*
+    Метод ищет гендер по id и возвращет его в обертке Optional
+     */
     public Optional<Gender> findById(Integer genderId) {
         return genderRepository.findById(genderId);
     }
 
-    public void addPatientAtListForGender(Patient patient, Gender gender) {
-        GeneralMethods.addObjectOneInListForObjectTwo(patient, gender, this);
-    }
-
-    public void addParentAtListForGender(Parent parent, Gender gender) {
-        GeneralMethods.addObjectOneInListForObjectTwo(parent, gender, this);
-    }
-
+    /*
+    Метод сохраняет новый гендер в БД
+     */
     @Transactional
     public void create(Gender gender) {
         genderRepository.save(gender);
     }
 
+    /*
+    Метод сохраняет измененный гендер в БД
+     */
     @Transactional
     public void update(Gender gender) {
         genderRepository.save(gender);
     }
 
-    public List<Gender> findAll() {
-        return genderRepository.findAll();
+    /*
+    Метод добавляет пациента в лист гендера, делается это для кэша
+     */
+    public void addPatientAtListForGender(Patient patient, Gender gender) {
+        GeneralMethods.addObjectOneInListForObjectTwo(patient, gender, this);
+    }
+
+    /*
+    Метод добавляет родителя пациента в лист гендера, делается это для кэша
+     */
+    public void addParentAtListForGender(Parent parent, Gender gender) {
+        GeneralMethods.addObjectOneInListForObjectTwo(parent, gender, this);
     }
 }
