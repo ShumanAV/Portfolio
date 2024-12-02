@@ -94,7 +94,7 @@ public class BloodController {
     }
 
     /*
-    Метод изменяет существующую группу крови, в URL передается id и в виде json объект Blood с новыми данными
+    Метод изменяет существующую группу крови, в URL передается id и в виде json объект BloodDTO с новыми данными
     для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращает код 200 в обертке ResponseEntity
      */
     @PatchMapping("/{id}")
@@ -102,6 +102,7 @@ public class BloodController {
                                              @RequestBody @Valid BloodDTO bloodDTO,
                                              BindingResult bindingResult) {
 
+        bloodDTO.setId(bloodId);
         Blood blood = convertToBlood(bloodDTO);
 
         bloodIdValidator.validate(blood, bindingResult);
@@ -110,6 +111,26 @@ public class BloodController {
         collectErrorsToString(bindingResult, BloodNotCreatedOrUpdatedException.class);
 
         bloodService.update(blood);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /*
+    Метод удаляет группу крови по id, id передается в URL, создаем пустой объект типа BloodDTO при помощи
+    @ModelAttribute, в него записываем переданный id, валидируем id, удаляем группу крови
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> delete(@PathVariable(value = "id") int bloodId,
+                                             @ModelAttribute("blood") BloodDTO bloodDTO,
+                                             BindingResult bindingResult) {
+        bloodDTO.setId(bloodId);
+        Blood blood = convertToBlood(bloodDTO);
+
+        bloodIdValidator.validate(blood, bindingResult);
+
+        collectErrorsToString(bindingResult, BloodNotFoundException.class);
+
+        bloodService.delete(blood);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

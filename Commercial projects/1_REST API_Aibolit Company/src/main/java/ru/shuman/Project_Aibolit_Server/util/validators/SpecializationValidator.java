@@ -7,6 +7,8 @@ import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Specialization;
 import ru.shuman.Project_Aibolit_Server.services.SpecializationService;
 
+import java.util.Optional;
+
 @Component
 public class SpecializationValidator implements Validator {
 
@@ -24,5 +26,11 @@ public class SpecializationValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
+        Specialization specialization = (Specialization) o;
+
+        Optional<Specialization> existingSpecialization = specializationService.findByName(specialization.getName());
+        if (existingSpecialization.isPresent() && specialization.getId() != existingSpecialization.get().getId()) {
+            errors.rejectValue("name", "", "Специализация с таким названием уже существует!");
+        }
     }
 }

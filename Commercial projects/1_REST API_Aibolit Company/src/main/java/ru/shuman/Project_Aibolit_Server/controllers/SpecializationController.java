@@ -30,6 +30,9 @@ public class SpecializationController {
     private final SpecializationValidator specializationValidator;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public SpecializationController(SpecializationService specializationService,
                                     SpecializationIdValidator specializationIdValidator,
@@ -40,6 +43,10 @@ public class SpecializationController {
         this.modelMapper = modelMapper;
     }
 
+    /*
+    Метод возвращает список всех специализаций в обертке ResponseEntity,
+    на вход может приходить параметр запроса published, список передается с учетом данного параметра
+     */
     @GetMapping
     public ResponseEntity<List<SpecializationDTO>> sendListSpecializations(@RequestParam(value = "published", required = false) Boolean published) {
 
@@ -56,6 +63,9 @@ public class SpecializationController {
         return new ResponseEntity<>(specializationDTOList, HttpStatus.OK);
     }
 
+    /*
+    Метод возвращает одну специализацию по id в обертке ResponseEntity, перед возвратом делается валидация id
+     */
     @GetMapping("/{id}")
     public ResponseEntity<SpecializationDTO> sendOneSpecialization(@PathVariable(value = "id") int specializationId,
                                                                    @ModelAttribute(value = "specialization") Specialization specialization,
@@ -73,6 +83,10 @@ public class SpecializationController {
 
     }
 
+    /*
+    Метод создает новую специализацию, на вход приходит новая специализация типа SpecializationDTO,
+    валидируется, в случае отсутствия ошибок сохраняется и возвращает ответ 200 в обертке ResponseEntity
+     */
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid SpecializationDTO specializationDTO,
                                              BindingResult bindingResult) {
@@ -88,11 +102,16 @@ public class SpecializationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /*
+    Метод изменяет существующую специализацию, в URL передается id и в виде json объект SpecializationDTO с новыми данными
+    для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращает код 200 в обертке ResponseEntity
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int specializationId,
                                              @RequestBody @Valid SpecializationDTO specializationDTO,
                                              BindingResult bindingResult) {
 
+        specializationDTO.setId(specializationId);
         Specialization specialization = convertToSpecialization(specializationDTO);
 
         specializationIdValidator.validate(specialization, bindingResult);
@@ -105,7 +124,7 @@ public class SpecializationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения SpecializationNotFound
+    // Метод обработчик исключения SpecializationNotFoundException
     @ExceptionHandler
     private ResponseEntity<SpecializationErrorResponse> handleException(SpecializationNotFoundException e) {
         SpecializationErrorResponse response = new SpecializationErrorResponse(

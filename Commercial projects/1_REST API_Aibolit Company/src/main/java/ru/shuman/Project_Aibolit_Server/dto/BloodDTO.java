@@ -12,7 +12,7 @@ public class BloodDTO {
 
     private Integer id;
 
-    @Size(max = 30, message = "Наименование группы крови должно быть не более 30 символов")
+    @Size(max = 50, message = "Наименование группы крови должно быть не более 50 символов")
     private String name;
 
 }

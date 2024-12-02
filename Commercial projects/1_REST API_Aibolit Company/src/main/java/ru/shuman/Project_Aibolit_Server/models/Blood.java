@@ -24,7 +24,7 @@ public class Blood {
     private Integer id;
 
     @Column(name = "name")
-    @Size(max = 30, message = "Наименование группы крови должно быть не более 30 символов")
+    @Size(max = 50, message = "Наименование группы крови должно быть не более 50 символов")
     private String name;
 
     @OneToMany(mappedBy = "blood")

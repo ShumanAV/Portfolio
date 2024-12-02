@@ -75,7 +75,7 @@ public class Doctor {
     private Specialization specialization;
 
     @OneToOne()
-    @JoinColumn(name = "doctor_id", referencedColumnName = "id")
+    @JoinColumn(name = "profile_id", referencedColumnName = "id")
     private Profile profile;
 
     @OneToMany(mappedBy = "doctor")

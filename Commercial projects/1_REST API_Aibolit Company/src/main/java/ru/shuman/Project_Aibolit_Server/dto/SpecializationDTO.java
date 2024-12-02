@@ -20,8 +20,4 @@ public class SpecializationDTO {
 
     private boolean published;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
 }
