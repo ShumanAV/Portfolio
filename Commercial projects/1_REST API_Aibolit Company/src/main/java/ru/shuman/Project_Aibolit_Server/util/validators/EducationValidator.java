@@ -7,6 +7,8 @@ import org.springframework.validation.Validator;
 import ru.shuman.Project_Aibolit_Server.models.Education;
 import ru.shuman.Project_Aibolit_Server.services.EducationService;
 
+import java.util.Optional;
+
 @Component
 public class EducationValidator implements Validator {
 
@@ -24,5 +26,12 @@ public class EducationValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
+        Education education = (Education) o;
+
+        // Проверяем есть ли уже с таким названием образование
+        Optional<Education> existingEducation = educationService.findByName(education.getName());
+        if (existingEducation.isPresent() && education.getId() != existingEducation.get().getId()) {
+            errors.rejectValue("name", "", "Образование с таким названием уже существует");
+        }
     }
 }

@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/patients")
@@ -63,7 +63,7 @@ public class PatientController {
 
         patientIdValidator.validate(patient, bindingResult);
 
-        collectErrorsToString(bindingResult, PatientNotFoundException.class);
+        checkingForErrorsAndThrowsException(bindingResult, PatientNotFoundException.class);
 
         PatientDTO patientDTO = convertToPatientDTO(patientService.findById(patientId).get());
 
@@ -79,7 +79,7 @@ public class PatientController {
 
         patientValidator.validate(patient, bindingResult);
 
-        collectErrorsToString(bindingResult, PatientNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, PatientNotCreatedOrUpdatedException.class);
 
         patientService.create(patient);
 
@@ -96,7 +96,7 @@ public class PatientController {
         patientIdValidator.validate(patient, bindingResult);
         patientValidator.validate(patient, bindingResult);
 
-        collectErrorsToString(bindingResult, PatientNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, PatientNotCreatedOrUpdatedException.class);
 
         patientService.update(patient);
 

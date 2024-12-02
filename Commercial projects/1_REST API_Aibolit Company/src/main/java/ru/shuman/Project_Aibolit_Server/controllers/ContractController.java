@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/contracts")
@@ -57,7 +57,7 @@ public class ContractController {
 
         contractIdValidator.validate(contract, bindingResult);
 
-        collectErrorsToString(bindingResult, ContractNotFoundException.class);
+        checkingForErrorsAndThrowsException(bindingResult, ContractNotFoundException.class);
 
         ContractDTO contractDTO = convertToContractDTO(contractService.findById(contractId).get());
 
@@ -73,7 +73,7 @@ public class ContractController {
 
         contractValidator.validate(contract, bindingResult);
 
-        collectErrorsToString(bindingResult, ContractNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, ContractNotCreatedOrUpdatedException.class);
 
         contractService.create(contract);
 
@@ -89,14 +89,14 @@ public class ContractController {
         contractIdValidator.validate(contract, bindingResult);
         contractValidator.validate(contract, bindingResult);
 
-        collectErrorsToString(bindingResult, ContractNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, ContractNotCreatedOrUpdatedException.class);
 
         contractService.update(contract);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения ContractNotFound
+    // Метод обработчик исключения ContractNotFoundException
     @ExceptionHandler
     private ResponseEntity<ContractErrorResponse> handleException(ContractNotFoundException e) {
         ContractErrorResponse response = new ContractErrorResponse(

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/doctors")
@@ -91,7 +91,7 @@ public class DoctorController {
 
         doctorIdValidator.validate(doctor, bindingResult);
 
-        collectErrorsToString(bindingResult, DoctorNotFoundException.class);
+        checkingForErrorsAndThrowsException(bindingResult, DoctorNotFoundException.class);
 
         DoctorDTO doctorDTO = convertToDoctorDTO(doctorService.findById(doctorId).get());
 
@@ -122,7 +122,7 @@ public class DoctorController {
         doctorValidator.validate(updatedDoctor, bindingResult);
         doctorIdValidator.validate(updatedDoctor, bindingResult);
 
-        collectErrorsToString(bindingResult, ProfileOrDoctorNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, ProfileOrDoctorNotCreatedOrUpdatedException.class);
 
         doctorService.update(updatedDoctor);
 

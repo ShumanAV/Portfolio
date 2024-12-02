@@ -14,9 +14,9 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    private final String SUBJECT = "User details";
-    private final String ISSUER = "Aibolit software";
-    private final int EXPIRATION_DATE_IN_MINUTES = 60;
+    private static final String SUBJECT = "User details";
+    private static final String ISSUER = "Aibolit medical system";
+    private static final int EXPIRATION_DATE_IN_MINUTES = 60 * 24 * 7;
 
     @Value("${jwt_secret}")
     private String secretKey;

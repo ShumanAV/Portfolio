@@ -82,7 +82,7 @@ public class GeneralMethodsTest {
     @MethodSource("generateExceptions")
     public void collectStringAboutErrorsTestWithoutExceptions(Class<? extends RuntimeException> clazz) {
         Assertions.assertDoesNotThrow(() -> {
-            GeneralMethods.collectErrorsToString(bindingResultEmpty, clazz);
+            GeneralMethods.checkingForErrorsAndThrowsException(bindingResultEmpty, clazz);
         });
     }
 
@@ -93,7 +93,7 @@ public class GeneralMethodsTest {
     public void collectStringAboutErrorsTest(Class<? extends RuntimeException> clazz) {
         // проверка на выброс исключения
         Assertions.assertThrows(clazz, () -> {
-            GeneralMethods.collectErrorsToString(bindingResultWithErrors, clazz);
+            GeneralMethods.checkingForErrorsAndThrowsException(bindingResultWithErrors, clazz);
         });
     }
 

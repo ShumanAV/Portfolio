@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/prices")
@@ -63,7 +63,7 @@ public class PriceController {
 
         priceIdValidator.validate(price, bindingResult);
 
-        collectErrorsToString(bindingResult, PriceNotFoundException.class);
+        checkingForErrorsAndThrowsException(bindingResult, PriceNotFoundException.class);
 
         PriceDTO priceDTO = convertToPriceDTO(priceService.findById(priceId).get());
 
@@ -79,7 +79,7 @@ public class PriceController {
 
         priceValidator.validate(price, bindingResult);
 
-        collectErrorsToString(bindingResult, PriceNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, PriceNotCreatedOrUpdatedException.class);
 
         priceService.create(price);
 
@@ -96,7 +96,7 @@ public class PriceController {
         priceIdValidator.validate(price, bindingResult);
         priceValidator.validate(price, bindingResult);
 
-        collectErrorsToString(bindingResult, PriceNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, PriceNotCreatedOrUpdatedException.class);
 
         priceService.update(price);
 

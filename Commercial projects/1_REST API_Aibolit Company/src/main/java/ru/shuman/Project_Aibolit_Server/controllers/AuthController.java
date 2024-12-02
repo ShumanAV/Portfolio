@@ -24,7 +24,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/auth")
@@ -67,7 +67,7 @@ public class AuthController {
 
         doctorValidator.validate(doctor, bindingResult);
 
-        collectErrorsToString(bindingResult, ProfileOrDoctorNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, ProfileOrDoctorNotCreatedOrUpdatedException.class);
 
         doctorService.register(doctor);
 

@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/callings")
@@ -57,7 +57,7 @@ public class CallingController {
 
         callingIdValidator.validate(calling, bindingResult);
 
-        collectErrorsToString(bindingResult, CallingNotFoundException.class);
+        checkingForErrorsAndThrowsException(bindingResult, CallingNotFoundException.class);
 
         CallingDTO callingDTO = convertToCallingDTO(callingService.findById(callingId).get());
 
@@ -72,7 +72,7 @@ public class CallingController {
 
         callingValidator.validate(calling, bindingResult);
 
-        collectErrorsToString(bindingResult, CallingNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, CallingNotCreatedOrUpdatedException.class);
 
         callingService.create(calling);
 
@@ -88,7 +88,7 @@ public class CallingController {
         callingIdValidator.validate(calling, bindingResult);
         callingValidator.validate(calling, bindingResult);
 
-        collectErrorsToString(bindingResult, CallingNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, CallingNotCreatedOrUpdatedException.class);
 
         callingService.update(calling);
 

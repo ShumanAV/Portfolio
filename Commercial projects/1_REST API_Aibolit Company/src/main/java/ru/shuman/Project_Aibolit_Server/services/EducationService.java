@@ -43,4 +43,8 @@ public class EducationService {
     public List<Education> findAll() {
         return educationRepository.findAll();
     }
+
+    public Optional<Education> findByName(String name) {
+        return educationRepository.findByName(name);
+    }
 }

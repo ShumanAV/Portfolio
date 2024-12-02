@@ -29,6 +29,7 @@ public class BloodValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Blood blood = (Blood) o;
 
+        //Проверяем есть ли уже группа крови с таким названием
         Optional<Blood> existingBlood = bloodService.findByName(blood.getName());
         if (existingBlood.isPresent() && blood.getId() != existingBlood.get().getId()) {
             errors.rejectValue("name", "", "Группа крови с таким названием уже существует!");

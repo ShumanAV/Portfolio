@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/bloods")
@@ -66,7 +66,7 @@ public class BloodController {
 
         bloodIdValidator.validate(blood, bindingResult);
 
-        collectErrorsToString(bindingResult, BloodNotFoundException.class);
+        checkingForErrorsAndThrowsException(bindingResult, BloodNotFoundException.class);
 
         BloodDTO bloodDTO = convertToBloodDTO(bloodService.findById(bloodId).get());
 
@@ -86,7 +86,7 @@ public class BloodController {
 
         bloodValidator.validate(blood, bindingResult);
 
-        collectErrorsToString(bindingResult, BloodNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, BloodNotCreatedOrUpdatedException.class);
 
         bloodService.create(blood);
 
@@ -108,7 +108,7 @@ public class BloodController {
         bloodIdValidator.validate(blood, bindingResult);
         bloodValidator.validate(blood, bindingResult);
 
-        collectErrorsToString(bindingResult, BloodNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, BloodNotCreatedOrUpdatedException.class);
 
         bloodService.update(blood);
 
@@ -128,7 +128,7 @@ public class BloodController {
 
         bloodIdValidator.validate(blood, bindingResult);
 
-        collectErrorsToString(bindingResult, BloodNotFoundException.class);
+        checkingForErrorsAndThrowsException(bindingResult, BloodNotFoundException.class);
 
         bloodService.delete(blood);
 

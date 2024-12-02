@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/specializations")
@@ -75,7 +75,7 @@ public class SpecializationController {
 
         specializationIdValidator.validate(specialization, bindingResult);
 
-        collectErrorsToString(bindingResult, SpecializationNotFoundException.class);
+        checkingForErrorsAndThrowsException(bindingResult, SpecializationNotFoundException.class);
 
         SpecializationDTO specializationDTO = convertToSpecializationDTO(specializationService.findById(specializationId).get());
 
@@ -95,7 +95,7 @@ public class SpecializationController {
 
         specializationValidator.validate(specialization, bindingResult);
 
-        collectErrorsToString(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
 
         specializationService.create(specialization);
 
@@ -117,7 +117,7 @@ public class SpecializationController {
         specializationIdValidator.validate(specialization, bindingResult);
         specializationValidator.validate(specialization, bindingResult);
 
-        collectErrorsToString(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
 
         specializationService.update(specialization);
 

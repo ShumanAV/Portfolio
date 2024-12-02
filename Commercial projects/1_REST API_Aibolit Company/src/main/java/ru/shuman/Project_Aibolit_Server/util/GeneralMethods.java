@@ -30,7 +30,7 @@ public class GeneralMethods {
     на входе тип исключений ограничен RuntimeException.
      */
 
-    public static void collectErrorsToString(BindingResult bindingResult, Class<? extends RuntimeException> exception) {
+    public static void checkingForErrorsAndThrowsException(BindingResult bindingResult, Class<? extends RuntimeException> exception) {
 
         try {
             if (bindingResult.hasErrors()) {
