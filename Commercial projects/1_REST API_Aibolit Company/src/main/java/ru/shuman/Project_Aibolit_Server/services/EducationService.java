@@ -17,34 +17,56 @@ public class EducationService {
 
     private final EducationRepository educationRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public EducationService(EducationRepository educationRepository) {
         this.educationRepository = educationRepository;
     }
 
+    /*
+    Метод формирует и возвращает список всех типов образования
+     */
+    public List<Education> findAll() {
+        return educationRepository.findAll();
+    }
+
+    /*
+    Метод ищет тип образования по названию и возвращает его в обертке Optional
+     */
+    public Optional<Education> findByName(String name) {
+        return educationRepository.findByName(name);
+    }
+
+    /*
+    Метод ищет тип образования по id и возвращает его в обертке Optional
+     */
     public Optional<Education> findById(Integer educationId) {
         return educationRepository.findById(educationId);
     }
 
-    public void addParentAtListForEducation(Parent parent, Education education) {
-        GeneralMethods.addObjectOneInListForObjectTwo(parent, education, this);
-    }
-
+    /*
+    Метод сохраняет новый тип образования в БД
+     */
     @Transactional
     public void create(Education education) {
         educationRepository.save(education);
     }
 
+    /*
+    Метод сохраняет измененный тип образования в БД
+     */
     @Transactional
     public void update(Education education) {
         educationRepository.save(education);
     }
 
-    public List<Education> findAll() {
-        return educationRepository.findAll();
+    /*
+    Метод добавляет родителя пациента в список типа образования, делается это для кэша
+     */
+    public void addParentAtListForEducation(Parent parent, Education education) {
+        GeneralMethods.addObjectOneInListForObjectTwo(parent, education, this);
     }
 
-    public Optional<Education> findByName(String name) {
-        return educationRepository.findByName(name);
-    }
 }

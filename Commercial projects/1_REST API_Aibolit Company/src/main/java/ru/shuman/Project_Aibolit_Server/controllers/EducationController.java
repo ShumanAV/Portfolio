@@ -30,6 +30,9 @@ public class EducationController {
     private final EducationValidator educationValidator;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public EducationController(EducationService educationService, EducationIdValidator educationIdValidator,
                                EducationValidator educationValidator, ModelMapper modelMapper) {
@@ -39,6 +42,9 @@ public class EducationController {
         this.modelMapper = modelMapper;
     }
 
+    /*
+    Метод формирует и возвращает список типов образований в обертке ResponseEntity
+     */
     @GetMapping
     public ResponseEntity<List<EducationDTO>> sendListEducations() {
 
@@ -49,6 +55,11 @@ public class EducationController {
         return new ResponseEntity<>(educationDTOList, HttpStatus.OK);
     }
 
+    /*
+    Метод возвращает один тип образования по id в обертке ResponseEntity, id берем из url,
+    при помощи @ModelAttribute создаем пустой объект типа Education, устанавливаем в нем переданный id, далее валидируем id,
+    находим тип образования и возвращаем его
+     */
     @GetMapping("/{id}")
     public ResponseEntity<EducationDTO> sendOneEducation(@PathVariable(value = "id") int educationId,
                                                      @ModelAttribute(value = "education") Education education,
@@ -66,6 +77,10 @@ public class EducationController {
 
     }
 
+    /*
+    Метод создает новый тип образования, на вход поступает объект EducationDTO в виде json, принимаем его, валидируем его,
+    в случае отсутствия ошибок при валидации создаем новый тип образования, возвращаем код 200 в обертке ResponseEntity
+     */
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid EducationDTO educationDTO,
                                              BindingResult bindingResult) {
@@ -81,11 +96,16 @@ public class EducationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /*
+    Метод изменяет существующий тип образования, в URL передается id и в виде json объект EducationDTO с новыми данными
+    для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращаем код 200 в обертке ResponseEntity
+     */
     @PatchMapping("/{id}")
-    public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int priceId,
+    public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int educationId,
                                              @RequestBody @Valid EducationDTO educationDTO,
                                              BindingResult bindingResult) {
 
+        educationDTO.setId(educationId);
         Education education = convertToEducation(educationDTO);
 
         educationIdValidator.validate(education, bindingResult);

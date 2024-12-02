@@ -75,8 +75,8 @@ public class BloodController {
     }
 
     /*
-    Метод создает новую группу крови, на вход поступает объект Blood в виде json, принимаем его, валидируем его,
-    в случае отсутствия ошибок при валидации создаем новую группу крови, возвращает код 200 в обертке ResponseEntity
+    Метод создает новую группу крови, на вход поступает объект BloodDTO в виде json, принимаем его, валидируем его,
+    в случае отсутствия ошибок при валидации создаем новую группу крови, возвращаем код 200 в обертке ResponseEntity
      */
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid BloodDTO bloodDTO,
@@ -95,7 +95,7 @@ public class BloodController {
 
     /*
     Метод изменяет существующую группу крови, в URL передается id и в виде json объект BloodDTO с новыми данными
-    для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращает код 200 в обертке ResponseEntity
+    для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращаем код 200 в обертке ResponseEntity
      */
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int bloodId,
