@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +17,7 @@ public class TypeContractDTO {
 
     private Integer id;
 
+    @NotNull(message = "Наименование типа контракта отсутствует")
     @Size(max = 255, message = "Наименование типа контракта должно быть не более 255 символов")
     private String name;
 

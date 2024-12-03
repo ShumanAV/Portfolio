@@ -46,6 +46,7 @@ public class BloodService {
     public Optional<Blood> findByName(String name) {
         return bloodRepository.findByName(name);
     }
+
     /*
     Метод сохраняет новую группу крови в БД
      */

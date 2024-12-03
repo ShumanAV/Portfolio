@@ -30,6 +30,9 @@ public class BloodController {
     private final BloodValidator bloodValidator;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public BloodController(BloodService bloodService, BloodIdValidator bloodIdValidator, BloodValidator bloodValidator,
                            ModelMapper modelMapper) {

@@ -18,19 +18,31 @@ public class TypeContractService {
 
     private final TypeContractRepository typeContractRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeContractService(TypeContractRepository typeContractRepository) {
         this.typeContractRepository = typeContractRepository;
     }
 
+    /*
+    Метод формирует список всех типов договоров и возвращает его
+    */
+    public List<TypeContract> findAll() {
+        return typeContractRepository.findAll();
+    }
+
+    /*
+    Метод находит тип договора по id и возвращает его в обертке Optional
+     */
     public Optional<TypeContract> findById(Integer typeContractId) {
         return typeContractRepository.findById(typeContractId);
     }
 
-    public void addContractAtListForTypeContract(Contract contract, TypeContract typeContract) {
-        GeneralMethods.addObjectOneInListForObjectTwo(contract, typeContract, this);
-    }
-
+    /*
+    Метод сохраняет новый тип договора в БД, добавляет дату и время создания и изменения
+     */
     @Transactional
     public void create(TypeContract typeContract) {
 
@@ -40,15 +52,25 @@ public class TypeContractService {
         typeContractRepository.save(typeContract);
     }
 
+    /*
+    Метод изменяет существующий тип договора в БД, ищем существующий тип договора в БД по id, переносим время создания
+    из типа договора из БД в изменяемый, обновляем дату и время изменения и сохраняем
+     */
     @Transactional
     public void update(TypeContract typeContract) {
 
+        Optional<TypeContract> existingTypeContract = typeContractRepository.findById(typeContract.getId());
+
+        typeContract.setCreatedAt(existingTypeContract.get().getCreatedAt());
         typeContract.setUpdatedAt(LocalDateTime.now());
 
         typeContractRepository.save(typeContract);
     }
 
-    public List<TypeContract> findAll() {
-        return typeContractRepository.findAll();
+    /*
+    Метод добавляет договор в лист типа договора, делается это для кэша
+    */
+    public void addContractAtListForTypeContract(Contract contract, TypeContract typeContract) {
+        GeneralMethods.addObjectOneInListForObjectTwo(contract, typeContract, this);
     }
 }
