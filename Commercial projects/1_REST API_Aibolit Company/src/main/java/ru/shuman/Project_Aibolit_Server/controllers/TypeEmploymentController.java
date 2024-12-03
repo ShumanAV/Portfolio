@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
-@RequestMapping("/typesemployments")
+@RequestMapping("/typesEmployments")
 public class TypeEmploymentController {
 
     private final TypeEmploymentService typeEmploymentService;

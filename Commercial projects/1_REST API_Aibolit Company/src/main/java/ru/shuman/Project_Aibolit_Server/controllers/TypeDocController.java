@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
-@RequestMapping("/typesdocs")
+@RequestMapping("/typesDocs")
 public class TypeDocController {
 
     private final TypeDocService typeDocService;

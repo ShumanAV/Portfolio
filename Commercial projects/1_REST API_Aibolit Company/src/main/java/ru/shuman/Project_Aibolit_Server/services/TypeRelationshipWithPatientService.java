@@ -17,30 +17,55 @@ public class TypeRelationshipWithPatientService {
 
     private final TypeRelationshipWithPatientRepository typeRelationshipWithPatientRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeRelationshipWithPatientService(TypeRelationshipWithPatientRepository typeRelationshipWithPatientRepository) {
         this.typeRelationshipWithPatientRepository = typeRelationshipWithPatientRepository;
     }
 
+    /*
+    Метод формирует список всех типов отношений родителей с пациентами и возвращает его
+    */
+    public List<TypeRelationshipWithPatient> findAll() {
+        return typeRelationshipWithPatientRepository.findAll();
+    }
+
+    /*
+    Метод находит тип отношения родителей с пациентом по названию и возвращает его в обертке Optional
+     */
+    public Optional<TypeRelationshipWithPatient> findByName(String name) {
+        return typeRelationshipWithPatientRepository.findByName(name);
+    }
+
+    /*
+    Метод находит тип отношения родителей с пациентом по id и возвращает его в обертке Optional
+     */
     public Optional<TypeRelationshipWithPatient> findById(Integer id) {
         return typeRelationshipWithPatientRepository.findById(id);
     }
 
-    public void addParentAtListForTypeRelationship(Parent parent, TypeRelationshipWithPatient typeRelationship) {
-        GeneralMethods.addObjectOneInListForObjectTwo(parent, typeRelationship, this);
-    }
-
+    /*
+    Метод сохраняет новый тип отношений родителей с пациентом в БД
+     */
     @Transactional
     public void create(TypeRelationshipWithPatient typeRelationship) {
         typeRelationshipWithPatientRepository.save(typeRelationship);
     }
 
+    /*
+    Метод изменяет существующий тип отношений родителей с пациентом в БД
+     */
     @Transactional
     public void update(TypeRelationshipWithPatient typeRelationship) {
         typeRelationshipWithPatientRepository.save(typeRelationship);
     }
 
-    public List<TypeRelationshipWithPatient> findAll() {
-        return typeRelationshipWithPatientRepository.findAll();
+    /*
+    Метод добавляет родителя в лист типа отношений родителей с пациентом, делается это для кэша
+    */
+    public void addParentAtListForTypeRelationship(Parent parent, TypeRelationshipWithPatient typeRelationship) {
+        GeneralMethods.addObjectOneInListForObjectTwo(parent, typeRelationship, this);
     }
 }
