@@ -63,6 +63,9 @@ public class BloodService {
         bloodRepository.save(blood);
     }
 
+    /*
+    Метод удаляет выбранную группу крови
+     */
     @Transactional
     public void delete(Blood blood) {
         bloodRepository.delete(blood);

@@ -4,17 +4,22 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.TypeDocDTO;
 import ru.shuman.Project_Aibolit_Server.models.TypeDoc;
 import ru.shuman.Project_Aibolit_Server.services.TypeDocService;
+import ru.shuman.Project_Aibolit_Server.util.errors.TypeDocErrorResponse;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.TypeDocCreatedOrUpdatedException;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.TypeDocNotFoundException;
 import ru.shuman.Project_Aibolit_Server.util.validators.TypeDocIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.TypeDocValidator;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/typedocs")
@@ -25,6 +30,9 @@ public class TypeDocController {
     private final TypeDocValidator typeDocValidator;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeDocController(TypeDocService typeDocService, TypeDocIdValidator typeDocIdValidator,
                              TypeDocValidator typeDocValidator, ModelMapper modelMapper) {
@@ -34,6 +42,9 @@ public class TypeDocController {
         this.modelMapper = modelMapper;
     }
 
+    /*
+    Метод формирует и возвращает список типов документов в обертке ResponseEntity
+     */
     @GetMapping
     public ResponseEntity<List<TypeDocDTO>> sendListTypesDocs() {
 
@@ -44,76 +55,89 @@ public class TypeDocController {
         return new ResponseEntity<>(typeDocDTOList, HttpStatus.OK);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<PriceDTO> sendOnePrice(@PathVariable(value = "id") int priceId,
-//                                                 @ModelAttribute(value = "price") Price price,
-//                                                 BindingResult bindingResult) {
-//
-//        price.setId(priceId);
-//
-//        priceIdValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotFound.class);
-//
-//        PriceDTO priceDTO = convertToPriceDTO(priceService.findById(priceId).get());
-//
-//        return new ResponseEntity<>(priceDTO, HttpStatus.OK);
-//
-//    }
-//
-//    @PostMapping
-//    public ResponseEntity<HttpStatus> create(@RequestBody @Valid PriceDTO priceDTO,
-//                                             BindingResult bindingResult) {
-//
-//        Price price = convertToPrice(priceDTO);
-//
-//        priceValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
-//
-//        priceService.create(price);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int priceId,
-//                                             @RequestBody @Valid PriceDTO priceDTO,
-//                                             BindingResult bindingResult) {
-//
-//        Price price = convertToPrice(priceDTO);
-//
-//        priceIdValidator.validate(price, bindingResult);
-//        priceValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
-//
-//        priceService.update(price);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    // Метод обработчик исключения PriceNotFound
-//    @ExceptionHandler
-//    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotFound(PriceNotFound e) {
-//        PriceErrorResponse response = new PriceErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    // Метод обработчик исключения PriceNotCreatedOrUpdatedException
-//    @ExceptionHandler
-//    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotCreated(PriceNotCreatedOrUpdatedException e) {
-//        PriceErrorResponse response = new PriceErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
+    /*
+    Метод возвращает один тип документа по id в обертке ResponseEntity, id берем из url,
+    при помощи @ModelAttribute создаем пустой объект типа TypeDoc, устанавливаем в нем переданный id, далее валидируем id,
+    находим тип документа и возвращаем его
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<TypeDocDTO> sendOneTypeDoc(@PathVariable(value = "id") int typeDocId,
+                                                     @ModelAttribute(value = "typeDoc") TypeDoc typeDoc,
+                                                     BindingResult bindingResult) {
+
+        typeDoc.setId(typeDocId);
+
+        typeDocIdValidator.validate(typeDoc, bindingResult);
+
+        checkingForErrorsAndThrowsException(bindingResult, TypeDocNotFoundException.class);
+
+        TypeDocDTO typeDocDTO = convertToTypeDocDTO(typeDocService.findById(typeDocId).get());
+
+        return new ResponseEntity<>(typeDocDTO, HttpStatus.OK);
+
+    }
+
+    /*
+    Метод создает новый тип документа, на вход поступает объект TypeDocDTO в виде json, принимаем его, валидируем его,
+    в случае отсутствия ошибок при валидации создаем новый тип документа, возвращаем код 200 в обертке ResponseEntity
+     */
+    @PostMapping
+    public ResponseEntity<HttpStatus> create(@RequestBody @Valid TypeDocDTO typeDocDTO,
+                                             BindingResult bindingResult) {
+
+        TypeDoc typeDoc = convertToTypeDoc(typeDocDTO);
+
+        typeDocValidator.validate(typeDoc, bindingResult);
+
+        checkingForErrorsAndThrowsException(bindingResult, TypeDocCreatedOrUpdatedException.class);
+
+        typeDocService.create(typeDoc);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /*
+    Метод изменяет существующий тип документа, в URL передается id и в виде json объект TypeDocDTO с новыми данными
+    для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращаем код 200 в обертке ResponseEntity
+     */
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int typeDocId,
+                                             @RequestBody @Valid TypeDocDTO typeDocDTO,
+                                             BindingResult bindingResult) {
+        typeDocDTO.setId(typeDocId);
+        TypeDoc typeDoc = convertToTypeDoc(typeDocDTO);
+
+        typeDocIdValidator.validate(typeDoc, bindingResult);
+        typeDocValidator.validate(typeDoc, bindingResult);
+
+        checkingForErrorsAndThrowsException(bindingResult, TypeDocCreatedOrUpdatedException.class);
+
+        typeDocService.update(typeDoc);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    // Метод обработчик исключения TypeDocNotFoundException
+    @ExceptionHandler
+    private ResponseEntity<TypeDocErrorResponse> handleException(TypeDocNotFoundException e) {
+        TypeDocErrorResponse response = new TypeDocErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    // Метод обработчик исключения TypeDocCreatedOrUpdatedException
+    @ExceptionHandler
+    private ResponseEntity<TypeDocErrorResponse> handleException(TypeDocCreatedOrUpdatedException e) {
+        TypeDocErrorResponse response = new TypeDocErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 
     // Метод конверсии из DTO в модель
     private TypeDoc convertToTypeDoc(TypeDocDTO typeDocDTO) {
