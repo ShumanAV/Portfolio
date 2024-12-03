@@ -117,7 +117,9 @@ public class TypeContractController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения TypeContractNotFoundException
+    /*
+    Метод обработчик исключения TypeContractNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<TypeContractErrorResponse> handleException(TypeContractNotFoundException e) {
         TypeContractErrorResponse response = new TypeContractErrorResponse(
@@ -128,7 +130,9 @@ public class TypeContractController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения TypeContractNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения TypeContractNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<TypeContractErrorResponse> handleException(TypeContractNotCreatedOrUpdatedException e) {
         TypeContractErrorResponse response = new TypeContractErrorResponse(
@@ -139,12 +143,16 @@ public class TypeContractController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private TypeContract convertToTypeContract(TypeContractDTO typeContractDTO) {
         return this.modelMapper.map(typeContractDTO, TypeContract.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private TypeContractDTO convertToTypeContractDTO(TypeContract typeContract) {
         return this.modelMapper.map(typeContract, TypeContractDTO.class);
     }

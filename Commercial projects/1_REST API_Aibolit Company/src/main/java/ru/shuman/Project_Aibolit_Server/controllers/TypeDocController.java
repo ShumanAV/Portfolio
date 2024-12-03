@@ -117,7 +117,9 @@ public class TypeDocController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения TypeDocNotFoundException
+    /*
+    Метод обработчик исключения TypeDocNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<TypeDocErrorResponse> handleException(TypeDocNotFoundException e) {
         TypeDocErrorResponse response = new TypeDocErrorResponse(
@@ -128,7 +130,9 @@ public class TypeDocController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения TypeDocCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения TypeDocCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<TypeDocErrorResponse> handleException(TypeDocCreatedOrUpdatedException e) {
         TypeDocErrorResponse response = new TypeDocErrorResponse(
@@ -139,12 +143,16 @@ public class TypeDocController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private TypeDoc convertToTypeDoc(TypeDocDTO typeDocDTO) {
         return this.modelMapper.map(typeDocDTO, TypeDoc.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private TypeDocDTO convertToTypeDocDTO(TypeDoc typeDoc) {
         return this.modelMapper.map(typeDoc, TypeDocDTO.class);
     }

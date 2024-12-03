@@ -118,7 +118,9 @@ public class BloodController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения BloodNotFoundException
+    /*
+    Метод обработчик исключения BloodNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<BloodErrorResponse> handleException(BloodNotFoundException e) {
         BloodErrorResponse response = new BloodErrorResponse(
@@ -129,7 +131,9 @@ public class BloodController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения BloodNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения BloodNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<BloodErrorResponse> handleException(BloodNotCreatedOrUpdatedException e) {
         BloodErrorResponse response = new BloodErrorResponse(
@@ -140,12 +144,16 @@ public class BloodController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Blood convertToBlood(BloodDTO bloodDTO) {
         return this.modelMapper.map(bloodDTO, Blood.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private BloodDTO convertToBloodDTO(Blood blood) {
         return this.modelMapper.map(blood, BloodDTO.class);
     }

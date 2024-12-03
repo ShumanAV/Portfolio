@@ -117,7 +117,9 @@ public class GenderController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения GenderNotFoundException
+    /*
+    Метод обработчик исключения GenderNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<GenderErrorResponse> handleException(GenderNotFoundException e) {
         GenderErrorResponse response = new GenderErrorResponse(
@@ -128,7 +130,9 @@ public class GenderController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения GenderNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения GenderNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<GenderErrorResponse> handleException(GenderNotCreatedOrUpdatedException e) {
         GenderErrorResponse response = new GenderErrorResponse(
@@ -139,12 +143,16 @@ public class GenderController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Gender convertToGender(GenderDTO genderDTO) {
         return this.modelMapper.map(genderDTO, Gender.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private GenderDTO convertToGenderDTO(Gender gender) {
         return this.modelMapper.map(gender, GenderDTO.class);
     }

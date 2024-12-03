@@ -27,6 +27,9 @@ public class RoleController {
     private final RoleValidator roleValidator;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public RoleController(RoleService roleService, RoleIdValidator roleIdValidator, RoleValidator roleValidator,
                           ModelMapper modelMapper) {
@@ -36,6 +39,9 @@ public class RoleController {
         this.modelMapper = modelMapper;
     }
 
+    /*
+    Метод формирует и возвращает список ролей в обертке ResponseEntity
+     */
     @GetMapping
     public ResponseEntity<List<RoleDTO>> sendListRoles() {
 
@@ -46,12 +52,16 @@ public class RoleController {
         return new ResponseEntity<>(roleDTOList, HttpStatus.OK);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Role convertToRole(RoleDTO roleDTO) {
         return this.modelMapper.map(roleDTO, Role.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private RoleDTO convertToRoleDTO(Role role) {
         return this.modelMapper.map(role, RoleDTO.class);
     }

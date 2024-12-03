@@ -36,6 +36,9 @@ public class AuthController {
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public AuthController(DoctorService doctorService, DoctorValidator doctorValidator, ModelMapper modelMapper,
                           JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
@@ -83,7 +86,6 @@ public class AuthController {
     В случае прохождения аутентификации формирует новый jwt токен и возвращает его в оболочке со статусом 200
     new ResponseEntity<>(Map.of("jwt-token", token), HttpStatus.OK).
      */
-
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> performLogin(@RequestBody @Valid AuthenticationDTO authenticationDTO) {
 
@@ -106,7 +108,9 @@ public class AuthController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    // Метод обработчик исключения ProfileNotAuthenticatedException
+    /*
+    Метод обработчик исключения ProfileNotAuthenticatedException
+     */
     @ExceptionHandler
     private ResponseEntity<AuthenticationErrorResponse> handleException(ProfileNotAuthenticatedException e) {
         AuthenticationErrorResponse response = new AuthenticationErrorResponse(
@@ -117,7 +121,9 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения ProfileOrDoctorNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения ProfileOrDoctorNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<DoctorErrorResponse> handleException(ProfileOrDoctorNotCreatedOrUpdatedException e) {
         DoctorErrorResponse response = new DoctorErrorResponse(
@@ -128,7 +134,9 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Doctor convertToDoctor(DoctorDTO doctorDTO) {
         return this.modelMapper.map(doctorDTO, Doctor.class);
     }

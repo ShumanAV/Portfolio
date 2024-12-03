@@ -62,8 +62,9 @@ public class PatientController {
     }
 
     /*
-    Метод возвращает одного пациента по id, id берем из URL, создаем нового пустого пациента при помощи @ModelAttribute,
-    в него записываем id
+    Метод возвращает одного пациента по id в обертке ResponseEntity, id берем из url,
+    при помощи @ModelAttribute создаем пустой объект типа Patient, устанавливаем в нем переданный id, далее валидируем id,
+    находим пациента и возвращаем его
      */
     @GetMapping("/{id}")
     public ResponseEntity<PatientDTO> sendOnePatient(@PathVariable(value = "id") int patientId,
@@ -138,7 +139,9 @@ public class PatientController {
 
     }
 
-    // Метод обработчик исключения PatientNotFoundException
+    /*
+    Метод обработчик исключения PatientNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<PatientErrorResponse> handleException(PatientNotFoundException e) {
         PatientErrorResponse response = new PatientErrorResponse(
@@ -149,7 +152,9 @@ public class PatientController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения PatientNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения PatientNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<PatientErrorResponse> handleException(PatientNotCreatedOrUpdatedException e) {
         PatientErrorResponse response = new PatientErrorResponse(
@@ -160,12 +165,16 @@ public class PatientController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Patient convertToPatient(PatientDTO patientDTO) {
         return this.modelMapper.map(patientDTO, Patient.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private PatientDTO convertToPatientDTO(Patient patient) {
         return this.modelMapper.map(patient, PatientDTO.class);
     }

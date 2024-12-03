@@ -124,7 +124,9 @@ public class TypeRelationshipWithPatientController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения TypeRelationshipWithPatientNotFoundException
+    /*
+    Метод обработчик исключения TypeRelationshipWithPatientNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<TypeRelationshipWithPatientErrorResponse> handleExceptionPriceNotFound(TypeRelationshipWithPatientNotFoundException e) {
         TypeRelationshipWithPatientErrorResponse response = new TypeRelationshipWithPatientErrorResponse(
@@ -135,7 +137,9 @@ public class TypeRelationshipWithPatientController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения TypeRelationshipWithPatientNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения TypeRelationshipWithPatientNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<TypeRelationshipWithPatientErrorResponse> handleExceptionPriceNotCreated(TypeRelationshipWithPatientNotCreatedOrUpdatedException e) {
         TypeRelationshipWithPatientErrorResponse response = new TypeRelationshipWithPatientErrorResponse(
@@ -146,12 +150,16 @@ public class TypeRelationshipWithPatientController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private TypeRelationshipWithPatient convertToTypeRelationship(TypeRelationshipWithPatientDTO dto) {
         return this.modelMapper.map(dto, TypeRelationshipWithPatient.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private TypeRelationshipWithPatientDTO convertToTypeRelationshipDTO(TypeRelationshipWithPatient relationship) {
         return this.modelMapper.map(relationship, TypeRelationshipWithPatientDTO.class);
     }

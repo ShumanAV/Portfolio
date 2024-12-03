@@ -124,7 +124,9 @@ public class SpecializationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения SpecializationNotFoundException
+    /*
+    Метод обработчик исключения SpecializationNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<SpecializationErrorResponse> handleException(SpecializationNotFoundException e) {
         SpecializationErrorResponse response = new SpecializationErrorResponse(
@@ -135,7 +137,9 @@ public class SpecializationController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения SpecializationNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения SpecializationNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<SpecializationErrorResponse> handleException(SpecializationNotCreatedOrUpdatedException e) {
         SpecializationErrorResponse response = new SpecializationErrorResponse(
@@ -146,12 +150,16 @@ public class SpecializationController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Specialization convertToSpecialization(SpecializationDTO specializationDTO) {
         return this.modelMapper.map(specializationDTO, Specialization.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private SpecializationDTO convertToSpecializationDTO(Specialization specialization) {
         return this.modelMapper.map(specialization, SpecializationDTO.class);
     }

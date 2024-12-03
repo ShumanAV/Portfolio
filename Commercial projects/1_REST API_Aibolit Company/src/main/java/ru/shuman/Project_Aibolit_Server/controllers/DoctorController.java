@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.DoctorDTO;
 import ru.shuman.Project_Aibolit_Server.models.Doctor;
 import ru.shuman.Project_Aibolit_Server.services.DoctorService;
-import ru.shuman.Project_Aibolit_Server.util.validators.DoctorValidator;
-import ru.shuman.Project_Aibolit_Server.util.validators.DoctorIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.errors.DoctorErrorResponse;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.ProfileOrDoctorNotCreatedOrUpdatedException;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.DoctorNotFoundException;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.ProfileOrDoctorNotCreatedOrUpdatedException;
+import ru.shuman.Project_Aibolit_Server.util.validators.DoctorIdValidator;
+import ru.shuman.Project_Aibolit_Server.util.validators.DoctorValidator;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -31,6 +31,9 @@ public class DoctorController {
     private final DoctorValidator doctorValidator;
     private final DoctorIdValidator doctorIdValidator;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public DoctorController(DoctorService doctorService, ModelMapper modelMapper, DoctorValidator doctorValidator,
                             DoctorIdValidator doctorIdValidator) {
@@ -50,13 +53,12 @@ public class DoctorController {
         - список докторов с published = true или false
         - список докторов с show_in_schedule = true или false
      */
-
     @GetMapping
     public ResponseEntity<List<DoctorDTO>> sendListDoctors(@RequestParam(value = "published", required = false) Boolean published,
                                                            @RequestParam(value = "show_in_schedule", required = false) Boolean showInSchedule) {
 
         List<Doctor> doctors = new ArrayList<>();
-        if (published == null && showInSchedule == null ) {
+        if (published == null && showInSchedule == null) {
             doctors = doctorService.findAll();
         } else if (published != null && showInSchedule == null) {
             doctors = doctorService.findAllByPublished(published);
@@ -81,7 +83,6 @@ public class DoctorController {
     Перед отправкой врача осуществляется проверка id в валидаторе userValidatorId на предмет того, что для данного id
     есть врач, далее проверяется есть ли ошибки в bindingResult.
      */
-
     @GetMapping("/{id}")
     public ResponseEntity<DoctorDTO> sendOneDoctor(@PathVariable(value = "id") int doctorId,
                                                    @ModelAttribute(value = "doctor") Doctor doctor,
@@ -112,11 +113,11 @@ public class DoctorController {
 
     Метод осуществляет апдейт существующего врача и возвращает обертку со статусом ResponseEntity<HttpStatus>
      */
-
     @PatchMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody @Valid DoctorDTO updatedDoctorDTO,
+    public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int doctorId,
+                                             @RequestBody @Valid DoctorDTO updatedDoctorDTO,
                                              BindingResult bindingResult) {
-
+        updatedDoctorDTO.setId(doctorId);
         Doctor updatedDoctor = convertToDoctor(updatedDoctorDTO);
 
         doctorValidator.validate(updatedDoctor, bindingResult);
@@ -129,7 +130,9 @@ public class DoctorController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения ProfileOrDoctorNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения ProfileOrDoctorNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<DoctorErrorResponse> handleException(ProfileOrDoctorNotCreatedOrUpdatedException e) {
         DoctorErrorResponse response = new DoctorErrorResponse(
@@ -140,7 +143,9 @@ public class DoctorController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения DoctorNotFoundException
+    /*
+    Метод обработчик исключения DoctorNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<DoctorErrorResponse> handleException(DoctorNotFoundException e) {
         DoctorErrorResponse response = new DoctorErrorResponse(
@@ -151,12 +156,16 @@ public class DoctorController {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    // Метод конвертации из DTO в модель
+    /*
+    Метод конвертации из DTO в модель
+     */
     private Doctor convertToDoctor(DoctorDTO doctorDTO) {
         return modelMapper.map(doctorDTO, Doctor.class);
     }
 
-    // Метод конвертации из модели в DTO
+    /*
+    Метод конвертации из модели в DTO
+     */
     private DoctorDTO convertToDoctorDTO(Doctor doctor) {
         return modelMapper.map(doctor, DoctorDTO.class);
     }

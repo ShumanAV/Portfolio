@@ -117,7 +117,9 @@ public class RegionController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения RegionNotFoundException
+    /*
+    Метод обработчик исключения RegionNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<RegionErrorResponse> handleException(RegionNotFoundException e) {
         RegionErrorResponse response = new RegionErrorResponse(
@@ -128,7 +130,9 @@ public class RegionController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения RegionNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения RegionNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<RegionErrorResponse> handleException(RegionNotCreatedOrUpdatedException e) {
         RegionErrorResponse response = new RegionErrorResponse(
@@ -139,12 +143,16 @@ public class RegionController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Region convertToRegion(RegionDTO regionDTO) {
         return this.modelMapper.map(regionDTO, Region.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private RegionDTO convertToRegionDTO(Region region) {
         return this.modelMapper.map(region, RegionDTO.class);
     }

@@ -52,12 +52,16 @@ public class PlaceStudyController {
         return new ResponseEntity<>(placeStudyDTOList, HttpStatus.OK);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private PlaceStudy convertToPlaceStudy(PlaceStudyDTO placeStudyDTO) {
         return this.modelMapper.map(placeStudyDTO, PlaceStudy.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private PlaceStudyDTO convertToPlaceStudyDTO(PlaceStudy placeStudy) {
         return this.modelMapper.map(placeStudy, PlaceStudyDTO.class);
     }

@@ -118,7 +118,9 @@ public class TypeEmploymentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения TypeEmploymentNotFoundException
+    /*
+    Метод обработчик исключения TypeEmploymentNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<TypeEmploymentErrorResponse> handleExceptionPriceNotFound(TypeEmploymentNotFoundException e) {
         TypeEmploymentErrorResponse response = new TypeEmploymentErrorResponse(
@@ -129,7 +131,9 @@ public class TypeEmploymentController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения TypeEmploymentNotCreatedOrUpdatedException
+    /*
+     Метод обработчик исключения TypeEmploymentNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<TypeEmploymentErrorResponse> handleExceptionPriceNotCreated(TypeEmploymentNotCreatedOrUpdatedException e) {
         TypeEmploymentErrorResponse response = new TypeEmploymentErrorResponse(
@@ -140,12 +144,16 @@ public class TypeEmploymentController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private TypeEmployment convertToTypeEmployment(TypeEmploymentDTO typeEmploymentDTO) {
         return this.modelMapper.map(typeEmploymentDTO, TypeEmployment.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private TypeEmploymentDTO convertToTypeEmploymentDTO(TypeEmployment typeEmployment) {
         return this.modelMapper.map(typeEmployment, TypeEmploymentDTO.class);
     }

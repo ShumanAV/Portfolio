@@ -123,7 +123,9 @@ public class PriceController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения PriceNotFoundException
+    /*
+    Метод обработчик исключения PriceNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<PriceErrorResponse> handleException(PriceNotFoundException e) {
         PriceErrorResponse response = new PriceErrorResponse(
@@ -134,7 +136,9 @@ public class PriceController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения PriceNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения PriceNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<PriceErrorResponse> handleException(PriceNotCreatedOrUpdatedException e) {
         PriceErrorResponse response = new PriceErrorResponse(
@@ -145,12 +149,16 @@ public class PriceController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Price convertToPrice(PriceDTO priceDTO) {
         return this.modelMapper.map(priceDTO, Price.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private PriceDTO convertToPriceDTO(Price price) {
         return this.modelMapper.map(price, PriceDTO.class);
     }

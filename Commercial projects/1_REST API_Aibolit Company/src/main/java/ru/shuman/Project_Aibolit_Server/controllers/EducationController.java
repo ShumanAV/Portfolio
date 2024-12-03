@@ -118,7 +118,9 @@ public class EducationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения EducationNotFoundException
+    /*
+    Метод обработчик исключения EducationNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<EducationErrorResponse> handleException(EducationNotFoundException e) {
         EducationErrorResponse response = new EducationErrorResponse(
@@ -129,7 +131,9 @@ public class EducationController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения EducationNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения EducationNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<EducationErrorResponse> handleException(EducationNotCreatedOrUpdatedException e) {
         EducationErrorResponse response = new EducationErrorResponse(
@@ -140,12 +144,16 @@ public class EducationController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Education convertToEducation(EducationDTO educationDTO) {
         return this.modelMapper.map(educationDTO, Education.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private EducationDTO convertToEducationDTO(Education education) {
         return this.modelMapper.map(education, EducationDTO.class);
     }
