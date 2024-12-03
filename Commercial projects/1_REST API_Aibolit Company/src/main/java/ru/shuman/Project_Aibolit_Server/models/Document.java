@@ -30,7 +30,7 @@ public class Document {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "type_doc_name", referencedColumnName = "name")
+    @JoinColumn(name = "type_doc_id", referencedColumnName = "id")
     private TypeDoc typeDoc;
 
     @OneToOne(mappedBy = "document")

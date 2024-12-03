@@ -30,11 +30,11 @@ public class RegionIdValidator implements Validator {
 
         String field = searchNameFieldInParentEntity(errors, region.getClass());
 
-        if (region.getName() == null || region.getName().equals("")) {
-            errors.rejectValue(field == null ? "name": field, "", "У региона отсутствует наименование!");
+        if (region.getId() == null) {
+            errors.rejectValue(field == null ? "id": field, "", "У региона отсутствует id!");
 
-        } else if (regionService.findByName(region.getName()).isEmpty()) {
-                errors.rejectValue(field == null ? "name": field, "", "Региона с таким наименованием не существует!");
+        } else if (regionService.findById(region.getId()).isEmpty()) {
+                errors.rejectValue(field == null ? "id": field, "", "Региона с таким id не существует!");
         }
     }
 }

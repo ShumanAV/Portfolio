@@ -119,7 +119,7 @@ public class RegionController {
 
     // Метод обработчик исключения RegionNotFoundException
     @ExceptionHandler
-    private ResponseEntity<RegionErrorResponse> handleExceptionPriceNotFound(RegionNotFoundException e) {
+    private ResponseEntity<RegionErrorResponse> handleException(RegionNotFoundException e) {
         RegionErrorResponse response = new RegionErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
@@ -130,7 +130,7 @@ public class RegionController {
 
     // Метод обработчик исключения RegionNotCreatedOrUpdatedException
     @ExceptionHandler
-    private ResponseEntity<RegionErrorResponse> handleExceptionPriceNotCreated(RegionNotCreatedOrUpdatedException e) {
+    private ResponseEntity<RegionErrorResponse> handleException(RegionNotCreatedOrUpdatedException e) {
         RegionErrorResponse response = new RegionErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()

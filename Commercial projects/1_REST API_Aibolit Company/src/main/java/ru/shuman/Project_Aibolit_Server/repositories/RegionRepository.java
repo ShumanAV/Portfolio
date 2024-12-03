@@ -7,8 +7,8 @@ import ru.shuman.Project_Aibolit_Server.models.Region;
 import java.util.Optional;
 
 @Repository
-public interface RegionRepository extends JpaRepository<Region, String> {
+public interface RegionRepository extends JpaRepository<Region, Integer> {
     Optional<Region> findByName(String name);
-    Optional<Region> findById(Integer id);
+
     Optional<Region> findByCode(Integer code);
 }

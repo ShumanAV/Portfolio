@@ -7,6 +7,7 @@ import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.repositories.RegionRepository;
 import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,13 +37,6 @@ public class RegionService {
      */
     public Optional<Region> findByCode(Integer code) {
         return regionRepository.findByCode(code);
-    }
-
-    /*
-    Метод ищет регион по String id и возвращает его в обертке Optional
-     */
-    public Optional<Region> findById(String regionId) {
-        return regionRepository.findById(regionId);
     }
 
     /*

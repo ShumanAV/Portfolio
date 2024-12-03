@@ -14,10 +14,9 @@ import java.util.List;
 @Setter
 public class RegionDTO {
 
-    @Column(name = "id")
     private Integer id;
 
-    @Max(value = 999999999, message = "Код региона должен быть не более 999 999 999")
+    @Max(value = 9999, message = "Код региона должен быть не более 9 999")
     @Min(value = 0, message = "Код региона должен быть более 0")
     private Integer code;
 

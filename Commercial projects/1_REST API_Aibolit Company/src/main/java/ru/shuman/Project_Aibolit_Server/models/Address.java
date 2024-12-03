@@ -55,7 +55,7 @@ public class Address {
     private Patient patient;
 
     @ManyToOne
-    @JoinColumn(name = "region_name", referencedColumnName = "name")
+    @JoinColumn(name = "region_id", referencedColumnName = "id")
     private Region region;
 
 }

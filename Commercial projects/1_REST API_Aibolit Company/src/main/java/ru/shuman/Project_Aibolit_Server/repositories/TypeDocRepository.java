@@ -7,7 +7,6 @@ import ru.shuman.Project_Aibolit_Server.models.TypeDoc;
 import java.util.Optional;
 
 @Repository
-public interface TypeDocRepository extends JpaRepository<TypeDoc, String> {
+public interface TypeDocRepository extends JpaRepository<TypeDoc, Integer> {
     Optional<TypeDoc> findByName(String name);
-    Optional<TypeDoc> findById(Integer id);
 }

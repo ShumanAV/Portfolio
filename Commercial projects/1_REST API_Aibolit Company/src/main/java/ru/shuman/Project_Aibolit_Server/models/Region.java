@@ -20,17 +20,18 @@ import java.util.List;
 
 @Entity
 @Table(name = "region")
-public class Region implements Serializable {
+public class Region {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
     @Column(name = "code")
-    @Max(value = 999999999, message = "Код региона должен быть не более 999 999 999")
+    @Max(value = 9999, message = "Код региона должен быть не более 9 999")
     @Min(value = 0, message = "Код региона должен быть более 0")
     private Integer code;
 
-    @Id
     @Column(name = "name")
     @NotNull(message = "Наименование региона не должно быть пустым")
     @Size(max = 255, message = "Наименование региона должно быть не более 255 символов")

@@ -21,10 +21,6 @@ public class TypeDocService {
         this.typeDocRepository = typeDocRepository;
     }
 
-    public Optional<TypeDoc> findById(String typeDocId) {
-        return typeDocRepository.findById(typeDocId);
-    }
-
     public Optional<TypeDoc> findById(Integer typeDocId) {
         return typeDocRepository.findById(typeDocId);
     }
