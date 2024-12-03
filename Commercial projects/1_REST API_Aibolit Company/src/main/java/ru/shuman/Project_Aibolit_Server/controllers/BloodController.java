@@ -46,7 +46,7 @@ public class BloodController {
     Метод формирует и возвращает список групп крови в обертке ResponseEntity
      */
     @GetMapping
-    public ResponseEntity<List<BloodDTO>> sendListBlood() {
+    public ResponseEntity<List<BloodDTO>> sendListBloods() {
 
         List<Blood> bloodList = bloodService.findAll();
 
@@ -114,26 +114,6 @@ public class BloodController {
         checkingForErrorsAndThrowsException(bindingResult, BloodNotCreatedOrUpdatedException.class);
 
         bloodService.update(blood);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    /*
-    Метод удаляет группу крови по id, id передается в URL, создаем пустой объект типа BloodDTO при помощи
-    @ModelAttribute, в него записываем переданный id, валидируем id, удаляем группу крови
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable(value = "id") int bloodId,
-                                             @ModelAttribute("blood") BloodDTO bloodDTO,
-                                             BindingResult bindingResult) {
-        bloodDTO.setId(bloodId);
-        Blood blood = convertToBlood(bloodDTO);
-
-        bloodIdValidator.validate(blood, bindingResult);
-
-        checkingForErrorsAndThrowsException(bindingResult, BloodNotFoundException.class);
-
-        bloodService.delete(blood);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/typerelationships")
+@RequestMapping("/typesrelationships")
 public class TypeRelationshipWithPatientController {
 
     private final TypeRelationshipWithPatientService relationshipService;

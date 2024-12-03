@@ -64,14 +64,6 @@ public class BloodService {
     }
 
     /*
-    Метод удаляет выбранную группу крови
-     */
-    @Transactional
-    public void delete(Blood blood) {
-        bloodRepository.delete(blood);
-    }
-
-    /*
     Метод добавляет пациента в лист группы крови, делается это для кэша
     */
     public void addPatientAtListForBlood(Patient patient, Blood blood) {
