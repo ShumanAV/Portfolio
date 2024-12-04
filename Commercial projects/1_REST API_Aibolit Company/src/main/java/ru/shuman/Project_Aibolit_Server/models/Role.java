@@ -10,6 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -39,4 +40,14 @@ public class Role {
     @OneToMany(mappedBy = "role")
     private List<Profile> profiles;
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+
+        Role role = (Role) object;
+
+        if (!Objects.equals(name, role.name)) return false;
+        return Objects.equals(runame, role.runame);
+    }
 }

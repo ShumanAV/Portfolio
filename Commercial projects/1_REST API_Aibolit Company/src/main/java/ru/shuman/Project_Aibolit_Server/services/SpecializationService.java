@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
+
 @Service
 @Transactional(readOnly = true)
 public class SpecializationService {
@@ -67,18 +69,18 @@ public class SpecializationService {
     }
 
     /*
-    Метод сохраняет измененную специализацию, специализация приходит, чтобы сохранить время создания, сначала находим по
-    id существующую специализацию и в измененную сохраняем время создания
+    Метод сохраняет изменения, которые были сделаны в изменяемой специализации, специализация приходит,
+    копируем значения всех не null полей из изменяемой специализации в существующую в БД, id и время создания остаются
+    без изменений
      */
     @Transactional
-    public void update(Specialization specialization) {
+    public void update(Specialization updatedSpecialization) {
 
-        Specialization existingSpecialization = specializationRepository.findById(specialization.getId()).get();
+        Specialization existingSpecialization = specializationRepository.findById(updatedSpecialization.getId()).get();
 
-        specialization.setCreatedAt(existingSpecialization.getCreatedAt());
-        specialization.setUpdatedAt(LocalDateTime.now());
+        copyNonNullProperties(updatedSpecialization, existingSpecialization);
 
-        specializationRepository.save(specialization);
+        existingSpecialization.setUpdatedAt(LocalDateTime.now());
     }
 
     /*

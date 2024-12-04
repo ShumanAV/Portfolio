@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
+
 @Service
 @Transactional(readOnly = true)
 public class DoctorService {
@@ -95,52 +97,56 @@ public class DoctorService {
         doctorRepository.save(doctor);
     }
 
-        /*
-    Метод update осуществляет изменение существующего врача в БД.
-
-    В методе данный врач добавляется в список врачей для объекта специализации из БД, для кэша.
-    Переносит из существующего в БД доктора дату создания в измененного доктора.
-    Устанавливает дату и время изменения.
-    Выполняет поиск пользователя у данного врача.
-
-    Далее, в случае если у входящего врача есть доступ к системе, т.е. AccessToSystem = True,
-    если для данного врача уже есть пользователь в БД, то происходит его изменение,
-    если пользователя нет, то происходит создание и сохранение нового пользователя.
-    Делается это без каскадирования, т.е. отдельно для пользователя.
-
-    Если AccessToSystem = False, но при этом есть уже пользователь в БД, происходит его удаление.
-
-    Далее происходит сохранение обновленного врача.
+    /*
+    Метод update сохраняет изменения в БД, которые сделаны в изменяемом враче.
      */
     @Transactional
     public void update(Doctor updatedDoctor) {
 
-        specializationService.addDoctorAtListForSpecialization(updatedDoctor, updatedDoctor.getSpecialization());
+        //находим в БД существующего врача
+        Doctor existingDoctor = doctorRepository.findById(updatedDoctor.getId()).get();
 
-        Optional<Doctor> existingDoctor = doctorRepository.findById(updatedDoctor.getId());
+        //если у существующего врача из БД и у измененного врача разные специализации, значит специализацию изменили,
+        // поэтому для кэша удалим из списка докторов у старой специализации существующего доктора
+        if (!existingDoctor.getSpecialization().equals(updatedDoctor.getSpecialization())) {
+            existingDoctor.getSpecialization().getDoctors().remove(existingDoctor);
+        }
 
-        updatedDoctor.setCreatedAt(existingDoctor.get().getCreatedAt());
-        updatedDoctor.setUpdatedAt(LocalDateTime.now());
+        //копируем значения всех полей не null из изменяемого доктора в существующего
+        copyNonNullProperties(updatedDoctor, existingDoctor);
 
-        Profile existingProfile = doctorRepository.findById(updatedDoctor.getId()).get().getProfile();
+        //у существующего доктора обновляем время изменения
+        existingDoctor.setUpdatedAt(LocalDateTime.now());
 
-        if (updatedDoctor.getAccessToSystem()) {
+        //для кэша, добавляем в список докторов у специализации или заменяем, если он уже там есть
+        specializationService.addDoctorAtListForSpecialization(existingDoctor, existingDoctor.getSpecialization());
 
-            updatedDoctor.getProfile().setDoctor(updatedDoctor);
-            if (existingProfile != null) {
-                profileService.update(existingProfile, updatedDoctor.getProfile());
+        //находим существующий профиль у существующего доктора
+        Profile existingProfile = existingDoctor.getProfile();
+
+        //Проверяем есть ли у врача - пользователя доступ к системе, если есть, значит должен быть профиль
+        if (existingDoctor.getAccessToSystem()) {
+
+            //Если профиль уже был, т.е. его id не равен null, значит его могли изменить, поэтому делаем апдейт профиля
+            if (existingProfile.getId() != null) {
+                profileService.update(existingProfile, existingDoctor.getProfile());
+
+                //иначе если id профиля равен null, значит профиль новый, ранее доступа у данного пользователя не было,
+                // значит создаем новый профиль
             } else {
-                profileService.create(updatedDoctor.getProfile());
+                profileService.create(existingDoctor.getProfile());
             }
 
-        } else {
+            //для кэша, для профиля установим измененного доктора
+            existingDoctor.getProfile().setDoctor(existingDoctor);
 
+        } else {
+            //Если у пользователя нет доступа к системе, но при этом в БД есть профиль, это значит что доступ к системе
+            // у данного пользователя ранее был, но его убрали, значит и старый профиль больше не нужен, удаляем его
             if (existingProfile != null) {
                 profileService.delete(existingProfile);
             }
         }
-
-        doctorRepository.save(updatedDoctor);
     }
 
     /*
