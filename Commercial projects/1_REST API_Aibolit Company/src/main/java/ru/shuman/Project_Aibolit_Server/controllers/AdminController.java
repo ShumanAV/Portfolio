@@ -20,6 +20,9 @@ public class AdminController {
 
     private final AdminService adminService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public AdminController(AdminService adminService) {
         this.adminService = adminService;

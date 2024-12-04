@@ -1,5 +1,8 @@
 package ru.shuman.Project_Aibolit_Server.util;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -10,9 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /*
 Класс GeneralMethods содержит статические методы, которые используются многократно по коду.
@@ -348,4 +349,33 @@ public class GeneralMethods {
         }
         return null;
     }
+
+    /*
+    Метод копирует значения полей не null из объекта источника в объект цель
+     */
+    public static void copyNonNullProperties(Object src, Object target) {
+        BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
+    }
+
+    /*
+    Метод возвращает массив String полей объекта источника, которые имеют значение null, на вход принимает объект
+    источник.
+
+    Например, объект источник - прайс Price, когда фронт-енд присылает объект Price для апдейта, могут быть заполнены
+    не все поля, нужно чтобы записались в БД только те поля, которые не null, данный метод определяет поля со значением
+    null и возвращает массив данных полей
+     */
+    public static String[] getNullPropertyNames (Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<String>();
+        for(java.beans.PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
+    }
+
 }

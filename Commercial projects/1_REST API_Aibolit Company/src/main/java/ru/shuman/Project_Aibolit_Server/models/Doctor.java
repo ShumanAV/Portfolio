@@ -56,13 +56,13 @@ public class Doctor {
     private LocalDate birthday;
 
     @Column(name = "access_to_system")
-    private boolean accessToSystem;
+    private Boolean accessToSystem;
 
     @Column(name = "show_in_schedule")
-    private boolean showInSchedule;
+    private Boolean showInSchedule;
 
     @Column(name = "published")
-    private boolean published;
+    private Boolean published;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

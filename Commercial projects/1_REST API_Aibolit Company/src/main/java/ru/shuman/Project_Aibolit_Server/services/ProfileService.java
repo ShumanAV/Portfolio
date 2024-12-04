@@ -19,6 +19,9 @@ public class ProfileService {
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public ProfileService(ProfileRepository profileRepository, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.profileRepository = profileRepository;
@@ -62,7 +65,8 @@ public class ProfileService {
 
     /*
     Метод update обновляет входящий с формы профиль, точнее заполняет данный профиль данными:
-    идентификатор, берется у существующего профиля из БД, если пароль у входящего профиля отличается от пароля в БД,
+    идентификатор, берется у существующего профиля из БД, время создания,
+    если пароль у входящего профиля отличается от пароля в БД,
     то обновляется зашифрованный пароль, дата и время изменения, также для выявления
     наличия списка профилей у роли и для кэша - у роли добавляется в список профилей данный профиль.
     Профиль сохраняется.
@@ -77,6 +81,7 @@ public class ProfileService {
             updatedProfile.setPassword(encodedPassword);
         }
 
+        updatedProfile.setCreatedAt(existingProfile.getCreatedAt());
         updatedProfile.setUpdatedAt(LocalDateTime.now());
 
         roleService.addProfileAtListForRole(updatedProfile, updatedProfile.getRole());

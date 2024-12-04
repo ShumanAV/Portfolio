@@ -54,7 +54,7 @@ public class PatientDTO {
 
     private Date birthday;
 
-    private boolean published;
+    private Boolean published;
 
     private LocalDateTime createdAt;
 

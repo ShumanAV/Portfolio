@@ -32,7 +32,7 @@ public class Specialization {
     private String description;
 
     @Column(name = "published")
-    private boolean published;
+    private Boolean published;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

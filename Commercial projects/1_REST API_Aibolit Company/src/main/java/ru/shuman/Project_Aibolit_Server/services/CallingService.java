@@ -20,6 +20,9 @@ public class CallingService {
     private final PriceService priceService;
     private final PatientService patientService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public CallingService(CallingRepository callingRepository, DoctorService doctorService, JournalService journalService,
                           PriceService priceService, PatientService patientService) {
@@ -30,14 +33,25 @@ public class CallingService {
         this.patientService = patientService;
     }
 
+    /*
+    Метод находит вызов врача по id и возвращает его в обертке Optional
+     */
     public Optional<Calling> findById(Integer callingId) {
         return callingRepository.findById(callingId);
     }
 
+    /*
+    Метод формирует список всех вызовов врачей и возвращает его
+    */
     public List<Calling> findAll() {
         return callingRepository.findAll();
     }
 
+    /*
+    Метод сохраняет новый вызов врача в БД, вносит дату и время создания и изменения.
+    Создает по цепочке дочернюю сущность Journal - карточка вызова врача, создает или обновляет Patient - пациента.
+    Для кэша данный вызов добавляется в список вызовов доктора, прайса, в журнал, пациента.
+    */
     @Transactional
     public void create(Calling calling) {
 
@@ -61,9 +75,17 @@ public class CallingService {
         callingRepository.save(calling);
     }
 
+    /*
+    Метод сохраняет измененный вызов врача в БД, вносит дату и время изменения.
+    Создает по цепочке дочернюю сущность Journal - карточка вызова врача, создает или обновляет Patient - пациента.
+    Для кэша данный вызов добавляется в список вызовов доктора, прайса, в журнал, пациента.
+    */
     @Transactional
     public void update(Calling calling) {
 
+        Optional<Calling> existingCalling = callingRepository.findById(calling.getId());
+
+        calling.setCreatedAt(existingCalling.get().getCreatedAt());
         calling.setUpdatedAt(LocalDateTime.now());
 
         doctorService.addCallingAtListForDoctor(calling, calling.getDoctor());

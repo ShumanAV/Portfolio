@@ -18,6 +18,5 @@ public class SpecializationDTO {
 
     private String description;
 
-    private boolean published;
-
+    private Boolean published;
 }

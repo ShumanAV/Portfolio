@@ -79,7 +79,7 @@ public class Patient {
     private Date birthday;
 
     @Column(name = "published")
-    private boolean published;
+    private Boolean published;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

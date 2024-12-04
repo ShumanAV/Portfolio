@@ -1,5 +1,8 @@
 package ru.shuman.Project_Aibolit_Server.services;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,8 +12,12 @@ import ru.shuman.Project_Aibolit_Server.repositories.PriceRepository;
 import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
 
 @Service
 @Transactional(readOnly = true)
@@ -60,18 +67,18 @@ public class PriceService {
     }
 
     /*
-    Метод сохраняет измененный прайс, находим существующий прайс в БД, из него переносим дату создания в изменяемый
-    прайс, обновляем дату изменения и сохраняем изменяемый прайс
+    Метод сохраняет поля из измененного прайса в существующий в БД, находим существующий прайс в БД,
+    из измененного прайса переносим все поля, которые не null в существующий прайс, обновляем дату и время изменения
+    и сохраняем обновленный существующий прайс
      */
     @Transactional
     public void update(Price price) {
 
         Price existingPrice = priceRepository.findById(price.getId()).get();
 
-        price.setCreatedAt(existingPrice.getCreatedAt());
-        price.setUpdatedAt(LocalDateTime.now());
+        copyNonNullProperties(price, existingPrice);
 
-        priceRepository.save(price);
+        existingPrice.setUpdatedAt(LocalDateTime.now());
     }
 
     /*

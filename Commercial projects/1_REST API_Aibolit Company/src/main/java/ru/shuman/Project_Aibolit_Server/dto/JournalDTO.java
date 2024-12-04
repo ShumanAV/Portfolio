@@ -21,7 +21,7 @@ public class JournalDTO {
 
     private String recommendation;
 
-    private boolean published;
+    private Boolean published;
 
     private LocalDateTime createdAt;
 

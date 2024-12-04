@@ -37,11 +37,11 @@ public class DoctorDTO {
 
     private LocalDate birthday;
 
-    private boolean accessToSystem;
+    private Boolean accessToSystem;
 
-    private boolean showInSchedule;
+    private Boolean showInSchedule;
 
-    private boolean published;
+    private Boolean published;
 
     private LocalDateTime createdAt;
 

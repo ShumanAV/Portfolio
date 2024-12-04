@@ -23,7 +23,7 @@ public class TypeContractDTO {
 
     @Max(value = 999999999, message = "Стоимость должна быть не более 999 999 999")
     @Min(value = 0, message = "Стоимость должна быть более 0")
-    private int cost;
+    private Integer cost;
 
     private LocalDateTime createdAt;
 

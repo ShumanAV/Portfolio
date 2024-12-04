@@ -39,7 +39,7 @@ public class Parent {
     private String patronymic;
 
     @Column(name = "parent_now")
-    private boolean parentNow;
+    private Boolean parentNow;
 
     @Column(name = "power_of_attorney")
     @Size(max = 100, message = "Документ должен быть не более 100 символов")
@@ -78,7 +78,7 @@ public class Parent {
     private Date birthday;
 
     @Column(name = "published")
-    private boolean published;
+    private Boolean published;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

@@ -22,7 +22,7 @@ public class ParentDTO {
     @Size(max = 100, message = "Отчество должно быть не более 100 символов")
     private String patronymic;
 
-    private boolean parentNow;
+    private Boolean parentNow;
 
     @Size(max = 100, message = "Документ должен быть не более 100 символов")
     private String powerOfAttorney;
@@ -51,7 +51,7 @@ public class ParentDTO {
 
     private Date birthday;
 
-    private boolean published;
+    private Boolean published;
 
     private DocumentDTO document;
 

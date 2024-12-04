@@ -19,6 +19,9 @@ public class DoctorService {
     private final ProfileService profileService;
     private final SpecializationService specializationService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public DoctorService(DoctorRepository doctorRepository, ProfileService profileService, SpecializationService specializationService) {
         this.doctorRepository = doctorRepository;
@@ -96,6 +99,7 @@ public class DoctorService {
     Метод update осуществляет изменение существующего врача в БД.
 
     В методе данный врач добавляется в список врачей для объекта специализации из БД, для кэша.
+    Переносит из существующего в БД доктора дату создания в измененного доктора.
     Устанавливает дату и время изменения.
     Выполняет поиск пользователя у данного врача.
 
@@ -113,6 +117,9 @@ public class DoctorService {
 
         specializationService.addDoctorAtListForSpecialization(updatedDoctor, updatedDoctor.getSpecialization());
 
+        Optional<Doctor> existingDoctor = doctorRepository.findById(updatedDoctor.getId());
+
+        updatedDoctor.setCreatedAt(existingDoctor.get().getCreatedAt());
         updatedDoctor.setUpdatedAt(LocalDateTime.now());
 
         Profile existingProfile = doctorRepository.findById(updatedDoctor.getId()).get().getProfile();
