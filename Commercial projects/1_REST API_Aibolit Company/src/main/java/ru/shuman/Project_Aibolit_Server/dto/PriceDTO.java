@@ -16,15 +16,16 @@ public class PriceDTO {
 
     private Integer id;
 
-    @NotNull(message = "Наименование услуги не заполнено")
+    @NotNull(message = "Наименование услуги отсутствует")
     @Size(max = 255, message = "Наименование услуги должно быть не более 255 символов")
     private String name;
 
-    @NotNull(message = "Стоимость услуги не заполнена")
+    @NotNull(message = "Стоимость услуги отсутствует")
     @Max(value = 999999999, message = "Стоимость услуги должна быть не более 999 999 999")
     @Min(value = 0, message = "Стоимость услуги должна быть более 0")
     private Integer cost;
 
+    @NotNull(message = "Поле published отсутствует")
     private Boolean published;
 
     private LocalDateTime createdAt;

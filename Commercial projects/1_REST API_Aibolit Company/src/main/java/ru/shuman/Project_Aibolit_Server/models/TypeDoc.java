@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -26,7 +27,8 @@ public class TypeDoc {
     private Integer id;
 
     @Column(name = "name")
-    @NotNull(message = "Наименование типа документа не должно быть пустым")
+    @NotNull(message = "Наименование типа документа отсутствует")
+    @NotEmpty(message = "Наименование типа документа не заполнено")
     @Size(max = 255, message = "Наименование типа документа должно быть не более 255 символов")
     private String name;
 

@@ -7,6 +7,8 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
@@ -26,11 +28,14 @@ public class Document {
     private Integer id;
 
     @Column(name = "name")
+    @NotNull(message = "Наименование документа отсутствует")
+    @NotEmpty(message = "Наименование документа не заполнено")
     @Size(max = 255, message = "Наименование документа должно быть не более 255 символов")
     private String name;
 
     @ManyToOne
     @JoinColumn(name = "type_doc_id", referencedColumnName = "id")
+    @NotNull(message = "Тип документа отсутствует")
     private TypeDoc typeDoc;
 
     @OneToOne(mappedBy = "document")

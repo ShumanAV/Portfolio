@@ -351,7 +351,9 @@ public class GeneralMethods {
     }
 
     /*
-    Метод копирует значения полей не null из объекта источника в объект цель
+    Метод копирует значения полей, которые не null из объекта источника в объект цель.
+    Используется при апдейте сущностей, чтобы при сохранении поля со значениями null не заменяли значения в БД,
+    чтобы в БД не терять данные (как пример, поле createdAt).
      */
     public static void copyNonNullProperties(Object src, Object target) {
         BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
@@ -369,7 +371,7 @@ public class GeneralMethods {
         final BeanWrapper src = new BeanWrapperImpl(source);
         java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
-        Set<String> emptyNames = new HashSet<String>();
+        Set<String> emptyNames = new HashSet<>();
         for(java.beans.PropertyDescriptor pd : pds) {
             Object srcValue = src.getPropertyValue(pd.getName());
             if (srcValue == null) emptyNames.add(pd.getName());

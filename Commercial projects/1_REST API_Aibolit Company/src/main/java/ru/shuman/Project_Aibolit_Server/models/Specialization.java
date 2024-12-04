@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,13 +27,17 @@ public class Specialization {
     private Integer id;
 
     @Column(name = "name")
+    @NotNull(message = "Наименование специализации отсутствует")
+    @NotEmpty(message = "Наименование специализации не заполнено")
     @Size(max = 100, message = "Наименование специализации должно быть не более 100 символов")
     private String name;
 
     @Column(name = "description")
+    @NotNull(message = "Описание специализации отсутствует")
     private String description;
 
     @Column(name = "published")
+    @NotNull(message = "Поле published отсутствует")
     private Boolean published;
 
     @Column(name = "created_at")

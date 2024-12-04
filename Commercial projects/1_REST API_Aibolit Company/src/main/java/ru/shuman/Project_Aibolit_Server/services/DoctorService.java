@@ -87,7 +87,7 @@ public class DoctorService {
         doctor.setCreatedAt(LocalDateTime.now());
         doctor.setUpdatedAt(LocalDateTime.now());
 
-        if (doctor.isAccessToSystem()) {
+        if (doctor.getAccessToSystem()) {
             doctor.getProfile().setDoctor(doctor);
             profileService.create(doctor.getProfile());
         }
@@ -124,7 +124,7 @@ public class DoctorService {
 
         Profile existingProfile = doctorRepository.findById(updatedDoctor.getId()).get().getProfile();
 
-        if (updatedDoctor.isAccessToSystem()) {
+        if (updatedDoctor.getAccessToSystem()) {
 
             updatedDoctor.getProfile().setDoctor(updatedDoctor);
             if (existingProfile != null) {

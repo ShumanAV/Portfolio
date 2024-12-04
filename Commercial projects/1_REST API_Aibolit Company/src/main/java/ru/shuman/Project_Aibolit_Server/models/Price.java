@@ -28,17 +28,18 @@ public class Price {
     private Integer id;
 
     @Column(name = "name")
-    @NotNull(message = "Наименование услуги не заполнено")
+    @NotNull(message = "Наименование услуги отсутствует")
     @Size(max = 255, message = "Наименование услуги должно быть не более 255 символов")
     private String name;
 
     @Column(name = "cost")
-    @NotNull(message = "Стоимость услуги не заполнена")
+    @NotNull(message = "Стоимость услуги отсутствует")
     @Max(value = 999999999, message = "Стоимость услуги должна быть не более 999 999 999")
     @Min(value = 0, message = "Стоимость услуги должна быть более 0")
     private Integer cost;
 
     @Column(name = "published")
+    @NotNull(message = "Поле published отсутствует")
     private Boolean published;
 
     @Column(name = "created_at")

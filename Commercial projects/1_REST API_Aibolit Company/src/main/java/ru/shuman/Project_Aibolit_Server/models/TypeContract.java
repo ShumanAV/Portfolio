@@ -6,10 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,10 +26,12 @@ public class TypeContract {
 
     @Column(name = "name")
     @NotNull(message = "Наименование типа контракта отсутствует")
+    @NotEmpty(message = "Наименование типа контракта не заполнено")
     @Size(max = 255, message = "Наименование типа контракта должно быть не более 255 символов")
     private String name;
 
     @Column(name = "cost")
+    @NotNull(message = "Стоимость типа контракта отсутствует")
     @Max(value = 999999999, message = "Стоимость должна быть не более 999 999 999")
     @Min(value = 0, message = "Стоимость должна быть более 0")
     private Integer cost;

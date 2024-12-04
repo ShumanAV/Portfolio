@@ -9,6 +9,8 @@ import ru.shuman.Project_Aibolit_Server.repositories.JournalRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
+
 @Service
 @Transactional(readOnly = true)
 public class JournalService {
@@ -43,16 +45,15 @@ public class JournalService {
     }
 
     /*
-    Метод изменяет существующую карточку вызова врача в БД, обновляется дата и время изменения
+    Метод сохраняет изменения в карточке вызова врача в БД, все изменения переносятся с изменяемого объекта в
+    существующий, обновляется дата и время изменения
      */
     @Transactional
-    public void update(Journal journal) {
+    public void update(Journal updatedJournal) {
 
-//        Optional<Journal> existingJournal = journalRepository.findById(journal.getId());
-//
-//        journal.setCreatedAt();
-        journal.setUpdatedAt(LocalDateTime.now());
+        Journal existingJournal = journalRepository.findById(updatedJournal.getId()).get();
 
-        journalRepository.save(journal);
+        copyNonNullProperties(updatedJournal, existingJournal);
+        existingJournal.setUpdatedAt(LocalDateTime.now());
     }
 }

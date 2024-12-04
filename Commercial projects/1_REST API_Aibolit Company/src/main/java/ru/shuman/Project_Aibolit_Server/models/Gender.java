@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -24,6 +26,8 @@ public class Gender {
     private Integer id;
 
     @Column(name = "name")
+    @NotNull(message = "Наименование гендерного признака отсутствует")
+    @NotEmpty(message = "Наименование гендерного признака не заполнено")
     @Size(max = 20, message = "Наименование гендерного признака должно быть не более 20 символов")
     private String name;
 
