@@ -62,6 +62,5 @@ public class DoctorDTO {
     @NotNull(message = "Специализация отсутствует")
     private SpecializationDTO specialization;
 
-    @NotNull(message = "Профиль отсутствует")
-    private ProfileDTO profileDTO;
+    private ProfileDTO profile;
 }

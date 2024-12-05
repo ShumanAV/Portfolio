@@ -8,6 +8,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -26,7 +27,6 @@ public class Profile {
     private Integer id;
 
     @Column(name = "username")
-    @NotEmpty(message = "Поле имя пользователя отсутствует")
     @Size(min = 2, max = 100, message = "Электронная почта должна быть не менее 2 и не более 100 символов")
     @Email(message = "Электронная почта должна быть в формате ххх@xxx.xx")
     private String username;
@@ -46,7 +46,6 @@ public class Profile {
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
-    @NotEmpty(message = "Поле роль отсутствует")
     private Role role;
 
 }

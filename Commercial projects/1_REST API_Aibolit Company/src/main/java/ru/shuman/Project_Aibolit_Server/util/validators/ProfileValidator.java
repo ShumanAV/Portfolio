@@ -36,7 +36,7 @@ public class ProfileValidator implements Validator {
 
         String field = searchNameFieldInParentEntity(errors, profile.getClass());
 
-        // Блок проверки наличия имени пользователя у профайла
+        // Блок проверки наличия имени пользователя у профиля
         if (profile.getUsername() == null || profile.getUsername().equals("")) {
             errors.rejectValue(field == null ? "username": field, "", "Имя пользователя не заполнено!");
 
@@ -55,12 +55,12 @@ public class ProfileValidator implements Validator {
             errors.rejectValue(field == null ? "password": field, "", "Пароль пользователя не заполнен!");
         }
 
-        // Блок проверки наличия роли у профайла
+        // Блок проверки наличия роли у профиля
         if (profile.getRole() == null) {
             errors.rejectValue(field == null ? "role": field, "", "У профиля не выбрана роль!");
 
         } else {
-            // Блок проверки наличия Id у роли
+            // Блок валидации роли
             roleIdValidator.validate(profile.getRole(), errors);
             roleValidator.validate(profile.getRole(), errors);
         }

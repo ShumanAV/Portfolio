@@ -75,7 +75,9 @@ public class ProfileService {
     если роль была изменена у профиля, из списка профилей у старой роли удаляется существующий профиль.
     */
     @Transactional
-    public void update(Profile existingProfile, Profile updatedProfile) {
+    public void update(Profile updatedProfile) {
+
+        Profile existingProfile = profileRepository.findById(updatedProfile.getId()).get();
 
         //для кэша, если у изменяемого профиля изменили роль, т.е. у существующего профиля и у изменяемого роль
         //отличается, то тогда у роли в списке которой находился существующиц профиль, удалим его
@@ -83,10 +85,10 @@ public class ProfileService {
             existingProfile.getRole().getProfiles().remove(existingProfile);
         }
 
-        copyNonNullProperties(updatedProfile, existingProfile);
-
         String encodedUpdatedPassword = passwordEncoder.encode(updatedProfile.getPassword());
-        existingProfile.setPassword(encodedUpdatedPassword);
+        updatedProfile.setPassword(encodedUpdatedPassword);
+
+        copyNonNullProperties(updatedProfile, existingProfile);
 
         existingProfile.setUpdatedAt(LocalDateTime.now());
 

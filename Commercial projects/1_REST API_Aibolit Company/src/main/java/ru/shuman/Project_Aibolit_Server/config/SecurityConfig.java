@@ -3,6 +3,7 @@ package ru.shuman.Project_Aibolit_Server.config;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,8 +46,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()         // отключение защиты csrf
                 .authorizeRequests()
 //                .antMatchers("/admin").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/doctors").hasAnyRole("DIRECTOR", "ADMIN")
+                .antMatchers(HttpMethod.GET, "/doctors/**").hasAnyRole("DIRECTOR", "ADMIN")
+                .antMatchers(HttpMethod.PATCH, "/doctors/{id}").hasAnyRole("DIRECTOR", "ADMIN")
                 .antMatchers("/admin", "/auth/login", "/auth/registration", "/error").permitAll()
-                .anyRequest().hasAnyRole("USER", "PHONE_ADMIN", "DIRECTOR", "DOCTOR")
+                .anyRequest().hasAnyRole("USER", "ADMIN", "DIRECTOR", "DOCTOR")
                 .and()
                 .formLogin().loginPage("/auth/login")
                 .loginProcessingUrl("/process_login")
@@ -59,22 +63,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.exceptionHandling()
-                .authenticationEntryPoint(
-                        (request, response, ex) -> {
-                            response.sendError(
-                                    HttpServletResponse.SC_UNAUTHORIZED,
-                                    ex.getMessage()
-                            );
-//                            response.setContentType("application/json");
-//                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//                            response.getOutputStream().println("{ \"error\": \"" + "Access is denied, the user is not authenticated. Possibly an invalid or expired JWT token." + "\" }");
-                        }
-                );
-
-//        http.exceptionHandling()
-//                .authenticationEntryPoint(restAuthenticationEntryPoint);
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
@@ -98,17 +86,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
-    }
-
-    // Метод обработчик исключения JWTVerificationException
-    @ExceptionHandler
-    private ResponseEntity<AuthenticationErrorResponse> handleException(JWTVerificationException e) {
-        AuthenticationErrorResponse response = new AuthenticationErrorResponse(
-                e.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
 }

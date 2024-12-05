@@ -44,49 +44,53 @@ public class DoctorValidator implements Validator {
         // Блок проверки отсутствия пользователя с таким телефоном
         Optional<Doctor> existingDoctor = doctorService.findByPhone(doctor.getPhone());
         if (existingDoctor.isPresent() && doctor.getId() != existingDoctor.get().getId()) {
-            errors.rejectValue(field == null ? "phone": field, "", "Доктор с таким номером телефона уже существует!");
+            errors.rejectValue(field == null ? "phone" : field, "", "Доктор с таким номером телефона уже существует!");
         }
 
         // Блок проверки отсутствия пользователя с таким СНИЛС
         existingDoctor = doctorService.findBySnils(doctor.getSnils());
         if (existingDoctor.isPresent() && doctor.getId() != existingDoctor.get().getId()) {
-            errors.rejectValue(field == null ? "snils": field, "", "Доктор с таким номером СНИЛС уже существует!");
+            errors.rejectValue(field == null ? "snils" : field, "", "Доктор с таким номером СНИЛС уже существует!");
         }
 
         // Блок проверки отсутствия пользователя с таким ИНН
         existingDoctor = doctorService.findByInn(doctor.getInn());
         if (existingDoctor.isPresent() && doctor.getId() != existingDoctor.get().getId()) {
-            errors.rejectValue(field == null ? "inn": field, "", "Доктор с таким номером ИНН уже существует!");
+            errors.rejectValue(field == null ? "inn" : field, "", "Доктор с таким номером ИНН уже существует!");
         }
 
-        // Блог проверки наличия специализации у пользователя
-        if (doctor.getSpecialization() == null) {
-            errors.rejectValue(field == null ? "specialization": field, "", "У доктора не заполнено поле специализация!");
-
-        } else {
-            // Блог проверки наличия Id специализации у пользователя
+        // Блок валидации специализации у пользователя
+        if (doctor.getSpecialization() != null) {
             specializationIdValidator.validate(doctor.getSpecialization(), errors);
-            specializationValidator.validate(doctor.getSpecialization(), errors);
+
+            // Для валидации специализации потребуется id, если есть id то валидируем, в случае отсутствия id -
+            // ошибка об отсутствии id будет сформирована выше в валидаторе id специализации
+            if (doctor.getSpecialization().getId() != null) {
+                specializationValidator.validate(doctor.getSpecialization(), errors);
+            }
         }
 
-        // Блок проверки профиля пользователя
-        if (doctor.isAccessToSystem()) {
+        // Блок проверки профиля пользователя, если у пользователя есть доступ к системе, значит должен быть профиль
+        // не равен null
+        if (doctor.getAccessToSystem() != null) {
+            if (doctor.getAccessToSystem()) {
 
-            // Блок проверки наличия профайла у пользователя
-            if (doctor.getProfile() == null) {
-                errors.rejectValue(field == null ? "profile": field, "", "У доктора есть доступ к системе, но отсутствует профиль!");
-            } else {
-                if (doctor.getProfile().getId() != null) {
-                    profileIdValidator.validate(doctor.getProfile(), errors);
+                // Блок проверки наличия профиля у пользователя
+                if (doctor.getProfile() == null) {
+                    errors.rejectValue(field == null ? "profile" : field, "", "У доктора есть доступ к системе, но отсутствует профиль!");
+                } else {
+                    if (doctor.getProfile().getId() != null) {
+                        profileIdValidator.validate(doctor.getProfile(), errors);
+                    }
+                    profileValidator.validate(doctor.getProfile(), errors);
                 }
-                profileValidator.validate(doctor.getProfile(), errors);
-            }
 
-        } else {
+            } else {
 
-            // Блок проверки отсутствия профайла у пользователя в случае отсутствия доступа к системе
-            if (doctor.getProfile() != null) {
-                errors.rejectValue(field == null ? "profile": field, "", "У данного доктора нет доступа к системе, но при этом есть профиль, его не должно быть!");
+                // Блок проверки отсутствия профайла у пользователя в случае отсутствия доступа к системе
+                if (doctor.getProfile() != null) {
+                    errors.rejectValue(field == null ? "profile" : field, "", "У данного доктора нет доступа к системе, но при этом есть профиль, его не должно быть!");
+                }
             }
         }
     }

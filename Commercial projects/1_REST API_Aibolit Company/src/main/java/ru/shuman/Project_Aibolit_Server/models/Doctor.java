@@ -91,7 +91,6 @@ public class Doctor {
 
     @OneToOne()
     @JoinColumn(name = "profile_id", referencedColumnName = "id")
-    @NotNull(message = "Профиль отсутствует")
     private Profile profile;
 
     @OneToMany(mappedBy = "doctor")

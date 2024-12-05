@@ -28,7 +28,7 @@ public class SpecializationValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Specialization specialization = (Specialization) o;
 
-        //Проверяем есть уже специализация с таким названием
+        //Проверяем есть ли уже специализация с таким названием
         Optional<Specialization> existingSpecialization = specializationService.findByName(specialization.getName());
         if (existingSpecialization.isPresent() && specialization.getId() != existingSpecialization.get().getId()) {
             errors.rejectValue("name", "", "Специализация с таким названием уже существует!");

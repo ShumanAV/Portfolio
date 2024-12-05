@@ -113,15 +113,15 @@ public class DoctorController {
 
     Метод осуществляет апдейт существующего врача и возвращает обертку со статусом ResponseEntity<HttpStatus>
      */
-    @PatchMapping
+    @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int doctorId,
                                              @RequestBody @Valid DoctorDTO updatedDoctorDTO,
                                              BindingResult bindingResult) {
         updatedDoctorDTO.setId(doctorId);
         Doctor updatedDoctor = convertToDoctor(updatedDoctorDTO);
 
-        doctorValidator.validate(updatedDoctor, bindingResult);
         doctorIdValidator.validate(updatedDoctor, bindingResult);
+        doctorValidator.validate(updatedDoctor, bindingResult);
 
         checkingForErrorsAndThrowsException(bindingResult, ProfileOrDoctorNotCreatedOrUpdatedException.class);
 

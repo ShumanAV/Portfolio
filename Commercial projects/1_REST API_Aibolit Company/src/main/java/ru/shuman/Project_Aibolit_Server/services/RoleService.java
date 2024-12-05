@@ -11,6 +11,8 @@ import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+
 @Service
 @Transactional(readOnly = true)
 public class RoleService {
@@ -47,7 +49,7 @@ public class RoleService {
      */
 
     public void addProfileAtListForRole(Profile profile, Role role) {
-        GeneralMethods.addObjectOneInListForObjectTwo(profile, role, this);
+        addObjectOneInListForObjectTwo(profile, role, this);
     }
 
     public List<Role> findAll() {

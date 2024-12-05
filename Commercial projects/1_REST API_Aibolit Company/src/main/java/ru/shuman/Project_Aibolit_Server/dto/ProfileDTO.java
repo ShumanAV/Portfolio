@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -14,7 +15,6 @@ public class ProfileDTO {
 
     private Integer id;
 
-    @NotEmpty(message = "Поле имя пользователя отсутствует")
     @Size(min = 2, max = 100, message = "Поле имя пользователя должно быть не менее 2 и не более 100 символов")
     @Email(message = "Поле имя пользователя должно быть в формате емэйла ххх@xxx.xx")
     private String username;
@@ -26,7 +26,6 @@ public class ProfileDTO {
 
     private LocalDateTime updatedAt;
 
-    @NotEmpty(message = "Поле роль отсутствует")
     private RoleDTO role;
 
 }

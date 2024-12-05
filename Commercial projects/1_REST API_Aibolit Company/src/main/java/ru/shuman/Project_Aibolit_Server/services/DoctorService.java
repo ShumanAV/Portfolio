@@ -129,7 +129,7 @@ public class DoctorService {
 
             //Если профиль уже был, т.е. его id не равен null, значит его могли изменить, поэтому делаем апдейт профиля
             if (existingProfile.getId() != null) {
-                profileService.update(existingProfile, existingDoctor.getProfile());
+                profileService.update(existingDoctor.getProfile());
 
                 //иначе если id профиля равен null, значит профиль новый, ранее доступа у данного пользователя не было,
                 // значит создаем новый профиль

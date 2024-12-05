@@ -27,7 +27,7 @@ public class ContractDTO {
     private LocalDateTime updatedAt;
 
     @NotNull(message = "Врач в договоре отсутствует")
-    private DoctorDTO doctorDTO;
+    private DoctorDTO doctor;
 
     @NotNull(message = "Пациент в договоре отсутствует")
     private PatientDTO patient;

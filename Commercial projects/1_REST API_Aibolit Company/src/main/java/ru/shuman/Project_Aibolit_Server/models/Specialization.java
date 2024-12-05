@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -49,4 +50,13 @@ public class Specialization {
     @OneToMany(mappedBy = "specialization")
     private List<Doctor> doctors;
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+
+        Specialization that = (Specialization) object;
+
+        return Objects.equals(name, that.name);
+    }
 }
