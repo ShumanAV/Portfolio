@@ -50,20 +50,20 @@ public class TypeRelationshipWithPatientService {
     Метод сохраняет новый тип отношений родителей с пациентом в БД
      */
     @Transactional
-    public void create(TypeRelationshipWithPatient typeRelationship) {
-        typeRelationshipWithPatientRepository.save(typeRelationship);
+    public void create(TypeRelationshipWithPatient newTypeRelationship) {
+        typeRelationshipWithPatientRepository.save(newTypeRelationship);
     }
 
     /*
     Метод изменяет существующий тип отношений родителей с пациентом в БД
      */
     @Transactional
-    public void update(TypeRelationshipWithPatient typeRelationship) {
-        typeRelationshipWithPatientRepository.save(typeRelationship);
+    public void update(TypeRelationshipWithPatient updatedTypeRelationship) {
+        typeRelationshipWithPatientRepository.save(updatedTypeRelationship);
     }
 
     /*
-    Метод добавляет родителя в лист типа отношений родителей с пациентом, делается это для кэша
+    Метод добавляет родителя в список родителей для типа отношений родителей с пациентом, делается это для кэша
     */
     public void addParentAtListForTypeRelationship(Parent parent, TypeRelationshipWithPatient typeRelationship) {
         GeneralMethods.addObjectOneInListForObjectTwo(parent, typeRelationship, this);

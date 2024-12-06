@@ -37,23 +37,31 @@ public class ContractService {
     }
 
     @Transactional
-    public void create(Contract contract) {
+    public void create(Contract newContract) {
 
-        contract.setCreatedAt(LocalDateTime.now());
-        contract.setUpdatedAt(LocalDateTime.now());
+        //Записываем дату и время создания и изменения
+        newContract.setCreatedAt(LocalDateTime.now());
+        newContract.setUpdatedAt(LocalDateTime.now());
 
-        doctorService.addContractAtListForDoctor(contract, contract.getDoctor());
+        //для кэша добавляем данный договор в лист договоров доктору, который в договоре
+        doctorService.addContractAtListForDoctor(newContract, newContract.getDoctor());
 
-        patientService.addContractAtListForPatient(contract, contract.getPatient());
-        if (contract.getPatient().getId() == null) {
-            patientService.create(contract.getPatient());
+        //для кэша добавляем данный договор в лист договоров пациенту, который в договоре
+        patientService.addContractAtListForPatient(newContract, newContract.getPatient());
+
+        //если id пациента null, это значит что пациент создан новый, поэтому нужно создать и пациента тоже,
+        // если id не null, значит пациент выбран уже существующий, в этом случае его нужно апдейтить
+        if (newContract.getPatient().getId() == null) {
+            patientService.create(newContract.getPatient());
         } else {
-            patientService.update(contract.getPatient());
+            patientService.update(newContract.getPatient());
         }
 
-        typeContractService.addContractAtListForTypeContract(contract, contract.getTypeContract());
+        //для кэша добавляем данный договор в лист договоров типу договора, который указан в договоре
+        typeContractService.addContractAtListForTypeContract(newContract, newContract.getTypeContract());
 
-        contractRepository.save(contract);
+        //сохраняем новый договор в БД
+        contractRepository.save(newContract);
     }
 
     @Transactional

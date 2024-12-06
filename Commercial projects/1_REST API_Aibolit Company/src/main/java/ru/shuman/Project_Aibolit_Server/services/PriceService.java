@@ -55,34 +55,37 @@ public class PriceService {
     }
 
     /*
-    Метод сохраняет новый прайс, добавляет в него дату и время создания и изменения
+    Метод сохраняет новый прайс в БД
      */
     @Transactional
-    public void create(Price price) {
+    public void create(Price newPrice) {
 
-        price.setCreatedAt(LocalDateTime.now());
-        price.setUpdatedAt(LocalDateTime.now());
+        //записываем в прайс дату и время создания и изменения
+        newPrice.setCreatedAt(LocalDateTime.now());
+        newPrice.setUpdatedAt(LocalDateTime.now());
 
-        priceRepository.save(price);
+        priceRepository.save(newPrice);
     }
 
     /*
-    Метод сохраняет поля из измененного прайса в существующий в БД, находим существующий прайс в БД,
+    Метод сохраняет измененный прайс в БД, находим существующий прайс в БД по id,
     из измененного прайса переносим все поля, которые не null в существующий прайс, обновляем дату и время изменения
-    и сохраняем обновленный существующий прайс
      */
     @Transactional
-    public void update(Price price) {
+    public void update(Price updatedPrice) {
 
-        Price existingPrice = priceRepository.findById(price.getId()).get();
+        //находим существующий прайс в БД по id
+        Price existingPrice = priceRepository.findById(updatedPrice.getId()).get();
 
-        copyNonNullProperties(price, existingPrice);
+        //копируем значения всех полей кроме тех, которые null, из измененного прайса в существующий прайс
+        copyNonNullProperties(updatedPrice, existingPrice);
 
+        //обновляем дату и время изменения
         existingPrice.setUpdatedAt(LocalDateTime.now());
     }
 
     /*
-    Метод добавляет вызов врача в лист прайса, делается это для кэша
+    Метод добавляет вызов врача в лист вызовов в прайсе, делается это для кэша
      */
     public void addCallingAtListForPrice(Calling calling, Price price) {
         GeneralMethods.addObjectOneInListForObjectTwo(calling, price, this);

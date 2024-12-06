@@ -53,46 +53,53 @@ public class ProfileService {
     наличия списка профилей у роли и для кэша - у роли добавляется в список профилей данный профиль.
      */
     @Transactional
-    public void create(Profile profile) {
+    public void create(Profile newProfile) {
 
-        String encodedPassword = passwordEncoder.encode(profile.getPassword());
-        profile.setPassword(encodedPassword);
+        //зашифровываем пароль указанный в новом профиле и устанавливаем его в профиль
+        String encodedPassword = passwordEncoder.encode(newProfile.getPassword());
+        newProfile.setPassword(encodedPassword);
 
-        profile.setCreatedAt(LocalDateTime.now());
-        profile.setUpdatedAt(LocalDateTime.now());
+        //записываем в профиль дату и время создания и изменения
+        newProfile.setCreatedAt(LocalDateTime.now());
+        newProfile.setUpdatedAt(LocalDateTime.now());
 
-        roleService.addProfileAtListForRole(profile, profile.getRole());
+        //добавляем профиль в список профилей для роли указанной в профиле
+        roleService.addProfileAtListForRole(newProfile, newProfile.getRole());
 
-        profileRepository.save(profile);
+        profileRepository.save(newProfile);
     }
 
     /*
-    Метод update сохраняет изменения с изменяемого профиля, переносит все изменения в существующий профиль в БД:
+    Метод update сохраняет измененный профиль, переносит все изменения в существующий профиль в БД:
     идентификатор и время создания остаются без изменений у существующего профиля,
     в существующем профиле в БД обновляется зашифрованный пароль из измененного профиля, т.к. он мог быть изменен,
-    дата и время изменения, также для выявления
-    наличия списка профилей у роли и для кэша - у роли добавляется в список профилей профиль с изменениями, а также
-    если роль была изменена у профиля, из списка профилей у старой роли удаляется существующий профиль.
+    дата и время изменения, также для выявления наличия списка профилей у роли и для кэша - у роли добавляется
+    в список профилей профиль с изменениями, а также если роль была изменена у профиля, из списка профилей
+    у старой роли удаляется существующий профиль.
     */
     @Transactional
     public void update(Profile updatedProfile) {
 
+        //находим существующий профиль в БД по id
         Profile existingProfile = profileRepository.findById(updatedProfile.getId()).get();
 
-        //для кэша, если у изменяемого профиля изменили роль, т.е. у существующего профиля и у изменяемого роль
-        //отличается, то тогда у роли в списке которой находился существующиц профиль, удалим его
+        //для кэша, если в измененном профиле изменили роль, т.е. у существующего профиля и у измененного роль
+        //отличается, то тогда удалим существующий профиль из списка профилей у старой роли
         if (!existingProfile.getRole().equals(updatedProfile.getRole())) {
             existingProfile.getRole().getProfiles().remove(existingProfile);
         }
 
+        //зашифровываем пароль из измененного профиля и записываем его обратно в измененный профиль
         String encodedUpdatedPassword = passwordEncoder.encode(updatedProfile.getPassword());
         updatedProfile.setPassword(encodedUpdatedPassword);
 
+        //копируем значения всех полей кроме тех, которые null из измененного профиля в существующий в БД
         copyNonNullProperties(updatedProfile, existingProfile);
 
+        //обновляем дату и время изменения в существующем профиле
         existingProfile.setUpdatedAt(LocalDateTime.now());
 
-        //для кэша, добавим или заменим в измененной роли в списке профилей существующий профиль
+        //для кэша, добавим или заменим измененный существующий профиль в списке профилей в указанной роли в профиле
         roleService.addProfileAtListForRole(existingProfile, existingProfile.getRole());
     }
 

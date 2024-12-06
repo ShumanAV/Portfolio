@@ -41,15 +41,16 @@ public class TypeContractService {
     }
 
     /*
-    Метод сохраняет новый тип договора в БД, добавляет дату и время создания и изменения
+    Метод сохраняет новый тип договора в БД
      */
     @Transactional
-    public void create(TypeContract typeContract) {
+    public void create(TypeContract newTypeContract) {
 
-        typeContract.setCreatedAt(LocalDateTime.now());
-        typeContract.setUpdatedAt(LocalDateTime.now());
+        //добавляем дату и время создания и изменения
+        newTypeContract.setCreatedAt(LocalDateTime.now());
+        newTypeContract.setUpdatedAt(LocalDateTime.now());
 
-        typeContractRepository.save(typeContract);
+        typeContractRepository.save(newTypeContract);
     }
 
     /*
@@ -57,14 +58,14 @@ public class TypeContractService {
     из типа договора из БД в изменяемый, обновляем дату и время изменения и сохраняем
      */
     @Transactional
-    public void update(TypeContract typeContract) {
+    public void update(TypeContract updatedtypeContract) {
 
-        Optional<TypeContract> existingTypeContract = typeContractRepository.findById(typeContract.getId());
+        Optional<TypeContract> existingTypeContract = typeContractRepository.findById(updatedtypeContract.getId());
 
-        typeContract.setCreatedAt(existingTypeContract.get().getCreatedAt());
-        typeContract.setUpdatedAt(LocalDateTime.now());
+        updatedtypeContract.setCreatedAt(existingTypeContract.get().getCreatedAt());
+        updatedtypeContract.setUpdatedAt(LocalDateTime.now());
 
-        typeContractRepository.save(typeContract);
+        typeContractRepository.save(updatedtypeContract);
     }
 
     /*

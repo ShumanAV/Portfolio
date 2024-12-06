@@ -19,40 +19,55 @@ public class RoleService {
 
     private final RoleRepository roleRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public RoleService(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
 
+    /*
+    Метод формирует и возвращает список всех ролей
+     */
+    public List<Role> findAll() {
+        return roleRepository.findAll();
+    }
+
+    /*
+    Метод ищет роль по имени и возвращает ее в обертке Optional
+     */
     public Optional<Role> findByName(String name) {
         return roleRepository.findByName(name);
     }
 
+    /*
+    Метод ищет роль по id и возвращает ее в обертке Optional
+     */
     public Optional<Role> findById(Integer roleId) {
         return roleRepository.findById(roleId);
     }
 
+    /*
+    Метод сохраняет новую роль в БД
+     */
     @Transactional
-    public void create(Role role) {
-        roleRepository.save(role);
-    }
-
-    @Transactional
-    public void update(Role role) {
-        roleRepository.save(role);
+    public void create(Role newRole) {
+        roleRepository.save(newRole);
     }
 
     /*
-    Метод принимает на вход пользователя, далее для данного пользователя
-    находится роль из БД, проверяется есть ли список пользователей у данной роли, если он равен null, то создается
-    new ArrayList<>(), а если список уже есть, то добавляется данный пользователь.
+    Метод сохраняет измененную роль в БД
      */
-
-    public void addProfileAtListForRole(Profile profile, Role role) {
-        addObjectOneInListForObjectTwo(profile, role, this);
+    @Transactional
+    public void update(Role updatedRole) {
+        roleRepository.save(updatedRole);
     }
 
-    public List<Role> findAll() {
-        return roleRepository.findAll();
+    /*
+    Метод добавляет профиль в список профилей для роли указанной в профиле, делается это для кэша
+     */
+    public void addProfileAtListForRole(Profile profile, Role role) {
+        addObjectOneInListForObjectTwo(profile, role, this);
     }
 }

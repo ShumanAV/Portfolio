@@ -33,27 +33,32 @@ public class JournalService {
     }
 
     /*
-    Метод сохраняет новую карточку вызова врача в БД, вносится дата и время создания и изменения
+    Метод сохраняет новую карточку вызова врача в БД
      */
     @Transactional
-    public void create(Journal journal) {
+    public void create(Journal newJournal) {
 
-        journal.setCreatedAt(LocalDateTime.now());
-        journal.setUpdatedAt(LocalDateTime.now());
+        //записываем дату и время создания и изменения
+        newJournal.setCreatedAt(LocalDateTime.now());
+        newJournal.setUpdatedAt(LocalDateTime.now());
 
-        journalRepository.save(journal);
+        journalRepository.save(newJournal);
     }
 
     /*
-    Метод сохраняет изменения в карточке вызова врача в БД, все изменения переносятся с изменяемого объекта в
+    Метод сохраняет измененную карточку вызова врача в БД, все изменения переносятся с изменяемого объекта в
     существующий, обновляется дата и время изменения
      */
     @Transactional
     public void update(Journal updatedJournal) {
 
+        //находим существующую карточку вызова врача в БД по id
         Journal existingJournal = journalRepository.findById(updatedJournal.getId()).get();
 
+        //копируем значения всех полей кроме тех, которые null, из измененной карточки в существующую
         copyNonNullProperties(updatedJournal, existingJournal);
+
+        //обновляем дату и время изменения
         existingJournal.setUpdatedAt(LocalDateTime.now());
     }
 }

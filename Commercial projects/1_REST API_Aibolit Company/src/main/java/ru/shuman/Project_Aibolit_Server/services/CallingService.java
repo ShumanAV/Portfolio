@@ -50,29 +50,37 @@ public class CallingService {
     /*
     Метод сохраняет новый вызов врача в БД, вносит дату и время создания и изменения.
     Создает по цепочке дочернюю сущность Journal - карточка вызова врача, создает или обновляет Patient - пациента.
-    Для кэша данный вызов добавляется в список вызовов доктора, прайса, в журнал, пациента.
+    Для кэша данный вызов добавляется в список вызовов доктора, прайса, карточки, пациента.
     */
     @Transactional
-    public void create(Calling calling) {
+    public void create(Calling newCalling) {
 
-        calling.setCreatedAt(LocalDateTime.now());
-        calling.setUpdatedAt(LocalDateTime.now());
+        //записываем дату и время создания и изменения
+        newCalling.setCreatedAt(LocalDateTime.now());
+        newCalling.setUpdatedAt(LocalDateTime.now());
 
-        doctorService.addCallingAtListForDoctor(calling, calling.getDoctor());
+        //для кэша добавляем вызов врача в список вызовов для доктора указанного в вызове
+        doctorService.addCallingAtListForDoctor(newCalling, newCalling.getDoctor());
 
-        calling.getJournal().setCalling(calling);
-        journalService.create(calling.getJournal());
+        //для кэша добавляем вызов врача в карточку вызова и создаем новую карточку
+        newCalling.getJournal().setCalling(newCalling);
+        journalService.create(newCalling.getJournal());
 
-        priceService.addCallingAtListForPrice(calling, calling.getPrice());
+        //для кэша добавляем вызов врача в список вызовов для прайса указанного в вызове
+        priceService.addCallingAtListForPrice(newCalling, newCalling.getPrice());
 
-        patientService.addCallingAtListForPatient(calling, calling.getPatient());
-        if (calling.getPatient().getId() == null) {
-            patientService.create(calling.getPatient());
+        //для кэша добавляем вызов врача в список вызовов для пациента указанного в вызове
+        patientService.addCallingAtListForPatient(newCalling, newCalling.getPatient());
+
+        //если id пациента, указанного в вызове null, это значит что пациент создан новый и его нужно создать в БД,
+        // если id не null, значит пациент выбран уже существующий в БД и его апдейтим
+        if (newCalling.getPatient().getId() == null) {
+            patientService.create(newCalling.getPatient());
         } else {
-            patientService.update(calling.getPatient());
+            patientService.update(newCalling.getPatient());
         }
 
-        callingRepository.save(calling);
+        callingRepository.save(newCalling);
     }
 
     /*
@@ -81,27 +89,27 @@ public class CallingService {
     Для кэша данный вызов добавляется в список вызовов доктора, прайса, в журнал, пациента.
     */
     @Transactional
-    public void update(Calling calling) {
+    public void update(Calling updatedCalling) {
 
-        Optional<Calling> existingCalling = callingRepository.findById(calling.getId());
+        Optional<Calling> existingCalling = callingRepository.findById(updatedCalling.getId());
 
-        calling.setCreatedAt(existingCalling.get().getCreatedAt());
-        calling.setUpdatedAt(LocalDateTime.now());
+        updatedCalling.setCreatedAt(existingCalling.get().getCreatedAt());
+        updatedCalling.setUpdatedAt(LocalDateTime.now());
 
-        doctorService.addCallingAtListForDoctor(calling, calling.getDoctor());
+        doctorService.addCallingAtListForDoctor(updatedCalling, updatedCalling.getDoctor());
 
-        calling.getJournal().setCalling(calling);
-        journalService.update(calling.getJournal());
+        updatedCalling.getJournal().setCalling(updatedCalling);
+        journalService.update(updatedCalling.getJournal());
 
-        priceService.addCallingAtListForPrice(calling, calling.getPrice());
+        priceService.addCallingAtListForPrice(updatedCalling, updatedCalling.getPrice());
 
-        patientService.addCallingAtListForPatient(calling, calling.getPatient());
-        if (calling.getPatient().getId() == null) {
-            patientService.create(calling.getPatient());
+        patientService.addCallingAtListForPatient(updatedCalling, updatedCalling.getPatient());
+        if (updatedCalling.getPatient().getId() == null) {
+            patientService.create(updatedCalling.getPatient());
         } else {
-            patientService.update(calling.getPatient());
+            patientService.update(updatedCalling.getPatient());
         }
 
-        callingRepository.save(calling);
+        callingRepository.save(updatedCalling);
     }
 }

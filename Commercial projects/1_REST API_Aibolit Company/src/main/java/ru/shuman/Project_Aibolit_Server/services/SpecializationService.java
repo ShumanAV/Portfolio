@@ -60,12 +60,12 @@ public class SpecializationService {
     Метод сохраняет новую специализацию, специализация приходит, заполняются поля дата и время создания и изменения
      */
     @Transactional
-    public void create(Specialization specialization) {
+    public void create(Specialization newSpecialization) {
 
-        specialization.setCreatedAt(LocalDateTime.now());
-        specialization.setUpdatedAt(LocalDateTime.now());
+        newSpecialization.setCreatedAt(LocalDateTime.now());
+        newSpecialization.setUpdatedAt(LocalDateTime.now());
 
-        specializationRepository.save(specialization);
+        specializationRepository.save(newSpecialization);
     }
 
     /*

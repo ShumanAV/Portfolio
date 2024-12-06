@@ -50,20 +50,20 @@ public class TypeEmploymentService {
     Метод сохраняет новый тип занятости в БД
      */
     @Transactional
-    public void create(TypeEmployment typeEmployment) {
-        typeEmploymentRepository.save(typeEmployment);
+    public void create(TypeEmployment newTypeEmployment) {
+        typeEmploymentRepository.save(newTypeEmployment);
     }
 
     /*
     Метод изменяет существующий тип занятости в БД
      */
     @Transactional
-    public void update(TypeEmployment typeEmployment) {
-        typeEmploymentRepository.save(typeEmployment);
+    public void update(TypeEmployment updatedTypeEmployment) {
+        typeEmploymentRepository.save(updatedTypeEmployment);
     }
 
     /*
-    Метод добавляет родителя в лист типа занятости, делается это для кэша
+    Метод добавляет родителя пациента в список родителей для типа занятости, делается это для кэша
     */
     public void addParentAtListForTypeEmployment(Parent parent, TypeEmployment typeEmployment) {
         GeneralMethods.addObjectOneInListForObjectTwo(parent, typeEmployment, this);

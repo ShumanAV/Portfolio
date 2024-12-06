@@ -49,16 +49,16 @@ public class TypeDocService {
     Метод сохраняет новый тип документа в БД
      */
     @Transactional
-    public void create(TypeDoc typeDoc) {
-        typeDocRepository.save(typeDoc);
+    public void create(TypeDoc newTypeDoc) {
+        typeDocRepository.save(newTypeDoc);
     }
 
     /*
     Метод изменяет существующий тип документа в БД
      */
     @Transactional
-    public void update(TypeDoc typeDoc) {
-        typeDocRepository.save(typeDoc);
+    public void update(TypeDoc updatedTypeDoc) {
+        typeDocRepository.save(updatedTypeDoc);
     }
 
     /*

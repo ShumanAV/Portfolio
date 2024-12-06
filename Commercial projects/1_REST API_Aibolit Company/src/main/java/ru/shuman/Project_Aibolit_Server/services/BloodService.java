@@ -51,27 +51,27 @@ public class BloodService {
     Метод сохраняет новую группу крови в БД
      */
     @Transactional
-    public void create(Blood blood) {
-        bloodRepository.save(blood);
+    public void create(Blood newBlood) {
+        bloodRepository.save(newBlood);
     }
 
     /*
     Метод изменяет существующую группу крови в БД
      */
     @Transactional
-    public void update(Blood blood) {
-        bloodRepository.save(blood);
+    public void update(Blood updatedBlood) {
+        bloodRepository.save(updatedBlood);
     }
 
     /*
-    Метод добавляет пациента в лист группы крови, делается это для кэша
+    Метод добавляет пациента в список пациентов для группы крови, делается это для кэша
     */
     public void addPatientAtListForBlood(Patient patient, Blood blood) {
         GeneralMethods.addObjectOneInListForObjectTwo(patient, blood, this);
     }
 
     /*
-    Метод добавляет родителя пациента в лист группы крови, делается это для кэша
+    Метод добавляет родителя пациента в список родителей для группы крови, делается это для кэша
      */
     public void addParentAtListForBlood(Parent parent, Blood blood) {
         GeneralMethods.addObjectOneInListForObjectTwo(parent, blood, this);

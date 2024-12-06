@@ -6,10 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.Parent;
 import ru.shuman.Project_Aibolit_Server.models.Patient;
 import ru.shuman.Project_Aibolit_Server.repositories.ParentRepository;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
 
 @Service
 @Transactional(readOnly = true)
@@ -87,44 +90,58 @@ public class ParentService {
     Метод сохраняет нового родителя пациента, добавляет дату и время создания и изменения, по цепочке сохраняем дочерние
     сущности такие как: Document - документ подтверждения личности, Address - адрес проживания,
     TypeRelationshipWithPatient - тип отношения с пациентом (мать, отец, бабаушка и т.д.),
-    Education - тип образования, Blood - группа крови, TypeEmployment - тип занятости (рабоает, учится, на пенсии и т.д.),
+    Education - тип образования, Blood - группа крови, TypeEmployment - тип занятости (работает, учится, на пенсии и т.д.),
     Gender - гендер.
-    Далее для кэша устанавливает родителя пациента для данных сущностей.
+    Для кэша устанавливает родителя пациента для данных сущностей.
     Далее родитель пациента сохраняется.
      */
     @Transactional
-    public void create(Parent parent) {
+    public void create(Parent newParent) {
 
-        parent.setCreatedAt(LocalDateTime.now());
-        parent.setUpdatedAt(LocalDateTime.now());
+        //Записываем дату и время создания и изменения
+        newParent.setCreatedAt(LocalDateTime.now());
+        newParent.setUpdatedAt(LocalDateTime.now());
 
-        parent.getDocument().setParent(parent);
-        documentService.create(parent.getDocument());
+        //для кэша в документ родителя прописываем данного родителя и создаем родителя
+        newParent.getDocument().setParent(newParent);
+        documentService.create(newParent.getDocument());
 
-        parent.getAddress().setParent(parent);
-        addressService.create(parent.getAddress());
+        //для кэша в домашний адрес родителя прописываем данного родителя и создаем адрес
+        newParent.getAddress().setParent(newParent);
+        addressService.create(newParent.getAddress());
 
-        if (parent.getTypeRelationshipWithPatient() != null) {
-            typeRelationshipWithPatientService.addParentAtListForTypeRelationship(parent, parent.getTypeRelationshipWithPatient());
+        //если у родителя выбран тип отношения с пациентом, т.е. он не null, то для кэша добавляем данного родителя в список
+        // родителей у выбранного типа отношения с пациентом
+        if (newParent.getTypeRelationshipWithPatient() != null) {
+            typeRelationshipWithPatientService.addParentAtListForTypeRelationship(newParent, newParent.getTypeRelationshipWithPatient());
         }
 
-        if (parent.getEducation() != null) {
-            educationService.addParentAtListForEducation(parent, parent.getEducation());
+        //если у родителя выбрано образование, т.е. оно не null, то для кэша добавляем данного родителя в список
+        // родителей у выбранного образования
+        if (newParent.getEducation() != null) {
+            educationService.addParentAtListForEducation(newParent, newParent.getEducation());
         }
 
-        if (parent.getBlood() != null) {
-            bloodService.addParentAtListForBlood(parent, parent.getBlood());
+        //если у родителя выбрана группа крови, т.е. она не null, то для кэша добавляем данного родителя в список
+        // родителей у выбранной группы крови
+        if (newParent.getBlood() != null) {
+            bloodService.addParentAtListForBlood(newParent, newParent.getBlood());
         }
 
-        if (parent.getTypeEmployment() != null) {
-            typeEmploymentService.addParentAtListForTypeEmployment(parent, parent.getTypeEmployment());
+        //если у родителя выбран тип занятости, т.е. он не null, то для кэша добавляем данного родителя в список
+        // родителей у выбранного типа занятости
+        if (newParent.getTypeEmployment() != null) {
+            typeEmploymentService.addParentAtListForTypeEmployment(newParent, newParent.getTypeEmployment());
         }
 
-        if (parent.getGender() != null) {
-            genderService.addParentAtListForGender(parent, parent.getGender());
+        //если у родителя выбран гендер, т.е. он не null, то для кэша добавляем данного родителя в список
+        // родителей у выбранного гендера
+        if (newParent.getGender() != null) {
+            genderService.addParentAtListForGender(newParent, newParent.getGender());
         }
 
-        parentRepository.save(parent);
+        //сохраняем данного родителя
+        parentRepository.save(newParent);
     }
 
     /*
@@ -138,45 +155,59 @@ public class ParentService {
     Далее пациент сохраняется.
      */
     @Transactional
-    public void update(Parent parent) {
+    public void update(Parent updatedParent) {
 
-        Parent existingParent = parentRepository.findById(parent.getId()).get();
+        //находим существующего родителя в БД по id
+        Parent existingParent = parentRepository.findById(updatedParent.getId()).get();
 
-        parent.setCreatedAt(existingParent.getCreatedAt());
-        parent.setUpdatedAt(LocalDateTime.now());
+        //копируем значения всех полей, кроме тех, которые не null, из измененного родителя в существующего
+        copyNonNullProperties(updatedParent, existingParent);
 
-        parent.getDocument().setParent(parent);
-        documentService.update(parent.getDocument());
+        //обновляем дату и время изменения
+        existingParent.setUpdatedAt(LocalDateTime.now());
 
-        parent.getAddress().setParent(parent);
-        addressService.update(parent.getAddress());
+        //для кэша, для указанного документа родителя устанавливаем данного родителя и апдейтим документ
+        existingParent.getDocument().setParent(existingParent);
+        documentService.update(existingParent.getDocument());
 
+        //для кэша, для указанного адреса проживания родителя устанавливаем данного родителя и апдейтим адрес
+        existingParent.getAddress().setParent(existingParent);
+        addressService.update(existingParent.getAddress());
 
-        if (parent.getTypeRelationshipWithPatient() != null) {
-            typeRelationshipWithPatientService.addParentAtListForTypeRelationship(parent, parent.getTypeRelationshipWithPatient());
+        //если у родителя выбран тип отношения с пациентом, т.е. он не null, то для кэша добавляем данного родителя в список
+        // родителей у выбранного типа отношения с пациентом
+        if (existingParent.getTypeRelationshipWithPatient() != null) {
+            typeRelationshipWithPatientService.addParentAtListForTypeRelationship(existingParent, existingParent.getTypeRelationshipWithPatient());
         }
 
-        if (parent.getEducation() != null) {
-            educationService.addParentAtListForEducation(parent, parent.getEducation());
+        //если у родителя выбрано образование, т.е. оно не null, то для кэша добавляем данного родителя в список
+        // родителей у выбранного образования
+        if (existingParent.getEducation() != null) {
+            educationService.addParentAtListForEducation(existingParent, existingParent.getEducation());
         }
 
-        if (parent.getBlood() != null) {
-            bloodService.addParentAtListForBlood(parent, parent.getBlood());
+        //если у родителя выбрана группа крови, т.е. она не null, то для кэша добавляем данного родителя в список
+        // родителей у выбранной группы крови
+        if (existingParent.getBlood() != null) {
+            bloodService.addParentAtListForBlood(existingParent, existingParent.getBlood());
         }
 
-        if (parent.getTypeEmployment() != null) {
-            typeEmploymentService.addParentAtListForTypeEmployment(parent, parent.getTypeEmployment());
+        //если у родителя выбран тип занятости, т.е. он не null, то для кэша добавляем данного родителя в список
+        // родителей у выбранного типа занятости
+        if (existingParent.getTypeEmployment() != null) {
+            typeEmploymentService.addParentAtListForTypeEmployment(existingParent, existingParent.getTypeEmployment());
         }
 
-        if (parent.getGender() != null) {
-            genderService.addParentAtListForGender(parent, parent.getGender());
+        //если у родителя выбран гендер, т.е. он не null, то для кэша добавляем данного родителя в список
+        // родителей у выбранного гендера
+        if (existingParent.getGender() != null) {
+            genderService.addParentAtListForGender(existingParent, existingParent.getGender());
         }
-
-        parentRepository.save(parent);
+        //т.к. существующий родитель находится в персистенс контексте, сохранять его не нужно
     }
 
     /*
-    Метод добавляет пациента в лист родителя
+    Метод добавляет пациента в список пациентов для родителя, делается это для кэша
      */
     public void addPatientAtListForParent(Patient patient, Parent parent, int numberParent) {
 

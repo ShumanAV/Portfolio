@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.shuman.Project_Aibolit_Server.dto.PlaceStudyDTO;
-import ru.shuman.Project_Aibolit_Server.dto.RoleDTO;
 import ru.shuman.Project_Aibolit_Server.models.PlaceStudy;
-import ru.shuman.Project_Aibolit_Server.models.Role;
 import ru.shuman.Project_Aibolit_Server.services.PlaceStudyService;
 import ru.shuman.Project_Aibolit_Server.util.validators.PlaceStudyIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.PlaceStudyValidator;
@@ -19,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/placestudies")
+@RequestMapping("/placesStudy")
 public class PlaceStudyController {
 
     private final PlaceStudyService placeStudyService;
@@ -43,7 +41,7 @@ public class PlaceStudyController {
     Метод формирует и возвращает список мест учебы пациентов в обертке ResponseEntity
      */
     @GetMapping
-    public ResponseEntity<List<PlaceStudyDTO>> sendListPlaceStudies() {
+    public ResponseEntity<List<PlaceStudyDTO>> sendListPlacesStudy() {
 
         List<PlaceStudy> placeStudies = placeStudyService.findAll();
 

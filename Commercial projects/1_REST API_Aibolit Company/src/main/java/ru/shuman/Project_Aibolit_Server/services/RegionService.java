@@ -57,16 +57,16 @@ public class RegionService {
     Метод сохраняет новый регион в БД
      */
     @Transactional
-    public void create(Region region) {
-        regionRepository.save(region);
+    public void create(Region newRegion) {
+        regionRepository.save(newRegion);
     }
 
     /*
     Метод сохраняет измененный регион в БД
      */
     @Transactional
-    public void update(Region region) {
-        regionRepository.save(region);
+    public void update(Region updatedRegion) {
+        regionRepository.save(updatedRegion);
     }
 
     /*

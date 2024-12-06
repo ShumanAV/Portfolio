@@ -41,15 +41,15 @@ public class PlaceStudyService {
     Метод сохраняет новое место учебы пациентов в БД
      */
     @Transactional
-    public void create(PlaceStudy placeStudy) {
-        placeStudyRepository.save(placeStudy);
+    public void create(PlaceStudy newPlaceStudy) {
+        placeStudyRepository.save(newPlaceStudy);
     }
 
     /*
     Метод сохраняет измененное место учебы пациентов в БД
      */
     @Transactional
-    public void update(PlaceStudy placeStudy) {
-        placeStudyRepository.save(placeStudy);
+    public void update(PlaceStudy updatedPlaceStudy) {
+        placeStudyRepository.save(updatedPlaceStudy);
     }
 }

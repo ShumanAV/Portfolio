@@ -32,24 +32,26 @@ public class AddressService {
     }
 
     /*
-    Метод сохраняет новый адрес в БД, также для кэша добавляет адрес в список регионов
+    Метод сохраняет новый адрес в БД
      */
     @Transactional
-    public void create(Address address) {
+    public void create(Address newAddress) {
 
-        regionService.AddAddressAtListForRegion(address, address.getRegion());
+        //для кэша добавляем адрес в список адресов для региона указанного в адресе
+        regionService.AddAddressAtListForRegion(newAddress, newAddress.getRegion());
 
-        addressRepository.save(address);
+        addressRepository.save(newAddress);
     }
 
     /*
-    Метод сохраняет измененный адрес в БД, также для кэша добавляет адрес в список регионов
+    Метод сохраняет измененный адрес в БД
      */
     @Transactional
-    public void update(Address address) {
+    public void update(Address updatedAddress) {
 
-        regionService.AddAddressAtListForRegion(address, address.getRegion());
+        //для кэша добавляем адрес в список адресов для региона указанного в адресе
+        regionService.AddAddressAtListForRegion(updatedAddress, updatedAddress.getRegion());
 
-        addressRepository.save(address);
+        addressRepository.save(updatedAddress);
     }
 }

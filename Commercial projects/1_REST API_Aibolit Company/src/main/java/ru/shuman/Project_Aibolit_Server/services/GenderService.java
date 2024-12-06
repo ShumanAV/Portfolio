@@ -16,6 +16,9 @@ public class GenderService {
 
     private final GenderRepository genderRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public GenderService(GenderRepository genderRepository) {
         this.genderRepository = genderRepository;
@@ -46,27 +49,27 @@ public class GenderService {
     Метод сохраняет новый гендер в БД
      */
     @Transactional
-    public void create(Gender gender) {
-        genderRepository.save(gender);
+    public void create(Gender newGender) {
+        genderRepository.save(newGender);
     }
 
     /*
     Метод сохраняет измененный гендер в БД
      */
     @Transactional
-    public void update(Gender gender) {
-        genderRepository.save(gender);
+    public void update(Gender updatedGender) {
+        genderRepository.save(updatedGender);
     }
 
     /*
-    Метод добавляет пациента в лист гендера, делается это для кэша
+    Метод добавляет пациента в список пациентов для гендера, делается это для кэша
      */
     public void addPatientAtListForGender(Patient patient, Gender gender) {
         GeneralMethods.addObjectOneInListForObjectTwo(patient, gender, this);
     }
 
     /*
-    Метод добавляет родителя пациента в лист гендера, делается это для кэша
+    Метод добавляет родителя пациента в список родителей для гендера, делается это для кэша
      */
     public void addParentAtListForGender(Parent parent, Gender gender) {
         GeneralMethods.addObjectOneInListForObjectTwo(parent, gender, this);

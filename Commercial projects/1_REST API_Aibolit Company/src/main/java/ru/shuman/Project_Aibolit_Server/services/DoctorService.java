@@ -82,28 +82,28 @@ public class DoctorService {
     Далее происходит сохранение врача.
      */
     @Transactional
-    public void register(Doctor doctor) {
+    public void register(Doctor newDoctor) {
 
-        specializationService.addDoctorAtListForSpecialization(doctor, doctor.getSpecialization());
+        specializationService.addDoctorAtListForSpecialization(newDoctor, newDoctor.getSpecialization());
 
-        doctor.setCreatedAt(LocalDateTime.now());
-        doctor.setUpdatedAt(LocalDateTime.now());
+        newDoctor.setCreatedAt(LocalDateTime.now());
+        newDoctor.setUpdatedAt(LocalDateTime.now());
 
-        if (doctor.getAccessToSystem()) {
-            doctor.getProfile().setDoctor(doctor);
-            profileService.create(doctor.getProfile());
+        if (newDoctor.getAccessToSystem()) {
+            newDoctor.getProfile().setDoctor(newDoctor);
+            profileService.create(newDoctor.getProfile());
         }
 
-        doctorRepository.save(doctor);
+        doctorRepository.save(newDoctor);
     }
 
     /*
-    Метод update сохраняет изменения в БД, которые сделаны в изменяемом враче.
+    Метод update сохраняет измененного доктора в БД
      */
     @Transactional
     public void update(Doctor updatedDoctor) {
 
-        //находим в БД существующего врача
+        //находим в БД существующего врача по id
         Doctor existingDoctor = doctorRepository.findById(updatedDoctor.getId()).get();
 
         //если у существующего врача из БД и у измененного врача разные специализации, значит специализацию изменили,
@@ -150,14 +150,14 @@ public class DoctorService {
     }
 
     /*
-    Метод добавляет вызов в список доктора для кэша
+    Метод добавляет вызов в список вызовов у доктора, делается это для кэша
      */
     public void addCallingAtListForDoctor(Calling calling, Doctor doctor) {
         GeneralMethods.addObjectOneInListForObjectTwo(calling, doctor, this);
     }
 
     /*
-    Метод добавляет договор в список доктора для кэша
+    Метод добавляет договор в список договоров у доктора, делается это для кэша
     */
     public void addContractAtListForDoctor(Contract contract, Doctor doctor) {
         GeneralMethods.addObjectOneInListForObjectTwo(contract, doctor, this);

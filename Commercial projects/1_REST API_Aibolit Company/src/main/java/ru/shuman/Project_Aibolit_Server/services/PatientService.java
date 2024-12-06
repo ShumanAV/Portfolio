@@ -3,12 +3,19 @@ package ru.shuman.Project_Aibolit_Server.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.shuman.Project_Aibolit_Server.models.*;
+import ru.shuman.Project_Aibolit_Server.models.Calling;
+import ru.shuman.Project_Aibolit_Server.models.Contract;
+import ru.shuman.Project_Aibolit_Server.models.Parent;
+import ru.shuman.Project_Aibolit_Server.models.Patient;
 import ru.shuman.Project_Aibolit_Server.repositories.PatientRepository;
 import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
 
 @Service
 @Transactional(readOnly = true)
@@ -109,94 +116,121 @@ public class PatientService {
     Метод сохраняет нового пациента, добавляет дату и время создания и изменения, по цепочке сохраняем дочерние
     сущности такие как: PlaceStudy - место учебы, Document - документ подтверждения личности,
     Address - адрес проживания, Blood - группа крови, Gender - гендер.
-    Далее для кэша устанавливает пациента для данных сущностей.
+    Для кэша устанавливает пациента для данных сущностей.
     Также создаются или обновляются родители пациента, их может быть несколько.
     Далее пациент сохраняется.
      */
     @Transactional
-    public void create(Patient patient) {
+    public void create(Patient newPatient) {
 
-        patient.setCreatedAt(LocalDateTime.now());
-        patient.setUpdatedAt(LocalDateTime.now());
+        //Записываем дату и время создания и изменения
+        newPatient.setCreatedAt(LocalDateTime.now());
+        newPatient.setUpdatedAt(LocalDateTime.now());
 
-        patient.getPlaceStudy().setPatient(patient);
-        placeStudyService.create(patient.getPlaceStudy());
+        //для кэша, для указанного места учебы пациента устанавливаем данного пациента и создаем новое место учебы
+        newPatient.getPlaceStudy().setPatient(newPatient);
+        placeStudyService.create(newPatient.getPlaceStudy());
 
-        patient.getDocument().setPatient(patient);
-        documentService.create(patient.getDocument());
+        //для кэша, для указанного документа пациента устанавливаем данного пациента и создаем новый документ
+        newPatient.getDocument().setPatient(newPatient);
+        documentService.create(newPatient.getDocument());
 
-        patient.getAddress().setPatient(patient);
-        addressService.create(patient.getAddress());
+        //для кэша, для указанного адреса проживания пациента устанавливаем данного пациента и создаем новый адрес
+        newPatient.getAddress().setPatient(newPatient);
+        addressService.create(newPatient.getAddress());
 
-        if (patient.getBlood() != null) {
-            bloodService.addPatientAtListForBlood(patient, patient.getBlood());
+        //если у пациента выбрана группа крови, т.е. она не null, то для кэша добавляем данного пациента в список
+        // пауиентов у выбранной группы крови
+        if (newPatient.getBlood() != null) {
+            bloodService.addPatientAtListForBlood(newPatient, newPatient.getBlood());
         }
 
-        if (patient.getGender() != null) {
-            genderService.addPatientAtListForGender(patient, patient.getGender());
+        //если у пациента выбран гендер, т.е. он не null, то для кэша добавляем данного пациента в список
+        // пауиентов у выбранного гендера
+        if (newPatient.getGender() != null) {
+            genderService.addPatientAtListForGender(newPatient, newPatient.getGender());
         }
 
-        int count = 0;
-        for (Parent parent : patient.getParents()) {
-            parentService.addPatientAtListForParent(patient, parent, count);
+        //проходимся в цикле по всем указанным родителям данного пациента, их может быть несколько
+        for (int i = 0; i < newPatient.getParents().size(); i++) {
+            Parent parent = newPatient.getParents().get(i);
+
+            //для кэша добавляем данного пациента в список пациентов для текущего родителя
+            parentService.addPatientAtListForParent(newPatient, parent, i);
+
+            //если id текущего родителя null, это значит что родитель создан новый и его нужно создать, если не null,
+            // значит он уже есть в БД и его нужно апдейтить
             if (parent.getId() == null) {
                 parentService.create(parent);
             } else {
                 parentService.update(parent);
             }
-            count += 1;
         }
 
-        patientRepository.save(patient);
+        //сохраняем данного пациента
+        patientRepository.save(newPatient);
     }
 
     /*
-    Метод сохраняет измененного пациента, находим существующего пациента в БД, переносим в изменяемого пациента
-    время создания, обновляем дату изменения, далее по цепочке обновляем все дочерние сущности такие как:
-    PlaceStudy - место учебы, Document - документ подтверждения личности, Address - адрес проживания,
-    Blood - группа крови, Gender - гендер.
-    Также для кэша устанавливаем измененного пациента для данных сущностей.
+    Метод сохраняет измененного пациента, находим существующего пациента в БД, копируем значения полей из изменяемого
+    пациента в существующего, обновляем дату изменения, далее по цепочке обновляем все дочерние сущности такие как:
+    PlaceStudy - место учебы, Document - документ подтверждения личности, Address - адрес проживания.
+    Также для кэша устанавливаем измененного пациента для дочерних сущностей.
     Также создаются или обновляются родители пациента, их может быть несколько,
     они могут быть изменены либо добавлены новые.
-    Далее пациент сохраняется.
      */
     @Transactional
-    public void update(Patient patient) {
+    public void update(Patient updatedPatient) {
 
-        Patient existingPatient = patientRepository.findById(patient.getId()).get();
+        //находим в БД существующего пациента по id
+        Patient existingPatient = patientRepository.findById(updatedPatient.getId()).get();
 
-        patient.setCreatedAt(existingPatient.getCreatedAt());
-        patient.setUpdatedAt(LocalDateTime.now());
+        //копируем значения всех полей, кроме тех, которые не null, из измененного пациента в существующего
+        copyNonNullProperties(updatedPatient, existingPatient);
 
-        patient.getPlaceStudy().setPatient(patient);
-        placeStudyService.update(patient.getPlaceStudy());
+        //обновляем дату и время изменения
+        existingPatient.setUpdatedAt(LocalDateTime.now());
 
-        patient.getDocument().setPatient(patient);
-        documentService.update(patient.getDocument());
+        //для кэша, для указанного места учебы пациента устанавливаем данного пациента и апдейтим место учебы
+        existingPatient.getPlaceStudy().setPatient(existingPatient);
+        placeStudyService.update(existingPatient.getPlaceStudy());
 
-        patient.getAddress().setPatient(patient);
-        addressService.update(patient.getAddress());
+        //для кэша, для указанного документа пациента устанавливаем данного пациента и апдейтим документ
+        existingPatient.getDocument().setPatient(existingPatient);
+        documentService.update(existingPatient.getDocument());
 
-        if (patient.getBlood() != null) {
-            bloodService.addPatientAtListForBlood(patient, patient.getBlood());
+        //для кэша, для указанного адреса проживания пациента устанавливаем данного пациента и апдейтим адрес
+        existingPatient.getAddress().setPatient(existingPatient);
+        addressService.update(existingPatient.getAddress());
+
+        //если у пациента выбрана группа крови, т.е. она не null, то для кэша добавляем данного пациента в список
+        // пауиентов у выбранной группы крови
+        if (existingPatient.getBlood() != null) {
+            bloodService.addPatientAtListForBlood(existingPatient, existingPatient.getBlood());
         }
 
-        if (patient.getGender() != null) {
-            genderService.addPatientAtListForGender(patient, patient.getGender());
+        //если у пациента выбран гендер, т.е. он не null, то для кэша добавляем данного пациента в список
+        // пауиентов у выбранного гендера
+        if (existingPatient.getGender() != null) {
+            genderService.addPatientAtListForGender(existingPatient, existingPatient.getGender());
         }
 
-        int numberParent = 0;
-        for (Parent parent : patient.getParents()) {
-            parentService.addPatientAtListForParent(patient, parent, numberParent);
+        //проходимся в цикле по всем указанным родителям данного пациента, их может быть несколько
+        for (int i = 0; i < existingPatient.getParents().size(); i++) {
+            Parent parent = existingPatient.getParents().get(i);
+
+            //для кэша добавляем данного пациента в список пациентов для текущего родителя
+            parentService.addPatientAtListForParent(existingPatient, parent, i);
+
+            //если id текущего родителя null, это значит что родитель создан новый и его нужно создать, если не null,
+            // значит он уже есть в БД и его нужно апдейтить
             if (parent.getId() == null) {
                 parentService.create(parent);
             } else {
                 parentService.update(parent);
             }
-            numberParent += 1;
         }
-
-        patientRepository.save(patient);
+        //т.к. существующий пациент находится в персистенс контексте, сохранять его не нужно
     }
 
     /*

@@ -50,20 +50,20 @@ public class EducationService {
     Метод сохраняет новый тип образования в БД
      */
     @Transactional
-    public void create(Education education) {
-        educationRepository.save(education);
+    public void create(Education newEducation) {
+        educationRepository.save(newEducation);
     }
 
     /*
     Метод сохраняет измененный тип образования в БД
      */
     @Transactional
-    public void update(Education education) {
-        educationRepository.save(education);
+    public void update(Education updatedEducation) {
+        educationRepository.save(updatedEducation);
     }
 
     /*
-    Метод добавляет родителя пациента в список типа образования, делается это для кэша
+    Метод добавляет родителя пациента в список родителей для типа образования, делается это для кэша
      */
     public void addParentAtListForEducation(Parent parent, Education education) {
         GeneralMethods.addObjectOneInListForObjectTwo(parent, education, this);
