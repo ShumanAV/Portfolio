@@ -3,6 +3,7 @@ package ru.shuman.Project_Aibolit_Server.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -40,12 +41,14 @@ public class CallingDTO {
     @NotNull(message = "Поле врач отсутствует")
     private DoctorDTO doctor;
 
+    @Valid
     @NotNull(message = "Карточка вызова отсутствует")
     private JournalDTO journal;
 
     @NotNull(message = "Прайс отсутствует")
     private PriceDTO price;
 
+    @Valid
     @NotNull(message = "Пациент отсутствует")
     private PatientDTO patient;
 
