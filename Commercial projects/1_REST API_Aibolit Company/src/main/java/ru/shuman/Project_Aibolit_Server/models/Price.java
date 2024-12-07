@@ -6,10 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,7 +25,7 @@ public class Price {
     private Integer id;
 
     @Column(name = "name")
-    @NotNull(message = "Наименование услуги отсутствует")
+    @NotEmpty(message = "Наименование услуги отсутствует или не заполнено")
     @Size(max = 255, message = "Наименование услуги должно быть не более 255 символов")
     private String name;
 

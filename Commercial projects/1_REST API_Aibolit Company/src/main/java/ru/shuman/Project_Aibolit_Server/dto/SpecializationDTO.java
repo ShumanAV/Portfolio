@@ -15,8 +15,7 @@ public class SpecializationDTO {
 
     private Integer id;
 
-    @NotNull(message = "Наименование специализации отсутствует")
-    @NotEmpty(message = "Наименование специализации не заполнено")
+    @NotEmpty(message = "Наименование специализации отсутствует или не заполнено")
     @Size(max = 100, message = "Наименование специализации должно быть не более 100 символов")
     private String name;
 

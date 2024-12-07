@@ -27,8 +27,7 @@ public class Role {
     private Integer id;
 
     @Column(name = "name")
-    @NotNull(message = "Наименование роли на английском языке отсутствует")
-    @NotEmpty(message = "Наименование роли на английском языке не заполнено")
+    @NotEmpty(message = "Наименование роли на английском языке отсутствует или не заполнено")
     @Size(max = 50, message = "Наименование роли на английском языке должно быть не более 50 символов")
     private String name;
 

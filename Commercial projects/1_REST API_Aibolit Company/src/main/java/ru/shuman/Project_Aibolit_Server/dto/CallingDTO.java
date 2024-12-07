@@ -15,10 +15,12 @@ public class CallingDTO {
     private Integer id;
 
     @NotNull(message = "Дата посещения отсутствует")
-    private Date date_visit;
+    @Size(max = 30, message = "Дата посещения врача должна быть не более 30 символов")
+    private String date_visit;
 
     @NotNull(message = "Дата вызова отсутствует")
-    private Date date_call;
+    @Size(max = 30, message = "Дата вызова врача должна быть не более 30 символов")
+    private String date_call;
 
     @NotNull(message = "Время начала вызова отсутствует")
     @Size(max = 50, message = "Время начала должно быть не более 50 символов")

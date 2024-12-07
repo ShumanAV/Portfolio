@@ -14,8 +14,7 @@ public class EducationDTO {
 
     private Integer id;
 
-    @NotNull(message = "Наименование образования отсутствует")
-    @NotEmpty(message = "Наименование образования не заполнено")
+    @NotEmpty(message = "Наименование образования отсутствует или не заполнено")
     @Size(max = 50, message = "Наименование образования должно быть не более 50 символов")
     private String name;
 

@@ -31,8 +31,7 @@ public class Region {
     private Integer code;
 
     @Column(name = "name")
-    @NotNull(message = "Наименование региона отсутствует")
-    @NotEmpty(message = "Наименование региона не заполнено")
+    @NotEmpty(message = "Наименование региона отсутствует или не заполнено")
     @Size(max = 255, message = "Наименование региона должно быть не более 255 символов")
     private String name;
 

@@ -27,11 +27,13 @@ public class Calling {
 
     @Column(name = "date_visit")
     @NotNull(message = "Дата посещения отсутствует")
-    private Date date_visit;
+    @Size(max = 30, message = "Дата посещения врача должна быть не более 30 символов")
+    private String date_visit;
 
     @Column(name = "date_call")
     @NotNull(message = "Дата вызова отсутствует")
-    private Date date_call;
+    @Size(max = 30, message = "Дата вызова врача должна быть не более 30 символов")
+    private String date_call;
 
     @Column(name = "time_start")
     @NotNull(message = "Время начала вызова отсутствует")

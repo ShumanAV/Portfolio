@@ -26,8 +26,7 @@ public class TypeRelationshipWithPatient {
     private Integer id;
 
     @Column(name = "name")
-    @NotNull(message = "Наименование типа отношений с пациентом отсутствует")
-    @NotEmpty(message = "Наименование типа отношений с пациентом не заполнено")
+    @NotEmpty(message = "Наименование типа отношений с пациентом отсутствует или не заполнено")
     @Size(max = 100, message = "Наименование типа отношений с пациентом должно быть не более 100 символов")
     private String name;
 

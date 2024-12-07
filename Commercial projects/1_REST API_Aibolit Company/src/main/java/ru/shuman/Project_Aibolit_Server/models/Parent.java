@@ -34,8 +34,7 @@ public class Parent {
     private String lastname;
 
     @Column(name = "firstname")
-    @NotNull(message = "Имя отсутствует")
-    @NotEmpty(message = "Имя не заполнено")
+    @NotEmpty(message = "Имя отсутствует или не заполнено")
     @Size(max = 100, message = "Имя должно быть не более 100 символов")
     private String firstname;
 
@@ -91,7 +90,8 @@ public class Parent {
 
     @Column(name = "birthday")
     @NotNull(message = "День рождения отсутствует")
-    private Date birthday;
+    @Size(max = 30, message = "День рождения родителя должно быть не более 30 символов")
+    private String birthday;
 
     @Column(name = "published")
     @NotNull(message = "Поле published отсутствует")

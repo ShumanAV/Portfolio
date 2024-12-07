@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.shuman.Project_Aibolit_Server.models.Parent;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -22,8 +23,7 @@ public class PatientDTO {
     @Size(max = 100, message = "Фамилия должна быть не более 100 символов")
     private String lastname;
 
-    @NotNull(message = "Имя пациента отсутствует")
-    @NotEmpty(message = "Имя пациента не может быть пустым")
+    @NotEmpty(message = "Имя пациента отсутствует или не заполнено")
     @Size(max = 100, message = "Имя должно быть не более 100 символов")
     private String firstname;
 
@@ -68,7 +68,8 @@ public class PatientDTO {
     private String allergy;
 
     @NotNull(message = "День рождения пациента отсутствует")
-    private Date birthday;
+    @Size(max = 30, message = "День рождения пациента должно быть не более 30 символов")
+    private String birthday;
 
     @NotNull(message = "Поле published пациента отсутствует")
     private Boolean published;
@@ -77,21 +78,27 @@ public class PatientDTO {
 
     private LocalDateTime updatedAt;
 
+    @Valid
     @NotNull(message = "Место учебы пациента отсутствует")
     private PlaceStudyDTO placeStudy;
 
+    @Valid
     @NotNull(message = "Документ пациента отсутствует")
     private DocumentDTO document;
 
+    @Valid
     @NotNull(message = "Адрес пациента отсутствует")
     private AddressDTO address;
 
+    @Valid
     @NotNull(message = "Группа крови пациента отсутствует")
     private BloodDTO blood;
 
+    @Valid
     @NotNull(message = "Гендер пациента отсутствует")
     private GenderDTO gender;
 
+    @Valid
     @NotNull(message = "Родители пациента отсутствуют")
     private List<ParentDTO> parents;
 

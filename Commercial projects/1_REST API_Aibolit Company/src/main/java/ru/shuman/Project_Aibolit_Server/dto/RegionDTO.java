@@ -18,8 +18,7 @@ public class RegionDTO {
     @Min(value = 0, message = "Код региона должен быть более 0")
     private Integer code;
 
-    @NotNull(message = "Наименование региона отсутствует")
-    @NotEmpty(message = "Наименование региона не заполнено")
+    @NotEmpty(message = "Наименование региона отсутствует или не заполнено")
     @Size(max = 255, message = "Наименование региона должно быть не более 255 символов")
     private String name;
 

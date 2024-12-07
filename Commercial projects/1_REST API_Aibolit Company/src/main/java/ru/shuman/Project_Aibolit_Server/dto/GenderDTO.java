@@ -14,8 +14,7 @@ public class GenderDTO {
 
     private Integer id;
 
-    @NotNull(message = "Наименование гендерного признака отсутствует")
-    @NotEmpty(message = "Наименование гендерного признака не заполнено")
+    @NotEmpty(message = "Наименование гендерного признака отсутствует или не заполнено")
     @Size(max = 20, message = "Наименование гендерного признака должно быть не более 20 символов")
     private String name;
 

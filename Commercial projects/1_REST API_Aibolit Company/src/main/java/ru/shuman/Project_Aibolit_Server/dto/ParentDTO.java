@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Column;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -21,8 +22,7 @@ public class ParentDTO {
     @Size(max = 100, message = "Фамилия должна быть не более 100 символов")
     private String lastname;
 
-    @NotNull(message = "Имя отсутствует")
-    @NotEmpty(message = "Имя не заполнено")
+    @NotEmpty(message = "Имя отсутствует или не заполнено")
     @Size(max = 100, message = "Имя должно быть не более 100 символов")
     private String firstname;
 
@@ -67,7 +67,8 @@ public class ParentDTO {
     private String job;
 
     @NotNull(message = "День рождения отсутствует")
-    private Date birthday;
+    @Size(max = 30, message = "День рождения родителя должно быть не более 30 символов")
+    private String birthday;
 
     @NotNull(message = "Поле published отсутствует")
     private Boolean published;
@@ -76,24 +77,31 @@ public class ParentDTO {
 
     private LocalDateTime updatedAt;
 
+    @Valid
     @NotNull(message = "Документ отсутствует")
     private DocumentDTO document;
 
+    @Valid
     @NotNull(message = "Адрес отсутствует")
     private AddressDTO address;
 
+    @Valid
     @NotNull(message = "Тип отношения родителя с пациентом отсутствует")
     private TypeRelationshipWithPatientDTO typeRelationshipWithPatient;
 
+    @Valid
     @NotNull(message = "Образование родителя отсутствует")
     private EducationDTO education;
 
+    @Valid
     @NotNull(message = "Группа крови родителя отсутствует")
     private BloodDTO blood;
 
+    @Valid
     @NotNull(message = "Тип занятости отсутствует")
     private TypeEmploymentDTO typeEmployment;
 
+    @Valid
     @NotNull(message = "Гендерный признак отсутствует")
     private GenderDTO gender;
 

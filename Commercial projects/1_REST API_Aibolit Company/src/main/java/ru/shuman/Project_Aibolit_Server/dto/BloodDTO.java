@@ -14,8 +14,7 @@ public class BloodDTO {
 
     private Integer id;
 
-    @NotNull(message = "Наименование группы крови отсутствует")
-    @NotEmpty(message = "Наименование группы крови не заполнено")
+    @NotEmpty(message = "Наименование группы крови отсутствует или не заполнено")
     @Size(max = 50, message = "Наименование группы крови должно быть не более 50 символов")
     private String name;
 

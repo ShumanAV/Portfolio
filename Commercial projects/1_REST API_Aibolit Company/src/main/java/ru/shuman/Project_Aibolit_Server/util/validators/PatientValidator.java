@@ -81,56 +81,28 @@ public class PatientValidator implements Validator {
 
         existingPatient = patientService.findByInn(patient.getInn());
         if (existingPatient.isPresent() && patient.getId() != existingPatient.get().getId()) {
-            errors.rejectValue(field == null ? "inn" : field, "", "Пациент с таким номером ИНН уже существует!");
+            errors.rejectValue(field == null ? "inn" : field, "", "Пациент с таким ИНН уже существует!");
         }
 
-        if (patient.getPlaceStudy() == null) {
-            errors.rejectValue(field == null ? "placeStudy" : field, "", "Место учебы у пациента отсутствует!");
-        } else {
+        if (patient.getPlaceStudy() != null) {
             if (patient.getPlaceStudy().getId() != null) {
                 placeStudyIdValidator.validate(patient.getPlaceStudy(), errors);
             }
             placeStudyValidator.validate(patient.getPlaceStudy(), errors);
         }
 
-        if (patient.getDocument() == null) {
-            errors.rejectValue(field == null ? "document" : field, "", "Документ у пациента отсутствует!");
-        } else {
+        if (patient.getDocument() != null) {
             if (patient.getDocument().getId() != null) {
                 documentIdValidator.validate(patient.getDocument(), errors);
             }
             documentValidator.validate(patient.getDocument(), errors);
         }
 
-        if (patient.getAddress() == null) {
-            errors.rejectValue(field == null ? "address" : field, "", "Адрес у пациента отсутствует!");
-        } else {
+        if (patient.getAddress() != null) {
             if (patient.getAddress().getId() != null) {
                 addressIdValidator.validate(patient.getAddress(), errors);
             }
             addressValidator.validate(patient.getAddress(), errors);
-        }
-
-        if (patient.getId() == null) {
-            if (patient.getPlaceStudy().getId() != null) {
-                errors.rejectValue(field == null ? "placeStudy" : field, "", "У нового пациента указано существующее место учебы с id!");
-            }
-            if (patient.getDocument().getId() != null) {
-                errors.rejectValue(field == null ? "document" : field, "", "У нового пациента указан существующий документ с id!");
-            }
-            if (patient.getAddress().getId() != null) {
-                errors.rejectValue(field == null ? "address" : field, "", "У нового пациента указан существующий адрес с id!");
-            }
-        } else {
-            if (patient.getPlaceStudy().getId() == null) {
-                errors.rejectValue(field == null ? "placeStudy" : field, "", "У существующего пациента указано новое место учебы без id!");
-            }
-            if (patient.getDocument().getId() == null) {
-                errors.rejectValue(field == null ? "document" : field, "", "У существующего пациента указан новый документ без id!");
-            }
-            if (patient.getAddress().getId() == null) {
-                errors.rejectValue(field == null ? "address" : field, "", "У существующего пациента указан новый адрес без id!");
-            }
         }
 
         if (patient.getBlood() != null) {

@@ -33,8 +33,7 @@ public class Doctor {
     private String lastname;
 
     @Column(name = "firstname")
-    @NotNull(message = "Имя отсутствует")
-    @NotEmpty(message = "Имя не может быть пустым")
+    @NotEmpty(message = "Имя отсутствует или не заполнено")
     @Size(max = 100, message = "Имя должно быть не более 100 символов")
     private String firstname;
 

@@ -26,8 +26,7 @@ public class TypeEmployment {
     private Integer id;
 
     @Column(name = "name")
-    @NotNull(message = "Наименование типа занятости родителя отсутствует")
-    @NotEmpty(message = "Наименование типа занятости родителя не заполнено")
+    @NotEmpty(message = "Наименование типа занятости родителя отсутствует или не заполнено")
     @Size(max = 100, message = "Наименование типа занятости родителя должно быть не более 100 символов")
     private String name;
 

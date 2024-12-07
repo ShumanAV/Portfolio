@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -26,11 +27,13 @@ public class Contract {
 
     @Column(name = "date_start")
     @NotNull(message = "Дата начала договора отсутствует")
-    private Date date_start;
+    @Size(max = 30, message = "Дата начала действия договора должна быть не более 30 символов")
+    private String date_start;
 
     @Column(name = "date_end")
     @NotNull(message = "Дата окончания договора отсутствует")
-    private Date date_end;
+    @Size(max = 30, message = "Дата окончания действия договора должна быть не более 30 символов")
+    private String date_end;
 
     @Column(name = "description")
     @NotNull(message = "Описание договора отсутствует")

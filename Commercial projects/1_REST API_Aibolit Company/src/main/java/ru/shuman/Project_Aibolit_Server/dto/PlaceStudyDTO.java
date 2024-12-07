@@ -14,8 +14,7 @@ public class PlaceStudyDTO {
 
     private Integer id;
 
-    @NotNull(message = "Наименование места учебы пациента отсутствует")
-    @NotEmpty(message = "Наименование места учебы пациента не заполнено")
+    @NotEmpty(message = "Наименование места учебы пациента отсутствует или не заполнено")
     @Size(max = 100, message = "Наименование места учебы должно быть не более 100 символов")
     private String name;
 

@@ -25,8 +25,7 @@ public class TypeContract {
     private Integer id;
 
     @Column(name = "name")
-    @NotNull(message = "Наименование типа контракта отсутствует")
-    @NotEmpty(message = "Наименование типа контракта не заполнено")
+    @NotEmpty(message = "Наименование типа контракта отсутствует или не заполнено")
     @Size(max = 255, message = "Наименование типа контракта должно быть не более 255 символов")
     private String name;
 

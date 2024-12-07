@@ -19,8 +19,7 @@ public class DoctorDTO {
     @Size(max = 100, message = "Фамилия должна быть не более 100 символов")
     private String lastname;
 
-    @NotNull(message = "Имя отсутствует")
-    @NotEmpty(message = "Имя не может быть пустым")
+    @NotEmpty(message = "Имя отсутствует или не заполнено")
     @Size(max = 100, message = "Имя должно быть не более 100 символов")
     private String firstname;
 

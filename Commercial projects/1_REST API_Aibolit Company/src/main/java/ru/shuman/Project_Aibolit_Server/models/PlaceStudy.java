@@ -25,8 +25,7 @@ public class PlaceStudy {
     private Integer id;
 
     @Column(name = "name")
-    @NotNull(message = "Наименование места учебы пациента отсутствует")
-    @NotEmpty(message = "Наименование места учебы пациента не заполнено")
+    @NotEmpty(message = "Наименование места учебы пациента отсутствует или не заполнено")
     @Size(max = 100, message = "Наименование места учебы пациента должно быть не более 100 символов")
     private String name;
 

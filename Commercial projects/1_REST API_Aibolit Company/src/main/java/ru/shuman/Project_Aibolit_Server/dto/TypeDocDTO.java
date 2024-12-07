@@ -14,8 +14,7 @@ public class TypeDocDTO {
 
     private Integer id;
 
-    @NotNull(message = "Наименование типа документа отсутствует")
-    @NotEmpty(message = "Наименование типа документа не заполнено")
+    @NotEmpty(message = "Наименование типа документа отсутствует или не заполнено")
     @Size(max = 255, message = "Наименование типа документа должно быть не более 255 символов")
     private String name;
 

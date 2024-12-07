@@ -28,8 +28,7 @@ public class Specialization {
     private Integer id;
 
     @Column(name = "name")
-    @NotNull(message = "Наименование специализации отсутствует")
-    @NotEmpty(message = "Наименование специализации не заполнено")
+    @NotEmpty(message = "Наименование специализации отсутствует или не заполнено")
     @Size(max = 100, message = "Наименование специализации должно быть не более 100 символов")
     private String name;
 

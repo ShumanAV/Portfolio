@@ -17,8 +17,7 @@ public class DocumentDTO {
 
     private Integer id;
 
-    @NotNull(message = "Наименование документа отсутствует")
-    @NotEmpty(message = "Наименование документа не заполнено")
+    @NotEmpty(message = "Наименование документа отсутствует или не заполнено")
     @Size(max = 255, message = "Наименование документа должно быть не более 255 символов")
     private String name;
 

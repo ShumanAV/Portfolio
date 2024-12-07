@@ -35,8 +35,7 @@ public class Patient {
     private String lastname;
 
     @Column(name = "firstname")
-    @NotNull(message = "Имя пациента отсутствует")
-    @NotEmpty(message = "Имя пациента не может быть пустым")
+    @NotEmpty(message = "Имя пациента отсутствует или не заполнено")
     @Size(max = 100, message = "Имя должно быть не более 100 символов")
     private String firstname;
 
@@ -92,7 +91,8 @@ public class Patient {
 
     @Column(name = "birthday")
     @NotNull(message = "День рождения пациента отсутствует")
-    private Date birthday;
+    @Size(max = 30, message = "День рождения пациента должно быть не более 30 символов")
+    private String birthday;
 
     @Column(name = "published")
     @NotNull(message = "Поле published пациента отсутствует")

@@ -65,32 +65,6 @@ public class ParentValidator implements Validator {
 
         String field = searchNameFieldInParentEntity(errors, parent.getClass());
 
-        if (parent.getDocument() != null) {
-            if (parent.getId() == null && parent.getDocument().getId() != null) {
-                errors.rejectValue(field == null ? "document" : field, "", "У нового родителя указан существующий документ с id!");
-            }
-            if (parent.getId() != null && parent.getDocument().getId() == null) {
-                errors.rejectValue(field == null ? "document" : field, "", "У существующего родителя указан новый документ без id!");
-            }
-            if (parent.getDocument().getId() != null) {
-                documentIdValidator.validate(parent.getDocument(), errors);
-            }
-            documentValidator.validate(parent.getDocument(), errors);
-        }
-
-        if (parent.getAddress() != null) {
-            if (parent.getId() == null && parent.getAddress().getId() != null) {
-                errors.rejectValue(field == null ? "address" : field, "", "У нового родителя указан существующий адрес с id!");
-            }
-            if (parent.getId() != null && parent.getAddress().getId() == null) {
-                errors.rejectValue(field == null ? "address" : field, "", "У существующего родителя указан новый адрес без id!");
-            }
-            if (parent.getAddress().getId() != null) {
-                addressIdValidator.validate(parent.getAddress(), errors);
-            }
-            addressValidator.validate(parent.getAddress(), errors);
-        }
-
         Optional<Parent> existingParent = parentService.findByPhone(parent.getPhone());
         if (existingParent.isPresent() && parent.getId() != existingParent.get().getId()) {
             errors.rejectValue(field == null ? "phone" : field, "", "Родитель с таким номером телефона уже существует!");
@@ -116,29 +90,57 @@ public class ParentValidator implements Validator {
             errors.rejectValue(field == null ? "inn" : field, "", "Родитель с таким номером ИНН уже существует!");
         }
 
+        if (parent.getDocument() != null) {
+            if (parent.getDocument().getId() != null) {
+                documentIdValidator.validate(parent.getDocument(), errors);
+            }
+            documentValidator.validate(parent.getDocument(), errors);
+        } else {
+            errors.rejectValue(field == null ? "document" : field, "", "Документ у родителя отсутствует!");
+        }
+
+        if (parent.getAddress() != null) {
+            if (parent.getAddress().getId() != null) {
+                addressIdValidator.validate(parent.getAddress(), errors);
+            }
+            addressValidator.validate(parent.getAddress(), errors);
+        } else {
+            errors.rejectValue(field == null ? "address" : field, "", "Адрес у родителя отсутствует!");
+        }
+
         if (parent.getTypeRelationshipWithPatient() != null) {
             typeRelationshipWithPatientIdValidator.validate(parent.getTypeRelationshipWithPatient(), errors);
             typeRelationshipWithPatientValidator.validate(parent.getTypeRelationshipWithPatient(), errors);
+        } else {
+            errors.rejectValue(field == null ? "typeRelationshipWithPatient" : field, "", "Тип отношения с пациентом у родителя отсутствует!");
         }
 
         if (parent.getEducation() != null) {
             educationIdValidator.validate(parent.getEducation(), errors);
             educationValidator.validate(parent.getEducation(), errors);
+        } else {
+            errors.rejectValue(field == null ? "education" : field, "", "Образование у родителя отсутствует!");
         }
 
         if (parent.getBlood() != null) {
             bloodIdValidator.validate(parent.getBlood(), errors);
             bloodValidator.validate(parent.getBlood(), errors);
+        } else {
+            errors.rejectValue(field == null ? "blood" : field, "", "Группа крови у родителя отсутствует!");
         }
 
         if (parent.getTypeEmployment() != null) {
             typeEmploymentIdValidator.validate(parent.getTypeEmployment(), errors);
             typeEmploymentValidator.validate(parent.getTypeEmployment(), errors);
+        } else {
+            errors.rejectValue(field == null ? "typeEmployment" : field, "", "Тип занятости у родителя отсутствует!");
         }
 
         if (parent.getGender() != null) {
             genderIdValidator.validate(parent.getGender(), errors);
             genderValidator.validate(parent.getGender(), errors);
+        } else {
+            errors.rejectValue(field == null ? "gender" : field, "", "Гендер у родителя отсутствует!");
         }
 
     }
