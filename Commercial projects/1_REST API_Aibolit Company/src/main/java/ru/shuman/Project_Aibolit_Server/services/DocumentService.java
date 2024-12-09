@@ -40,6 +40,7 @@ public class DocumentService {
         //для кэша добавляем документ в список документов у типа документа
         typeDocService.addDocumentAtListForTypeDoc(newDocument, newDocument.getTypeDoc());
 
+        //сохраняем новый документ
         documentRepository.save(newDocument);
     }
 
@@ -49,9 +50,10 @@ public class DocumentService {
     @Transactional
     public void update(Document updatedDocument) {
 
-        //для кэша добавляем документ в список документов у типа документа
+        //для кэша добавляем документ в список документов для типа документа
         typeDocService.addDocumentAtListForTypeDoc(updatedDocument, updatedDocument.getTypeDoc());
 
+        //сохраняем измененный документ
         documentRepository.save(updatedDocument);
     }
 }

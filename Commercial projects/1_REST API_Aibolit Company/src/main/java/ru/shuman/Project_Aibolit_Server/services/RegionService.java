@@ -11,6 +11,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+
 @Service
 @Transactional(readOnly = true)
 public class RegionService {
@@ -70,9 +72,9 @@ public class RegionService {
     }
 
     /*
-    Метод добавляет адрес в лист региона, делается это для кэша
+    Метод добавляет адрес в список адресов для региона указанного в адресе, делается это для кэша
      */
     public void AddAddressAtListForRegion(Address address, Region region) {
-        GeneralMethods.addObjectOneInListForObjectTwo(address, region, this);
+        addObjectOneInListForObjectTwo(address, region, this);
     }
 }

@@ -16,6 +16,9 @@ public class AddressValidator implements Validator {
     private final RegionValidator regionValidator;
     private final RegionIdValidator regionIdValidator;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public AddressValidator(AddressService addressService, RegionValidator regionValidator, RegionIdValidator regionIdValidator) {
         this.addressService = addressService;
@@ -32,13 +35,16 @@ public class AddressValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Address address = (Address) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, address.getClass());
 
+        //проверяем есть ли регион в адресе
         if (address.getRegion() == null) {
             errors.rejectValue(field == null ? "region": field, "", "В адресе не выбран регион!");
+
+            //если есть валидируем id региона
         } else {
             regionIdValidator.validate(address.getRegion(), errors);
-            regionValidator.validate(address.getRegion(), errors);
         }
     }
 }

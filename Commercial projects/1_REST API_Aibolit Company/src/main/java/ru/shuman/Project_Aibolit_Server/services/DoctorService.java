@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
 import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
 
 @Service
@@ -84,16 +85,21 @@ public class DoctorService {
     @Transactional
     public void register(Doctor newDoctor) {
 
+        //для кэша, добавляем доктора в список докторов у специализации или заменяем, если он уже там есть
         specializationService.addDoctorAtListForSpecialization(newDoctor, newDoctor.getSpecialization());
 
+        //записываем дату и время создания и изменения доктора
         newDoctor.setCreatedAt(LocalDateTime.now());
         newDoctor.setUpdatedAt(LocalDateTime.now());
 
+        //если у доктора есть доступ к системе, значит есть профиль с именем пользователя и паролем, для кэша добавляем
+        // доктора для профиля, создаем новый профиль
         if (newDoctor.getAccessToSystem()) {
             newDoctor.getProfile().setDoctor(newDoctor);
             profileService.create(newDoctor.getProfile());
         }
 
+        //сохраняем нового доктора
         doctorRepository.save(newDoctor);
     }
 
@@ -150,16 +156,16 @@ public class DoctorService {
     }
 
     /*
-    Метод добавляет вызов в список вызовов у доктора, делается это для кэша
+    Метод добавляет вызов врача в список вызовов для доктора указанного в вызове, делается это для кэша
      */
     public void addCallingAtListForDoctor(Calling calling, Doctor doctor) {
-        GeneralMethods.addObjectOneInListForObjectTwo(calling, doctor, this);
+        addObjectOneInListForObjectTwo(calling, doctor, this);
     }
 
     /*
-    Метод добавляет договор в список договоров у доктора, делается это для кэша
+    Метод добавляет договор в список договоров для доктора указанного в договоре, делается это для кэша
     */
     public void addContractAtListForDoctor(Contract contract, Doctor doctor) {
-        GeneralMethods.addObjectOneInListForObjectTwo(contract, doctor, this);
+        addObjectOneInListForObjectTwo(contract, doctor, this);
     }
 }

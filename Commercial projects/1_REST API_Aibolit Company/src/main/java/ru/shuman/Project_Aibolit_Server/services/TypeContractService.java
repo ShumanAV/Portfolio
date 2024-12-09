@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
+
 @Service
 @Transactional(readOnly = true)
 public class TypeContractService {
@@ -46,32 +49,35 @@ public class TypeContractService {
     @Transactional
     public void create(TypeContract newTypeContract) {
 
-        //добавляем дату и время создания и изменения
+        //добавляем дату и время создания и изменения типа договора
         newTypeContract.setCreatedAt(LocalDateTime.now());
         newTypeContract.setUpdatedAt(LocalDateTime.now());
 
+        //сохраняем новый тип договора
         typeContractRepository.save(newTypeContract);
     }
 
     /*
-    Метод изменяет существующий тип договора в БД, ищем существующий тип договора в БД по id, переносим время создания
-    из типа договора из БД в изменяемый, обновляем дату и время изменения и сохраняем
+    Метод сохраняет измененный тип договора в БД, ищет существующий тип договора в БД по id, копирует значения всех
+    не null полей из измененного типа договора в существующий, обновляет дату и время изменения типа договора
      */
     @Transactional
     public void update(TypeContract updatedtypeContract) {
 
-        Optional<TypeContract> existingTypeContract = typeContractRepository.findById(updatedtypeContract.getId());
+        //находим существующий тип договора в БД по id
+        TypeContract existingTypeContract = typeContractRepository.findById(updatedtypeContract.getId()).get();
 
-        updatedtypeContract.setCreatedAt(existingTypeContract.get().getCreatedAt());
-        updatedtypeContract.setUpdatedAt(LocalDateTime.now());
+        //копируем значения всех полей кроме тех, которые null, из измененного типа договора в существующий
+        copyNonNullProperties(updatedtypeContract, existingTypeContract);
 
-        typeContractRepository.save(updatedtypeContract);
+        //обновляем дату и время изменения типа договора
+        existingTypeContract.setUpdatedAt(LocalDateTime.now());
     }
 
     /*
-    Метод добавляет договор в лист типа договора, делается это для кэша
+    Метод добавляет договор в список договоров для типа договора, делается это для кэша
     */
     public void addContractAtListForTypeContract(Contract contract, TypeContract typeContract) {
-        GeneralMethods.addObjectOneInListForObjectTwo(contract, typeContract, this);
+        addObjectOneInListForObjectTwo(contract, typeContract, this);
     }
 }

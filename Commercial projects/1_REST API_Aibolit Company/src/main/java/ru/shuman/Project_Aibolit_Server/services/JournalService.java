@@ -28,8 +28,8 @@ public class JournalService {
     /*
     Метод находит карточку вызова врача по id и возвращает ее в обертке Optional
      */
-    public Optional<Journal> findById(Integer diaryId) {
-        return journalRepository.findById(diaryId);
+    public Optional<Journal> findById(Integer journalId) {
+        return journalRepository.findById(journalId);
     }
 
     /*
@@ -38,15 +38,16 @@ public class JournalService {
     @Transactional
     public void create(Journal newJournal) {
 
-        //записываем дату и время создания и изменения
+        //записываем дату и время создания и изменения карточки вызова врача
         newJournal.setCreatedAt(LocalDateTime.now());
         newJournal.setUpdatedAt(LocalDateTime.now());
 
+        //сохраняем новую карточку вызова врача
         journalRepository.save(newJournal);
     }
 
     /*
-    Метод сохраняет измененную карточку вызова врача в БД, все изменения переносятся с изменяемого объекта в
+    Метод сохраняет измененную карточку вызова врача в БД, значения всех полей кроме null копируются с изменяемого объекта в
     существующий, обновляется дата и время изменения
      */
     @Transactional

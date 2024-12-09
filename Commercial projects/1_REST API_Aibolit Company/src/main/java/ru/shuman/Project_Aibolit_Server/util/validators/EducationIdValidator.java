@@ -14,6 +14,9 @@ public class EducationIdValidator implements Validator {
 
     private final EducationService educationService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public EducationIdValidator(EducationService educationService) {
         this.educationService = educationService;
@@ -28,11 +31,14 @@ public class EducationIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Education education = (Education) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, education.getClass());
 
+        //проверяем есть ли id у образования
         if (education.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У образования родителя отсутствует id!");
 
+            //проверяем есть ли в БД образование с таким id
         } else if (educationService.findById(education.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id": field, "", "Образование у родителя с таким id не существует!");
         }

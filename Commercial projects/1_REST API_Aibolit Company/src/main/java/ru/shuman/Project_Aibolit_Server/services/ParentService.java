@@ -207,7 +207,7 @@ public class ParentService {
     }
 
     /*
-    Метод добавляет пациента в список пациентов для родителя, делается это для кэша
+    Метод добавляет пациента в список пациентов для родителя указанного в пациенте, делается это для кэша
      */
     public void addPatientAtListForParent(Patient patient, Parent parent, int numberParent) {
 

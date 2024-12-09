@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
 import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
 
 @Service
@@ -57,37 +58,40 @@ public class SpecializationService {
     }
 
     /*
-    Метод сохраняет новую специализацию, специализация приходит, заполняются поля дата и время создания и изменения
+    Метод сохраняет новую специализацию в БД, заполняет дату и время создания и изменения
      */
     @Transactional
     public void create(Specialization newSpecialization) {
 
+        //записываем дату и время создания и изменения специализации
         newSpecialization.setCreatedAt(LocalDateTime.now());
         newSpecialization.setUpdatedAt(LocalDateTime.now());
 
+        //сохраняем новую специализацию в БД
         specializationRepository.save(newSpecialization);
     }
 
     /*
-    Метод сохраняет изменения, которые были сделаны в изменяемой специализации, специализация приходит,
-    копируем значения всех не null полей из изменяемой специализации в существующую в БД, id и время создания остаются
-    без изменений
+    Метод сохраняет измененную специализацию, копирует значения всех не null полей из изменяемой специализации
+     в существующую в БД, id и время создания остаются без изменений
      */
     @Transactional
     public void update(Specialization updatedSpecialization) {
 
+        //находим существующую специализацию в БД по id
         Specialization existingSpecialization = specializationRepository.findById(updatedSpecialization.getId()).get();
 
+        //копируем значения всех полей кроме тех, которые null, из измененного типа договора в существующий
         copyNonNullProperties(updatedSpecialization, existingSpecialization);
 
+        //обновляем дату и время изменения специализации
         existingSpecialization.setUpdatedAt(LocalDateTime.now());
     }
 
     /*
-    Метод добавляет доктора в список специализации, делается это как для кэша
+    Метод добавляет доктора в список докторов для специализации, делается это как для кэша
     */
-
     public void addDoctorAtListForSpecialization(Doctor doctor, Specialization specialization) {
-        GeneralMethods.addObjectOneInListForObjectTwo(doctor, specialization, this);
+        addObjectOneInListForObjectTwo(doctor, specialization, this);
     }
 }

@@ -5,10 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.repositories.CallingRepository;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
 
 @Service
 @Transactional(readOnly = true)
@@ -62,15 +65,12 @@ public class CallingService {
         //для кэша добавляем вызов врача в список вызовов для доктора указанного в вызове
         doctorService.addCallingAtListForDoctor(newCalling, newCalling.getDoctor());
 
-        //для кэша добавляем вызов врача в карточку вызова и создаем новую карточку
-        newCalling.getJournal().setCalling(newCalling);
+        //создаем новую карточку вызова врача, плюс для кэша добавляем вызов врача в карточку вызова
         journalService.create(newCalling.getJournal());
+        newCalling.getJournal().setCalling(newCalling);
 
         //для кэша добавляем вызов врача в список вызовов для прайса указанного в вызове
         priceService.addCallingAtListForPrice(newCalling, newCalling.getPrice());
-
-        //для кэша добавляем вызов врача в список вызовов для пациента указанного в вызове
-        patientService.addCallingAtListForPatient(newCalling, newCalling.getPatient());
 
         //если id пациента, указанного в вызове null, это значит что пациент создан новый и его нужно создать в БД,
         // если id не null, значит пациент выбран уже существующий в БД и его апдейтим
@@ -80,36 +80,53 @@ public class CallingService {
             patientService.update(newCalling.getPatient());
         }
 
+        //для кэша добавляем вызов врача в список вызовов для пациента указанного в вызове, данная строка должна быть ниже
+        //создания пациента, т.к. в методе потребуется id пациента
+        patientService.addCallingAtListForPatient(newCalling, newCalling.getPatient());
+
         callingRepository.save(newCalling);
     }
 
     /*
-    Метод сохраняет измененный вызов врача в БД, вносит дату и время изменения.
-    Создает по цепочке дочернюю сущность Journal - карточка вызова врача, создает или обновляет Patient - пациента.
+    Метод сохраняет измененный вызов врача в БД, копирует все значения полей кроме null из измененного вызова врача
+    в существуюещий вызов в БД, вносит дату и время изменения.
+    Апдейтит по цепочке дочернюю сущность Journal - карточка вызова врача, создает или обновляет Patient - пациента.
     Для кэша данный вызов добавляется в список вызовов доктора, прайса, в журнал, пациента.
     */
     @Transactional
     public void update(Calling updatedCalling) {
 
-        Optional<Calling> existingCalling = callingRepository.findById(updatedCalling.getId());
+        //находим существующий вызов в БД по id
+        Calling existingCalling = callingRepository.findById(updatedCalling.getId()).get();
 
-        updatedCalling.setCreatedAt(existingCalling.get().getCreatedAt());
-        updatedCalling.setUpdatedAt(LocalDateTime.now());
+        //копируем значения всех полей кроме тех, которые не null, из изменяемого вызова в существующий
+        copyNonNullProperties(updatedCalling, existingCalling);
 
-        doctorService.addCallingAtListForDoctor(updatedCalling, updatedCalling.getDoctor());
+        //обновляем дату и время изменения вызова
+        existingCalling.setUpdatedAt(LocalDateTime.now());
 
-        updatedCalling.getJournal().setCalling(updatedCalling);
-        journalService.update(updatedCalling.getJournal());
+        //для кэша добавляем вызов врача в список вызовов для доктора указанного в вызове
+        doctorService.addCallingAtListForDoctor(existingCalling, existingCalling.getDoctor());
 
-        priceService.addCallingAtListForPrice(updatedCalling, updatedCalling.getPrice());
+        //апдейтим карточку вызова, плюс для кэша добавляем вызов врача журнал
+        journalService.update(existingCalling.getJournal());
+        existingCalling.getJournal().setCalling(existingCalling);
 
-        patientService.addCallingAtListForPatient(updatedCalling, updatedCalling.getPatient());
-        if (updatedCalling.getPatient().getId() == null) {
-            patientService.create(updatedCalling.getPatient());
+        //для кэша добавляем вызов врача в список вызовов для прайса указанного в вызове
+        priceService.addCallingAtListForPrice(existingCalling, existingCalling.getPrice());
+
+        //если id пациента равен null, это значит, что пациент создан новый и его нужно создать, если не null, значит
+        // пациент выбран существующий и поэтому его нужно апдейтить
+        if (existingCalling.getPatient().getId() == null) {
+            patientService.create(existingCalling.getPatient());
         } else {
-            patientService.update(updatedCalling.getPatient());
+            patientService.update(existingCalling.getPatient());
         }
 
-        callingRepository.save(updatedCalling);
+        //для кэша добавляем вызов врача в список вызовов для пациента указанного в вызове, эта строка должна быть ниже
+        // создания пациента, т.к. в методе понадобится его id
+        patientService.addCallingAtListForPatient(existingCalling, existingCalling.getPatient());
+
+        //сохранять существующий вызов врача не нужно, т.к. он находится в персистенс контексте
     }
 }

@@ -20,6 +20,9 @@ public class ContractValidator implements Validator {
     private final TypeContractIdValidator typeContractIdValidator;
     private final TypeContractValidator typeContractValidator;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public ContractValidator(ContractService contractService, PatientValidator patientValidator, DoctorValidator doctorValidator,
                              DoctorIdValidator doctorIdValidator, PatientIdValidator patientIdValidator, TypeContractIdValidator typeContractIdValidator,
@@ -42,29 +45,21 @@ public class ContractValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Contract contract = (Contract) o;
 
-        String field = searchNameFieldInParentEntity(errors, contract.getClass());
-
-        if (contract.getDoctor() == null) {
-            errors.rejectValue(field == null ? "user": field, "", "Пользователь в договоре не выбран!");
-        } else {
+        //проверяем если id доктора есть, валидируем его id, сам доктор валидровался при создании
+        if (contract.getDoctor().getId() != null) {
             doctorIdValidator.validate(contract.getDoctor(), errors);
-            doctorValidator.validate(contract.getDoctor(), errors);
         }
 
-        if (contract.getPatient() == null) {
-            errors.rejectValue(field == null ? "patient": field, "", "Пациент в договоре не выбран!");
-        } else {
-            if (contract.getPatient().getId() != null) {
-                patientIdValidator.validate(contract.getPatient(), errors);
-            }
-            patientValidator.validate(contract.getPatient(), errors);
+        //проверяем если id пациента есть, валидируем его id
+        if (contract.getPatient().getId() != null) {
+            patientIdValidator.validate(contract.getPatient(), errors);
         }
+        //валидируем самого пациента, он может быть создан новый либо изменен существующий
+        patientValidator.validate(contract.getPatient(), errors);
 
-        if (contract.getTypeContract() == null) {
-            errors.rejectValue(field == null ? "typeContract": field, "", "Тип договора в договоре не выбран!");
-        } else {
+        //проверяем если id типа договора есть, валидируем его id, сам тип договора валидровался при создании
+        if (contract.getTypeContract().getId() != null) {
             typeContractIdValidator.validate(contract.getTypeContract(), errors);
-            typeContractValidator.validate(contract.getTypeContract(), errors);
         }
     }
 }

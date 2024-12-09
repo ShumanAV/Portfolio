@@ -11,6 +11,8 @@ import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+
 @Service
 @Transactional(readOnly = true)
 public class TypeEmploymentService {
@@ -55,7 +57,7 @@ public class TypeEmploymentService {
     }
 
     /*
-    Метод изменяет существующий тип занятости в БД
+    Метод сохраняет измененный тип занятости в БД
      */
     @Transactional
     public void update(TypeEmployment updatedTypeEmployment) {
@@ -66,6 +68,6 @@ public class TypeEmploymentService {
     Метод добавляет родителя пациента в список родителей для типа занятости, делается это для кэша
     */
     public void addParentAtListForTypeEmployment(Parent parent, TypeEmployment typeEmployment) {
-        GeneralMethods.addObjectOneInListForObjectTwo(parent, typeEmployment, this);
+        addObjectOneInListForObjectTwo(parent, typeEmployment, this);
     }
 }

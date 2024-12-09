@@ -14,6 +14,9 @@ public class CallingIdValidator implements Validator {
 
     private final CallingService callingService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public CallingIdValidator(CallingService callingService) {
         this.callingService = callingService;
@@ -28,13 +31,13 @@ public class CallingIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Calling calling = (Calling) o;
 
-        String field = searchNameFieldInParentEntity(errors, calling.getClass());
-
+        //проверяем есть ли id у вызова врача
         if (calling.getId() == null) {
-            errors.rejectValue(field == null ? "id" : field, "", "У вызова отсутствует id!");
+            errors.rejectValue("id", "", "У вызова врача отсутствует id!");
 
+            //проверяем есть ли вызов врача в БД с таким id
         } else if (callingService.findById(calling.getId()).isEmpty()) {
-            errors.rejectValue(field == null ? "id": field, "", "Вызова с таким id не существует!");
+            errors.rejectValue("id", "", "Вызова врача с таким id не существует!");
         }
 
     }

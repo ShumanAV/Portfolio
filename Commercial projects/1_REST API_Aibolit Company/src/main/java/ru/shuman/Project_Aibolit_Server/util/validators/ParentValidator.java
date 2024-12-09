@@ -95,8 +95,6 @@ public class ParentValidator implements Validator {
                 documentIdValidator.validate(parent.getDocument(), errors);
             }
             documentValidator.validate(parent.getDocument(), errors);
-        } else {
-            errors.rejectValue(field == null ? "document" : field, "", "Документ у родителя отсутствует!");
         }
 
         if (parent.getAddress() != null) {
@@ -104,43 +102,26 @@ public class ParentValidator implements Validator {
                 addressIdValidator.validate(parent.getAddress(), errors);
             }
             addressValidator.validate(parent.getAddress(), errors);
-        } else {
-            errors.rejectValue(field == null ? "address" : field, "", "Адрес у родителя отсутствует!");
         }
 
         if (parent.getTypeRelationshipWithPatient() != null) {
             typeRelationshipWithPatientIdValidator.validate(parent.getTypeRelationshipWithPatient(), errors);
-            typeRelationshipWithPatientValidator.validate(parent.getTypeRelationshipWithPatient(), errors);
-        } else {
-            errors.rejectValue(field == null ? "typeRelationshipWithPatient" : field, "", "Тип отношения с пациентом у родителя отсутствует!");
         }
 
         if (parent.getEducation() != null) {
             educationIdValidator.validate(parent.getEducation(), errors);
-            educationValidator.validate(parent.getEducation(), errors);
-        } else {
-            errors.rejectValue(field == null ? "education" : field, "", "Образование у родителя отсутствует!");
         }
 
         if (parent.getBlood() != null) {
             bloodIdValidator.validate(parent.getBlood(), errors);
-            bloodValidator.validate(parent.getBlood(), errors);
-        } else {
-            errors.rejectValue(field == null ? "blood" : field, "", "Группа крови у родителя отсутствует!");
         }
 
         if (parent.getTypeEmployment() != null) {
             typeEmploymentIdValidator.validate(parent.getTypeEmployment(), errors);
-            typeEmploymentValidator.validate(parent.getTypeEmployment(), errors);
-        } else {
-            errors.rejectValue(field == null ? "typeEmployment" : field, "", "Тип занятости у родителя отсутствует!");
         }
 
         if (parent.getGender() != null) {
             genderIdValidator.validate(parent.getGender(), errors);
-            genderValidator.validate(parent.getGender(), errors);
-        } else {
-            errors.rejectValue(field == null ? "gender" : field, "", "Гендер у родителя отсутствует!");
         }
 
     }

@@ -15,6 +15,9 @@ public class GenderValidator implements Validator {
 
     private final GenderService genderService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public GenderValidator(GenderService genderService) {
         this.genderService = genderService;

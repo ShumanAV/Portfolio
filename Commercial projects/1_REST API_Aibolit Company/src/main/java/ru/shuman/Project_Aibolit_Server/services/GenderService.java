@@ -10,6 +10,8 @@ import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+
 @Service
 @Transactional(readOnly = true)
 public class GenderService {
@@ -62,16 +64,16 @@ public class GenderService {
     }
 
     /*
-    Метод добавляет пациента в список пациентов для гендера, делается это для кэша
+    Метод добавляет пациента в список пациентов для гендера указанного в пациенте, делается это для кэша
      */
     public void addPatientAtListForGender(Patient patient, Gender gender) {
-        GeneralMethods.addObjectOneInListForObjectTwo(patient, gender, this);
+        addObjectOneInListForObjectTwo(patient, gender, this);
     }
 
     /*
-    Метод добавляет родителя пациента в список родителей для гендера, делается это для кэша
+    Метод добавляет родителя пациента в список родителей для гендера указанного в родителе, делается это для кэша
      */
     public void addParentAtListForGender(Parent parent, Gender gender) {
-        GeneralMethods.addObjectOneInListForObjectTwo(parent, gender, this);
+        addObjectOneInListForObjectTwo(parent, gender, this);
     }
 }

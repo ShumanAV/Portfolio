@@ -12,6 +12,8 @@ import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+
 @Service
 @Transactional(readOnly = true)
 public class BloodService {
@@ -64,17 +66,17 @@ public class BloodService {
     }
 
     /*
-    Метод добавляет пациента в список пациентов для группы крови, делается это для кэша
+    Метод добавляет пациента в список пациентов для группы крови указанной у пациента, делается это для кэша
     */
     public void addPatientAtListForBlood(Patient patient, Blood blood) {
-        GeneralMethods.addObjectOneInListForObjectTwo(patient, blood, this);
+        addObjectOneInListForObjectTwo(patient, blood, this);
     }
 
     /*
-    Метод добавляет родителя пациента в список родителей для группы крови, делается это для кэша
+    Метод добавляет родителя пациента в список родителей для группы крови указанной у родителя, делается это для кэша
      */
     public void addParentAtListForBlood(Parent parent, Blood blood) {
-        GeneralMethods.addObjectOneInListForObjectTwo(parent, blood, this);
+        addObjectOneInListForObjectTwo(parent, blood, this);
     }
 
 }

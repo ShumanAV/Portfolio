@@ -107,12 +107,10 @@ public class PatientValidator implements Validator {
 
         if (patient.getBlood() != null) {
             bloodIdValidator.validate(patient.getBlood(), errors);
-            bloodValidator.validate(patient.getBlood(), errors);
         }
 
         if (patient.getGender() != null) {
             genderIdValidator.validate(patient.getGender(), errors);
-            genderValidator.validate(patient.getGender(), errors);
         }
 
         for (Parent parent : patient.getParents()) {

@@ -16,6 +16,9 @@ public class DocumentValidator implements Validator {
     private final TypeDocValidator typeDocValidator;
     private final TypeDocIdValidator typeDocIdValidator;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public DocumentValidator(DocumentService documentService, TypeDocValidator typeDocValidator, TypeDocIdValidator typeDocIdValidator) {
         this.documentService = documentService;
@@ -32,13 +35,12 @@ public class DocumentValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Document document = (Document) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, document.getClass());
 
-        if (document.getTypeDoc() == null) {
-            errors.rejectValue(field == null ? "typeDoc": field, "", "У документа не выбран тип документа!");
-        } else {
+        //проверяем если есть id у типа документа, валидируем его id
+        if (document.getTypeDoc().getId() != null) {
             typeDocIdValidator.validate(document.getTypeDoc(), errors);
-            typeDocValidator.validate(document.getTypeDoc(), errors);
         }
     }
 }

@@ -40,6 +40,7 @@ public class AddressService {
         //для кэша добавляем адрес в список адресов для региона указанного в адресе
         regionService.AddAddressAtListForRegion(newAddress, newAddress.getRegion());
 
+        //сохраняем новый адрес
         addressRepository.save(newAddress);
     }
 
@@ -52,6 +53,7 @@ public class AddressService {
         //для кэша добавляем адрес в список адресов для региона указанного в адресе
         regionService.AddAddressAtListForRegion(updatedAddress, updatedAddress.getRegion());
 
+        //сохраняем измененный адрес
         addressRepository.save(updatedAddress);
     }
 }

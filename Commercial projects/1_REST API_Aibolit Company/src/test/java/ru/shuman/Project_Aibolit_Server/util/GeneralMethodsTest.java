@@ -22,6 +22,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
+
 public class GeneralMethodsTest {
 
     private static BindingResult bindingResultEmpty;
@@ -82,7 +84,7 @@ public class GeneralMethodsTest {
     @MethodSource("generateExceptions")
     public void collectStringAboutErrorsTestWithoutExceptions(Class<? extends RuntimeException> clazz) {
         Assertions.assertDoesNotThrow(() -> {
-            GeneralMethods.checkingForErrorsAndThrowsException(bindingResultEmpty, clazz);
+            checkingForErrorsAndThrowsException(bindingResultEmpty, clazz);
         });
     }
 
@@ -93,7 +95,7 @@ public class GeneralMethodsTest {
     public void collectStringAboutErrorsTest(Class<? extends RuntimeException> clazz) {
         // проверка на выброс исключения
         Assertions.assertThrows(clazz, () -> {
-            GeneralMethods.checkingForErrorsAndThrowsException(bindingResultWithErrors, clazz);
+            checkingForErrorsAndThrowsException(bindingResultWithErrors, clazz);
         });
     }
 

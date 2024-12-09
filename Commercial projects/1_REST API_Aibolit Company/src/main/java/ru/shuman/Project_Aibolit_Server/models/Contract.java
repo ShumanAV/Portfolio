@@ -9,7 +9,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -28,12 +27,12 @@ public class Contract {
     @Column(name = "date_start")
     @NotNull(message = "Дата начала договора отсутствует")
     @Size(max = 30, message = "Дата начала действия договора должна быть не более 30 символов")
-    private String date_start;
+    private String dateStart;
 
     @Column(name = "date_end")
     @NotNull(message = "Дата окончания договора отсутствует")
     @Size(max = 30, message = "Дата окончания действия договора должна быть не более 30 символов")
-    private String date_end;
+    private String dateEnd;
 
     @Column(name = "description")
     @NotNull(message = "Описание договора отсутствует")

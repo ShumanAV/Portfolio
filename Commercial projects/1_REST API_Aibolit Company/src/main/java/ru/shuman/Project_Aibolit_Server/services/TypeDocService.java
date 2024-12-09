@@ -10,6 +10,8 @@ import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+
 @Service
 @Transactional(readOnly = true)
 public class TypeDocService {
@@ -54,7 +56,7 @@ public class TypeDocService {
     }
 
     /*
-    Метод изменяет существующий тип документа в БД
+    Метод сохраняет измененный тип документа в БД
      */
     @Transactional
     public void update(TypeDoc updatedTypeDoc) {
@@ -62,9 +64,9 @@ public class TypeDocService {
     }
 
     /*
-    Метод добавляет документ в лист типа документа, делается это для кэша
+    Метод добавляет документ в список документов для типа документа, делается это для кэша
     */
     public void addDocumentAtListForTypeDoc(Document document, TypeDoc typeDoc) {
-        GeneralMethods.addObjectOneInListForObjectTwo(document, typeDoc, this);
+        addObjectOneInListForObjectTwo(document, typeDoc, this);
     }
 }

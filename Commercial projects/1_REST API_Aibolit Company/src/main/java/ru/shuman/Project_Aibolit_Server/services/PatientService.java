@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
 import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
 
 @Service
@@ -127,17 +128,17 @@ public class PatientService {
         newPatient.setCreatedAt(LocalDateTime.now());
         newPatient.setUpdatedAt(LocalDateTime.now());
 
-        //для кэша, для указанного места учебы пациента устанавливаем данного пациента и создаем новое место учебы
-        newPatient.getPlaceStudy().setPatient(newPatient);
+        //создаем место учебы пациента, плюс для кэша, для указанного места учебы пациента устанавливаем данного пациента
         placeStudyService.create(newPatient.getPlaceStudy());
+        newPatient.getPlaceStudy().setPatient(newPatient);
 
-        //для кэша, для указанного документа пациента устанавливаем данного пациента и создаем новый документ
-        newPatient.getDocument().setPatient(newPatient);
+        //создаем документ пациента, плюс для кэша, для указанного документа пациента устанавливаем данного пациента
         documentService.create(newPatient.getDocument());
+        newPatient.getDocument().setPatient(newPatient);
 
-        //для кэша, для указанного адреса проживания пациента устанавливаем данного пациента и создаем новый адрес
-        newPatient.getAddress().setPatient(newPatient);
+        //создаем адрес проживания пациента, плюс для кэша, для указанного адреса проживания пациента устанавливаем данного пациента
         addressService.create(newPatient.getAddress());
+        newPatient.getAddress().setPatient(newPatient);
 
         //если у пациента выбрана группа крови, т.е. она не null, то для кэша добавляем данного пациента в список
         // пауиентов у выбранной группы крови
@@ -153,10 +154,9 @@ public class PatientService {
 
         //проходимся в цикле по всем указанным родителям данного пациента, их может быть несколько
         for (int i = 0; i < newPatient.getParents().size(); i++) {
-            Parent parent = newPatient.getParents().get(i);
 
-            //для кэша добавляем данного пациента в список пациентов для текущего родителя
-            parentService.addPatientAtListForParent(newPatient, parent, i);
+            //получаем по очереди каждого родителя по номеру в списке i
+            Parent parent = newPatient.getParents().get(i);
 
             //если id текущего родителя null, это значит что родитель создан новый и его нужно создать, если не null,
             // значит он уже есть в БД и его нужно апдейтить
@@ -165,6 +165,8 @@ public class PatientService {
             } else {
                 parentService.update(parent);
             }
+            //для кэша добавляем данного пациента в список пациентов для текущего родителя
+            parentService.addPatientAtListForParent(newPatient, parent, i);
         }
 
         //сохраняем данного пациента
@@ -217,6 +219,8 @@ public class PatientService {
 
         //проходимся в цикле по всем указанным родителям данного пациента, их может быть несколько
         for (int i = 0; i < existingPatient.getParents().size(); i++) {
+
+            //получаем по очереди каждого родителя по номеру в списке i
             Parent parent = existingPatient.getParents().get(i);
 
             //для кэша добавляем данного пациента в список пациентов для текущего родителя
@@ -234,16 +238,16 @@ public class PatientService {
     }
 
     /*
-    Метод добавляет вызов врача в лист пациента, делается это для кэша
+    Метод добавляет вызов врача в список вызовов для пациента указанного в вызове, делается это для кэша
      */
     public void addCallingAtListForPatient(Calling calling, Patient patient) {
-        GeneralMethods.addObjectOneInListForObjectTwo(calling, patient, this);
+        addObjectOneInListForObjectTwo(calling, patient, this);
     }
 
     /*
-    Метод добавляет договор в лист пациента, делается это для кэша
+    Метод добавляет договор в список договоров для пациента указанного в договоре, делается это для кэша
      */
     public void addContractAtListForPatient(Contract contract, Patient patient) {
-        GeneralMethods.addObjectOneInListForObjectTwo(contract, patient, this);
+        addObjectOneInListForObjectTwo(contract, patient, this);
     }
 }

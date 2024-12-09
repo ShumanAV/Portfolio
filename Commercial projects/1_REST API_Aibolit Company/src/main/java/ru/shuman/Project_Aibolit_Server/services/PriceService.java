@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
 import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
 
 @Service
@@ -36,8 +37,8 @@ public class PriceService {
     /*
     Метод ищет прайс по id и возвращает его в обертке Optional
      */
-    public Optional<Price> findById(Integer diaryId) {
-        return priceRepository.findById(diaryId);
+    public Optional<Price> findById(Integer priceId) {
+        return priceRepository.findById(priceId);
     }
 
     /*
@@ -64,12 +65,13 @@ public class PriceService {
         newPrice.setCreatedAt(LocalDateTime.now());
         newPrice.setUpdatedAt(LocalDateTime.now());
 
+        //сохраняем новый прайс
         priceRepository.save(newPrice);
     }
 
     /*
     Метод сохраняет измененный прайс в БД, находим существующий прайс в БД по id,
-    из измененного прайса переносим все поля, которые не null в существующий прайс, обновляем дату и время изменения
+    из измененного прайса копируем все поля, которые не null в существующий прайс, обновляем дату и время изменения
      */
     @Transactional
     public void update(Price updatedPrice) {
@@ -85,9 +87,9 @@ public class PriceService {
     }
 
     /*
-    Метод добавляет вызов врача в лист вызовов в прайсе, делается это для кэша
+    Метод добавляет вызов врача в список вызовов для прайса указанного в вызове, делается это для кэша
      */
     public void addCallingAtListForPrice(Calling calling, Price price) {
-        GeneralMethods.addObjectOneInListForObjectTwo(calling, price, this);
+        addObjectOneInListForObjectTwo(calling, price, this);
     }
 }

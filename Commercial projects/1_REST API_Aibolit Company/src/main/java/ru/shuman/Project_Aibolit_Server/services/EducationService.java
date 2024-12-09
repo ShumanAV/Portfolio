@@ -11,6 +11,8 @@ import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+
 @Service
 @Transactional(readOnly = true)
 public class EducationService {
@@ -63,10 +65,10 @@ public class EducationService {
     }
 
     /*
-    Метод добавляет родителя пациента в список родителей для типа образования, делается это для кэша
+    Метод добавляет родителя пациента в список родителей для типа образования указанного у родителя, делается это для кэша
      */
     public void addParentAtListForEducation(Parent parent, Education education) {
-        GeneralMethods.addObjectOneInListForObjectTwo(parent, education, this);
+        addObjectOneInListForObjectTwo(parent, education, this);
     }
 
 }

@@ -11,6 +11,8 @@ import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+
 @Service
 @Transactional(readOnly = true)
 public class TypeRelationshipWithPatientService {
@@ -55,7 +57,7 @@ public class TypeRelationshipWithPatientService {
     }
 
     /*
-    Метод изменяет существующий тип отношений родителей с пациентом в БД
+    Метод сохраняет измененный тип отношений родителей с пациентом в БД
      */
     @Transactional
     public void update(TypeRelationshipWithPatient updatedTypeRelationship) {
@@ -66,6 +68,6 @@ public class TypeRelationshipWithPatientService {
     Метод добавляет родителя в список родителей для типа отношений родителей с пациентом, делается это для кэша
     */
     public void addParentAtListForTypeRelationship(Parent parent, TypeRelationshipWithPatient typeRelationship) {
-        GeneralMethods.addObjectOneInListForObjectTwo(parent, typeRelationship, this);
+        addObjectOneInListForObjectTwo(parent, typeRelationship, this);
     }
 }
