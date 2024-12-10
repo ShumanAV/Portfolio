@@ -1,5 +1,7 @@
 package ru.shuman.Project_Aibolit_Server.util.errors;
 
+//Класс обертка для отправки клиенту сообщения об ошибке в процессе запроса одного типа договора по id, сохранения
+// нового или апдейте существующего типа договора
 public class TypeContractErrorResponse {
     private String message;
     private long timestamp;

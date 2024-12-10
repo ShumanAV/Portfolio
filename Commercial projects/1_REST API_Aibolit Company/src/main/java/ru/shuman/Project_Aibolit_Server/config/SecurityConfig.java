@@ -20,24 +20,20 @@ import ru.shuman.Project_Aibolit_Server.services.ProfileDetailsService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final ProfileDetailsService profileDetailsService;
-//    private final RESTAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final JWTFilter jwtFilter;
 
     @Autowired
     public SecurityConfig(ProfileDetailsService profileDetailsService, JWTFilter jwtFilter) {
         this.profileDetailsService = profileDetailsService;
-//        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
         this.jwtFilter = jwtFilter;
     }
 
-    // Конфигурируем сам Спринг Секурити, т.е. какая страница отвечает за вход какая за ошибки и т.д.,
-    // а также в данном методе конфигурируем авторизацию
+    // Конфигурируем сам Спринг Секурити
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()         // отключение защиты csrf
+                .csrf().disable()
                 .authorizeRequests()
-//                .antMatchers("/admin").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/doctors").hasAnyRole("DIRECTOR", "ADMIN")
                 .antMatchers(HttpMethod.GET, "/doctors/**").hasAnyRole("DIRECTOR", "ADMIN")
                 .antMatchers(HttpMethod.PATCH, "/doctors/{id}").hasAnyRole("DIRECTOR", "ADMIN")
@@ -45,8 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().hasAnyRole("USER", "ADMIN", "DIRECTOR", "DOCTOR")
                 .and()
                 .formLogin().loginPage("/auth/login")
-                .loginProcessingUrl("/process_login")
-//                .defaultSuccessUrl("/hello", true)
+//                .loginProcessingUrl("/process_login")
 //                .failureUrl("/auth/login?error")
                 .and()
                 .logout()

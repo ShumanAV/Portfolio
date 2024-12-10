@@ -1,5 +1,7 @@
 package ru.shuman.Project_Aibolit_Server.util.errors;
 
+//Класс обертка для отправки клиенту сообщения об ошибке в процессе запроса одного гендера по id, сохранения
+// нового или апдейте существующего гендера
 public class GenderErrorResponse {
     private String message;
     private long timestamp;

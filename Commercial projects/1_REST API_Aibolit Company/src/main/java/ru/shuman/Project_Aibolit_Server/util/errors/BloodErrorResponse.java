@@ -1,5 +1,7 @@
 package ru.shuman.Project_Aibolit_Server.util.errors;
 
+//Класс обертка для отправки клиенту сообщения об ошибке в процессе запроса одной группы крови по id, сохранения новой
+// или апдейте существующей группы крови
 public class BloodErrorResponse {
     private String message;
     private long timestamp;

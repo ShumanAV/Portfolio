@@ -223,9 +223,6 @@ public class PatientService {
             //получаем по очереди каждого родителя по номеру в списке i
             Parent parent = existingPatient.getParents().get(i);
 
-            //для кэша добавляем данного пациента в список пациентов для текущего родителя
-            parentService.addPatientAtListForParent(existingPatient, parent, i);
-
             //если id текущего родителя null, это значит что родитель создан новый и его нужно создать, если не null,
             // значит он уже есть в БД и его нужно апдейтить
             if (parent.getId() == null) {
@@ -233,6 +230,8 @@ public class PatientService {
             } else {
                 parentService.update(parent);
             }
+            //для кэша добавляем данного пациента в список пациентов для текущего родителя
+            parentService.addPatientAtListForParent(existingPatient, parent, i);
         }
         //т.к. существующий пациент находится в персистенс контексте, сохранять его не нужно
     }

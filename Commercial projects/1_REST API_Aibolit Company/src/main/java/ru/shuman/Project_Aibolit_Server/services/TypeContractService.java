@@ -44,7 +44,7 @@ public class TypeContractService {
     }
 
     /*
-    Метод сохраняет новый тип договора в БД
+    Метод сохраняет новый тип договора в БД, добавляет в него дату и время создания и изменения
      */
     @Transactional
     public void create(TypeContract newTypeContract) {

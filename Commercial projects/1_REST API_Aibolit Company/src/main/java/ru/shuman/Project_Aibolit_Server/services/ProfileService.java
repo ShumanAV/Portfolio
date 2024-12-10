@@ -66,6 +66,7 @@ public class ProfileService {
         //добавляем профиль в список профилей для роли указанной в профиле
         roleService.addProfileAtListForRole(newProfile, newProfile.getRole());
 
+        //сохраняем новый профиль в БД
         profileRepository.save(newProfile);
     }
 

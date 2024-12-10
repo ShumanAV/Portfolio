@@ -1,5 +1,7 @@
 package ru.shuman.Project_Aibolit_Server.util.errors;
 
+//Класс обертка для отправки клиенту сообщения об ошибке в процессе запроса одного пациента по id, сохранения
+// нового или апдейте существующего пациента
 public class PatientErrorResponse {
     private String message;
     private long timestamp;

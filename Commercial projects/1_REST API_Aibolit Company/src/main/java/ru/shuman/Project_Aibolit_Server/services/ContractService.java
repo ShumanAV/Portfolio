@@ -59,7 +59,7 @@ public class ContractService {
         newContract.setCreatedAt(LocalDateTime.now());
         newContract.setUpdatedAt(LocalDateTime.now());
 
-        //для кэша добавляем данный договор в лист договоров доктору, который в договоре
+        //для кэша, добавляем данный договор в список договоров для доктора указанного в договоре
         doctorService.addContractAtListForDoctor(newContract, newContract.getDoctor());
 
         //если id пациента null, это значит что пациент создан новый, поэтому нужно создать и пациента тоже,
@@ -70,11 +70,11 @@ public class ContractService {
             patientService.update(newContract.getPatient());
         }
 
-        //для кэша добавляем данный договор в лист договоров пациенту, который в договоре, данная строка должна быть ниже
+        //для кэша, добавляем данный договор в список договоров для пациента указанного в договоре, данная строка должна быть ниже
         // создания пациента, т.к. в методе потребуется id пациента
         patientService.addContractAtListForPatient(newContract, newContract.getPatient());
 
-        //для кэша добавляем данный договор в лист договоров типу договора, который указан в договоре
+        //для кэша, добавляем данный договор в список договоров для типа договора указанного в договоре
         typeContractService.addContractAtListForTypeContract(newContract, newContract.getTypeContract());
 
         //сохраняем новый договор в БД

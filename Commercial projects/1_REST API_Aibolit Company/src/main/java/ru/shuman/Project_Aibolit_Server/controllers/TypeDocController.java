@@ -10,7 +10,7 @@ import ru.shuman.Project_Aibolit_Server.dto.TypeDocDTO;
 import ru.shuman.Project_Aibolit_Server.models.TypeDoc;
 import ru.shuman.Project_Aibolit_Server.services.TypeDocService;
 import ru.shuman.Project_Aibolit_Server.util.errors.TypeDocErrorResponse;
-import ru.shuman.Project_Aibolit_Server.util.exceptions.TypeDocCreatedOrUpdatedException;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.TypeDocNotCreatedOrUpdatedException;
 import ru.shuman.Project_Aibolit_Server.util.exceptions.TypeDocNotFoundException;
 import ru.shuman.Project_Aibolit_Server.util.validators.TypeDocIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.TypeDocValidator;
@@ -89,7 +89,7 @@ public class TypeDocController {
 
         typeDocValidator.validate(typeDoc, bindingResult);
 
-        checkingForErrorsAndThrowsException(bindingResult, TypeDocCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, TypeDocNotCreatedOrUpdatedException.class);
 
         typeDocService.create(typeDoc);
 
@@ -110,7 +110,7 @@ public class TypeDocController {
         typeDocIdValidator.validate(typeDoc, bindingResult);
         typeDocValidator.validate(typeDoc, bindingResult);
 
-        checkingForErrorsAndThrowsException(bindingResult, TypeDocCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, TypeDocNotCreatedOrUpdatedException.class);
 
         typeDocService.update(typeDoc);
 
@@ -134,7 +134,7 @@ public class TypeDocController {
     Метод обработчик исключения TypeDocCreatedOrUpdatedException
      */
     @ExceptionHandler
-    private ResponseEntity<TypeDocErrorResponse> handleException(TypeDocCreatedOrUpdatedException e) {
+    private ResponseEntity<TypeDocErrorResponse> handleException(TypeDocNotCreatedOrUpdatedException e) {
         TypeDocErrorResponse response = new TypeDocErrorResponse(
                 e.getMessage(),
                 System.currentTimeMillis()
