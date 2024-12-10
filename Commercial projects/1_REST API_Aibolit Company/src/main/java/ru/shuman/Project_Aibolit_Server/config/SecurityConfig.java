@@ -1,11 +1,8 @@
 package ru.shuman.Project_Aibolit_Server.config;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -16,12 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.shuman.Project_Aibolit_Server.services.ProfileDetailsService;
-import ru.shuman.Project_Aibolit_Server.util.RESTAuthenticationEntryPoint;
-import ru.shuman.Project_Aibolit_Server.util.errors.AuthenticationErrorResponse;
-
-import javax.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -32,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JWTFilter jwtFilter;
 
     @Autowired
-    public SecurityConfig(ProfileDetailsService profileDetailsService, RESTAuthenticationEntryPoint restAuthenticationEntryPoint, JWTFilter jwtFilter) {
+    public SecurityConfig(ProfileDetailsService profileDetailsService, JWTFilter jwtFilter) {
         this.profileDetailsService = profileDetailsService;
 //        this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
         this.jwtFilter = jwtFilter;

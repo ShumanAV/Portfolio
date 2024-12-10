@@ -12,6 +12,9 @@ public class PlaceStudyValidator implements Validator {
 
     private final PlaceStudyService placeStudyService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public PlaceStudyValidator(PlaceStudyService placeStudyService) {
         this.placeStudyService = placeStudyService;

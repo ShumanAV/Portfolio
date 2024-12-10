@@ -18,6 +18,9 @@ public class ProfileValidator implements Validator {
     private final RoleIdValidator roleIdValidator;
     private final RoleValidator roleValidator;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public ProfileValidator(ProfileService profileService, RoleIdValidator roleIdValidator, RoleValidator roleValidator) {
         this.profileService = profileService;
@@ -34,15 +37,16 @@ public class ProfileValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Profile profile = (Profile) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, profile.getClass());
 
-        // Блок проверки наличия имени пользователя у профиля
+        // проверяем наличие имени пользователя у профиля
         if (profile.getUsername() == null || profile.getUsername().equals("")) {
             errors.rejectValue(field == null ? "username": field, "", "Имя пользователя не заполнено!");
 
         } else {
 
-            // Блок проверки отсутствия пользователя с таким же именем пользователя в профайле
+            // проверяем отсутствие пользователя с таким же именем пользователя в профиле
             Optional<Profile> existingProfile = profileService.findByUsername(profile.getUsername());
             if (existingProfile.isPresent() &&
                     profile.getId() != existingProfile.get().getId()) {
@@ -50,19 +54,20 @@ public class ProfileValidator implements Validator {
             }
         }
 
-        // Блок проверки наличия пароля
+        // проверяем наличие пароля
         if (profile.getPassword() == null || profile.getPassword().equals("")) {
             errors.rejectValue(field == null ? "password": field, "", "Пароль пользователя не заполнен!");
         }
 
-        // Блок проверки наличия роли у профиля
+        // проверяем наличие роли у профиля
         if (profile.getRole() == null) {
             errors.rejectValue(field == null ? "role": field, "", "У профиля не выбрана роль!");
 
         } else {
-            // Блок валидации роли
-            roleIdValidator.validate(profile.getRole(), errors);
-            roleValidator.validate(profile.getRole(), errors);
+            // проверяем есть ли id у роли, то валидируем ее id, сама роль валидируется при создании
+            if (profile.getRole().getId() != null) {
+                roleIdValidator.validate(profile.getRole(), errors);
+            }
         }
 
     }

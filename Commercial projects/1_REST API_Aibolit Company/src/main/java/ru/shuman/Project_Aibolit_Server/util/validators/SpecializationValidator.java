@@ -14,6 +14,9 @@ public class SpecializationValidator implements Validator {
 
     private final SpecializationService specializationService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public SpecializationValidator(SpecializationService specializationService) {
         this.specializationService = specializationService;
@@ -28,10 +31,13 @@ public class SpecializationValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Specialization specialization = (Specialization) o;
 
-        //Проверяем есть ли уже специализация с таким названием
-        Optional<Specialization> existingSpecialization = specializationService.findByName(specialization.getName());
-        if (existingSpecialization.isPresent() && specialization.getId() != existingSpecialization.get().getId()) {
-            errors.rejectValue("name", "", "Специализация с таким названием уже существует!");
+        //проверяем есть ли название специализации
+        if (specialization.getName() != null) {
+            //проверяем уникальность названия специализации, есть ли уже специализация с таким названием
+            Optional<Specialization> existingSpecialization = specializationService.findByName(specialization.getName());
+            if (existingSpecialization.isPresent() && specialization.getId() != existingSpecialization.get().getId()) {
+                errors.rejectValue("name", "", "Специализация с таким названием уже существует!");
+            }
         }
     }
 }

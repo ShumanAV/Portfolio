@@ -15,6 +15,9 @@ public class TypeDocIdValidator implements Validator {
 
     private final TypeDocService typeDocService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeDocIdValidator(TypeDocService typeDocService) {
         this.typeDocService = typeDocService;
@@ -29,11 +32,14 @@ public class TypeDocIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeDoc typeDoc = (TypeDoc) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, typeDoc.getClass());
 
+        //проверяем есть ли id у типа документа
         if (typeDoc.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У типа документа отсутствует id!");
 
+            //проверяем есть ли тип документа в БД с таким id
         } else if (typeDocService.findById(typeDoc.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id": field, "", "Типа документа с таким id не существует!");
         }

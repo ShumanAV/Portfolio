@@ -61,8 +61,8 @@ public class DoctorValidator implements Validator {
             errors.rejectValue("inn", "", "Доктор с таким номером ИНН уже существует!");
         }
 
-        // проверяем есть ли id у специализации, валидируем ее id, сама специализация была провалидирована при создании
-        if (doctor.getSpecialization().getId() != null) {
+        // проверяем есть ли специализация и id у специализации, валидируем ее id, сама специализация была провалидирована при создании
+        if (doctor.getSpecialization() != null && doctor.getSpecialization().getId() != null) {
             specializationIdValidator.validate(doctor.getSpecialization(), errors);
         }
 

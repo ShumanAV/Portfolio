@@ -45,20 +45,24 @@ public class ContractValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Contract contract = (Contract) o;
 
-        //проверяем если id доктора есть, валидируем его id, сам доктор валидровался при создании
-        if (contract.getDoctor().getId() != null) {
+        //проверяем если есть доктор (чтобы не было NullPointerException) и id доктора, валидируем его id,
+        // сам доктор валидровался при создании
+        if (contract.getDoctor() != null && contract.getDoctor().getId() != null) {
             doctorIdValidator.validate(contract.getDoctor(), errors);
         }
 
-        //проверяем если id пациента есть, валидируем его id
-        if (contract.getPatient().getId() != null) {
-            patientIdValidator.validate(contract.getPatient(), errors);
+        //проверяем если есть пациент (чтобы не было NullPointerException) и id пациента, валидируем его id
+        if (contract.getPatient() != null) {
+            if (contract.getPatient().getId() != null) {
+                patientIdValidator.validate(contract.getPatient(), errors);
+            }
+            //валидируем самого пациента, он может быть создан новый либо изменен существующий
+            patientValidator.validate(contract.getPatient(), errors);
         }
-        //валидируем самого пациента, он может быть создан новый либо изменен существующий
-        patientValidator.validate(contract.getPatient(), errors);
 
-        //проверяем если id типа договора есть, валидируем его id, сам тип договора валидровался при создании
-        if (contract.getTypeContract().getId() != null) {
+        //проверяем если есть тип договора (чтобы не было NullPointerException) и id типа договора, валидируем его id,
+        // сам тип договора валидровался при создании
+        if (contract.getTypeContract() != null && contract.getTypeContract().getId() != null) {
             typeContractIdValidator.validate(contract.getTypeContract(), errors);
         }
     }

@@ -14,6 +14,9 @@ public class ParentIdValidator implements Validator {
 
     private final ParentService parentService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public ParentIdValidator(ParentService parentService) {
         this.parentService = parentService;
@@ -28,11 +31,14 @@ public class ParentIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Parent parent = (Parent) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, parent.getClass());
 
+        //проверяем есть ли id у родителя
         if (parent.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У родителя отсутствует id!");
 
+            //проверяем есть ли родитель в БД с таким id
         } else if (parentService.findById(parent.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id" : field, "", "Родителя с таким id не существует!");
         }

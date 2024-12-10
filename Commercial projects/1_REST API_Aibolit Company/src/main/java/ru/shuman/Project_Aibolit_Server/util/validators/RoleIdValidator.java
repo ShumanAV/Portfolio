@@ -14,6 +14,9 @@ public class RoleIdValidator implements Validator {
 
     private final RoleService roleService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public RoleIdValidator(RoleService roleService) {
         this.roleService = roleService;
@@ -28,11 +31,14 @@ public class RoleIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Role role = (Role) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, role.getClass());
 
+        //проверяем есть ли id у роли
         if (role.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У роли отсутствует id!");
 
+            //проверяем есть ли роль в БД с таким id
         } else if (roleService.findById(role.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id": field, "", "Роли с таким id не существует!");
         }

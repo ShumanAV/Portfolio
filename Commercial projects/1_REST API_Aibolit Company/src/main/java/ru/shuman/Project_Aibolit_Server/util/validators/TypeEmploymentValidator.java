@@ -17,6 +17,9 @@ public class TypeEmploymentValidator implements Validator {
 
     private final TypeEmploymentService typeEmploymentService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeEmploymentValidator(TypeEmploymentService typeEmploymentService) {
         this.typeEmploymentService = typeEmploymentService;
@@ -31,11 +34,16 @@ public class TypeEmploymentValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeEmployment typeEmployment = (TypeEmployment) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, typeEmployment.getClass());
 
-        Optional<TypeEmployment> existingTypeEmployment = typeEmploymentService.findByName(typeEmployment.getName());
-        if (existingTypeEmployment.isPresent() && typeEmployment.getId() != existingTypeEmployment.get().getId()) {
-            errors.rejectValue(field == null ? "name" : field, "", "Тип занятости родителя с таким названием уже существует!");
+        //проверяем есть ли название типа занятости
+        if (typeEmployment.getName() != null) {
+            //проверяем уникальность названия типа занятости, есть ли уже тип занятости с таким названием и другим id
+            Optional<TypeEmployment> existingTypeEmployment = typeEmploymentService.findByName(typeEmployment.getName());
+            if (existingTypeEmployment.isPresent() && typeEmployment.getId() != existingTypeEmployment.get().getId()) {
+                errors.rejectValue(field == null ? "name" : field, "", "Тип занятости родителя с таким названием уже существует!");
+            }
         }
     }
 }

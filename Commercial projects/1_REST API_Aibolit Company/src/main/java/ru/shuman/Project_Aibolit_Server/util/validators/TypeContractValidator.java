@@ -12,6 +12,9 @@ public class TypeContractValidator implements Validator {
 
     private final TypeContractService typeContractService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeContractValidator(TypeContractService typeContractService) {
         this.typeContractService = typeContractService;
@@ -24,5 +27,6 @@ public class TypeContractValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
+        //валидации пока нет
     }
 }

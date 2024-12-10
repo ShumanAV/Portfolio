@@ -14,6 +14,9 @@ public class TypeEmploymentIdValidator implements Validator {
 
     private final TypeEmploymentService typeEmploymentService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeEmploymentIdValidator(TypeEmploymentService typeEmploymentService) {
         this.typeEmploymentService = typeEmploymentService;
@@ -28,11 +31,14 @@ public class TypeEmploymentIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeEmployment typeEmployment = (TypeEmployment) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, typeEmployment.getClass());
 
+        //проверяем есть ли id у типа занятости
         if (typeEmployment.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У типа занятости родителя отсутствует id!");
 
+            //проверяем есть ли тип занятости в БД с таким id
         } else if (typeEmploymentService.findById(typeEmployment.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id": field, "", "Тип занятости у родителя с таким id не существует!");
         }

@@ -17,6 +17,9 @@ public class TypeRelationshipWithPatientValidator implements Validator {
 
     private final TypeRelationshipWithPatientService typeRelationshipWithPatientService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeRelationshipWithPatientValidator(TypeRelationshipWithPatientService typeRelationshipWithPatientService) {
         this.typeRelationshipWithPatientService = typeRelationshipWithPatientService;
@@ -31,13 +34,19 @@ public class TypeRelationshipWithPatientValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeRelationshipWithPatient typeRelationshipWithPatient = (TypeRelationshipWithPatient) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, typeRelationshipWithPatient.getClass());
 
-        Optional<TypeRelationshipWithPatient> existingTypeRelationshipWithPatient =
-                typeRelationshipWithPatientService.findByName(typeRelationshipWithPatient.getName());
-        if (existingTypeRelationshipWithPatient.isPresent()
-                && typeRelationshipWithPatient.getId() != existingTypeRelationshipWithPatient.get().getId()) {
-            errors.rejectValue(field == null ? "name" : field, "", "Тип отношения родителя с пациентом с таким названием уже существует!");
+        //проверяем есть ли название типа отношений родителя с пациентом
+        if (typeRelationshipWithPatient.getName() != null) {
+            //проверяем уникальность названия типа отношений родителя с пациентом, есть ли уже тип отношений родителя
+            // с пациентом с таким названием и другим id
+            Optional<TypeRelationshipWithPatient> existingTypeRelationshipWithPatient =
+                    typeRelationshipWithPatientService.findByName(typeRelationshipWithPatient.getName());
+            if (existingTypeRelationshipWithPatient.isPresent()
+                    && typeRelationshipWithPatient.getId() != existingTypeRelationshipWithPatient.get().getId()) {
+                errors.rejectValue(field == null ? "name" : field, "", "Тип отношения родителя с пациентом с таким названием уже существует!");
+            }
         }
     }
 }

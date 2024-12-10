@@ -16,6 +16,9 @@ public class TypeDocValidator implements Validator {
 
     private final TypeDocService typeDocService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeDocValidator(TypeDocService typeDocService) {
         this.typeDocService = typeDocService;
@@ -30,11 +33,16 @@ public class TypeDocValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeDoc typeDoc = (TypeDoc) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, typeDoc.getClass());
 
-        Optional<TypeDoc> existingTypeDoc = typeDocService.findByName(typeDoc.getName());
-        if (existingTypeDoc.isPresent() && typeDoc.getId() != existingTypeDoc.get().getId()) {
-            errors.rejectValue(field == null ? "name" : field, "", "Тип документа с таким названием уже существует!");
+        //проверяем есть ли название типа документа
+        if (typeDoc.getName() != null) {
+            //проверяем уникальность названия типа документа, есть ли уже тип документа с таким названием и другим id
+            Optional<TypeDoc> existingTypeDoc = typeDocService.findByName(typeDoc.getName());
+            if (existingTypeDoc.isPresent() && typeDoc.getId() != existingTypeDoc.get().getId()) {
+                errors.rejectValue(field == null ? "name" : field, "", "Тип документа с таким названием уже существует!");
+            }
         }
     }
 }

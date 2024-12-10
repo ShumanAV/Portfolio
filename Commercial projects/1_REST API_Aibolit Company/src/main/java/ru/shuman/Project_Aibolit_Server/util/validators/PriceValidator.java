@@ -12,6 +12,9 @@ public class PriceValidator implements Validator {
 
     private final PriceService priceService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public PriceValidator(PriceService priceService) {
         this.priceService = priceService;
@@ -24,5 +27,6 @@ public class PriceValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
+        //валидации пока нет
     }
 }
