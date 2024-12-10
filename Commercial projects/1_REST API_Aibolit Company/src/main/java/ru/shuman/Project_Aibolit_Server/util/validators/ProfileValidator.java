@@ -48,8 +48,7 @@ public class ProfileValidator implements Validator {
 
             // проверяем отсутствие пользователя с таким же именем пользователя в профиле
             Optional<Profile> existingProfile = profileService.findByUsername(profile.getUsername());
-            if (existingProfile.isPresent() &&
-                    profile.getId() != existingProfile.get().getId()) {
+            if (existingProfile.isPresent() && profile.getId() != existingProfile.get().getId()) {
                 errors.rejectValue(field == null ? "username": field, "", "Профиль с таким именем пользователя уже существует!");
             }
         }

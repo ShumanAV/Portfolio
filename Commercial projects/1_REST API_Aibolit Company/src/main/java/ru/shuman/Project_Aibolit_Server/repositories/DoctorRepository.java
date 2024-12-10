@@ -15,4 +15,5 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
     List<Doctor> findByPublished(boolean published);
     List<Doctor> findByShowInSchedule(boolean showInSchedule);
     List<Doctor> findByPublishedAndShowInSchedule(boolean published, boolean showInSchedule);
+    Optional<Doctor> findByProfileUsername(String username);
 }

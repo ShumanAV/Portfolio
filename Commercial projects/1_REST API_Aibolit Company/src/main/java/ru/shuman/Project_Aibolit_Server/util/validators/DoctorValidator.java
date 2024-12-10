@@ -15,7 +15,6 @@ import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.searchNameFie
 public class DoctorValidator implements Validator {
 
     private final DoctorService doctorService;
-    private final SpecializationValidator specializationValidator;
     private final SpecializationIdValidator specializationIdValidator;
     private final ProfileValidator profileValidator;
     private final ProfileIdValidator profileIdValidator;
@@ -24,11 +23,9 @@ public class DoctorValidator implements Validator {
     Внедрение зависимостей
      */
     @Autowired
-    public DoctorValidator(DoctorService doctorService, SpecializationValidator specializationValidator,
-                           SpecializationIdValidator specializationIdValidator, ProfileValidator profileValidator,
-                           ProfileIdValidator profileIdValidator) {
+    public DoctorValidator(DoctorService doctorService, SpecializationIdValidator specializationIdValidator,
+                           ProfileValidator profileValidator, ProfileIdValidator profileIdValidator) {
         this.doctorService = doctorService;
-        this.specializationValidator = specializationValidator;
         this.specializationIdValidator = specializationIdValidator;
         this.profileValidator = profileValidator;
         this.profileIdValidator = profileIdValidator;

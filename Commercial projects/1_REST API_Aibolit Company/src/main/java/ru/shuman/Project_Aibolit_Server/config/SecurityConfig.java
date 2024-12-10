@@ -41,12 +41,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().hasAnyRole("USER", "ADMIN", "DIRECTOR", "DOCTOR")
                 .and()
                 .formLogin().loginPage("/auth/login")
-//                .loginProcessingUrl("/process_login")
-//                .failureUrl("/auth/login?error")
+                .loginProcessingUrl("/process_login")
                 .and()
                 .logout()
                 .logoutUrl("/logout")
-//                .logoutSuccessUrl("/auth/login")
+                .logoutSuccessUrl("/auth/login")
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -61,8 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(getPasswordEncoder());
     }
 
-    // Данный бин необходим для шифрования/не шифрования паролей, без шифрования NoOpPasswordEncoder.getInstance(),
-    // с шифрованием new BCryptPasswordEncoder()
+    // Создадим бин для шифрования/не шифрования паролей
     @Bean
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();

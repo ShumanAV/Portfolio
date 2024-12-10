@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.repositories.DoctorRepository;
-import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,44 +31,67 @@ public class DoctorService {
         this.specializationService = specializationService;
     }
 
-    // Метод осуществляет поиск врачей по номеру телефона и возвращает его в обертке Optional
+    /*
+     Метод осуществляет поиск врачей по номеру телефона и возвращает его в обертке Optional
+     */
     public Optional<Doctor> findByPhone(String phone) {
         return doctorRepository.findByPhone(phone);
     }
 
-    // Метод осуществляет поиск врача по СНИЛСу и возвращает его в обертке Optional
+    /*
+     Метод осуществляет поиск врача по СНИЛСу и возвращает его в обертке Optional
+     */
     public Optional<Doctor> findBySnils(String snils) {
         return doctorRepository.findBySnils(snils);
     }
 
-    // Метод осуществляет поиск врача по ИНН и возвращает его в обертке Optional
+    /*
+     Метод осуществляет поиск врача по ИНН и возвращает его в обертке Optional
+     */
     public Optional<Doctor> findByInn(String inn) {
         return doctorRepository.findByInn(inn);
     }
 
-    // Метод осуществляет поиск всех врачей и возвращает их список
+    /*
+     Метод осуществляет поиск всех врачей и возвращает их список
+     */
     public List<Doctor> findAll() {
         return doctorRepository.findAll();
     }
 
-    // Метод осуществляет поиск врачей с published = True или False и возвращает их список
+    /*
+    Метод осуществляет поиск врачей с published = True или False и возвращает их список
+     */
     public List<Doctor> findAllByPublished(boolean published) {
         return doctorRepository.findByPublished(published);
     }
 
-    // Метод осуществляет поиск врачей с showInSchedule = True или False и возвращает их список
+    /*
+    Метод осуществляет поиск врачей с showInSchedule = True или False и возвращает их список
+     */
     public List<Doctor> findAllByShowInSchedule(boolean showInSchedule) {
         return doctorRepository.findByShowInSchedule(showInSchedule);
     }
 
-    // Метод осуществляет поиск врачей с published = True или False и showInSchedule = True или False и возвращает их список
+    /*
+     Метод осуществляет поиск врачей с published = True или False и showInSchedule = True или False и возвращает их список
+     */
     public List<Doctor> findAllByPublishedAndShowInSchedule(boolean published, boolean showInSchedule) {
         return doctorRepository.findByPublishedAndShowInSchedule(published, showInSchedule);
     }
 
-    // Метод осуществляет поиск врача по id и возвращает его в обертке Optional
+    /*
+    Метод осуществляет поиск врача по id и возвращает его в обертке Optional
+     */
     public Optional<Doctor> findById(Integer doctorId) {
         return doctorRepository.findById(doctorId);
+    }
+
+    /*
+    Метод осуществляет поиск врача по имени пользователя его профиля и возвращает его в обертке Optional
+     */
+    public Optional<Doctor> findByProfileUsername(String username) {
+        return doctorRepository.findByProfileUsername(username);
     }
 
     /*
