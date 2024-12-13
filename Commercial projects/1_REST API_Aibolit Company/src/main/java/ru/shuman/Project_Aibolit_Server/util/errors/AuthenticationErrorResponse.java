@@ -1,5 +1,6 @@
 package ru.shuman.Project_Aibolit_Server.util.errors;
 
+//Класс обертка для отправки клиенту сообщения об ошибке в процессе аутентификации
 public class AuthenticationErrorResponse {
     private String message;
     private long timestamp;

@@ -6,8 +6,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -24,7 +27,8 @@ public class Blood {
     private Integer id;
 
     @Column(name = "name")
-    @Size(max = 30, message = "Наименование группы крови должно быть не более 30 символов")
+    @NotEmpty(message = "Наименование группы крови отсутствует или не заполнено")
+    @Size(max = 50, message = "Наименование группы крови должно быть не более 50 символов")
     private String name;
 
     @OneToMany(mappedBy = "blood")
@@ -32,5 +36,21 @@ public class Blood {
 
     @OneToMany(mappedBy = "blood")
     private List<Patient> patients;
+
+    /*
+    Данный метод нужен для тестирования
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+
+        Blood blood = (Blood) object;
+
+        if (!Objects.equals(id, blood.id)) return false;
+        if (!Objects.equals(name, blood.name)) return false;
+        if (!Objects.equals(parents, blood.parents)) return false;
+        return Objects.equals(patients, blood.patients);
+    }
 
 }

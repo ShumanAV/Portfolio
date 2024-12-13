@@ -16,11 +16,18 @@ public class ProfileDetailsService implements UserDetailsService {
 
     private final ProfileRepository profileRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public ProfileDetailsService(ProfileRepository profileRepository) {
         this.profileRepository = profileRepository;
     }
 
+    /*
+    Метод ищет профиль пользователя по имени пользователя, если не находит выбрасывает исключение, если находит
+    возвращает профиль в обертке ProfileDetails
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Profile> profile = profileRepository.findByUsername(username);

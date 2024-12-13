@@ -14,6 +14,9 @@ public class PriceIdValidator implements Validator {
 
     private final PriceService priceService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public PriceIdValidator(PriceService priceService) {
         this.priceService = priceService;
@@ -28,11 +31,14 @@ public class PriceIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Price price = (Price) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, price.getClass());
 
+        //проверяем есть ли id у прайса
         if (price.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У прайса отсутствует id!");
 
+            //проверяем есть ли прайс в БД с таким id
         } else if (priceService.findById(price.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id": field, "", "Прайса с таким id не существует!");
         }

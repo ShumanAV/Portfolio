@@ -15,26 +15,41 @@ public class PlaceStudyService {
 
     private final PlaceStudyRepository placeStudyRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public PlaceStudyService(PlaceStudyRepository placeStudyRepository) {
         this.placeStudyRepository = placeStudyRepository;
     }
 
+    /*
+    Метод формирует и возвращает список всех мест учебы пациентов
+     */
+    public List<PlaceStudy> findAll() {
+        return placeStudyRepository.findAll();
+    }
+
+    /*
+    Метод ищет место учебы пациента по id и возвращает его
+     */
     public Optional<PlaceStudy> findById(Integer placeStudyId) {
         return placeStudyRepository.findById(placeStudyId);
     }
 
+    /*
+    Метод сохраняет новое место учебы пациентов в БД
+     */
     @Transactional
-    public void create(PlaceStudy placeStudy) {
-        placeStudyRepository.save(placeStudy);
+    public void create(PlaceStudy newPlaceStudy) {
+        placeStudyRepository.save(newPlaceStudy);
     }
 
+    /*
+    Метод сохраняет измененное место учебы пациентов в БД
+     */
     @Transactional
-    public void update(PlaceStudy placeStudy) {
-        placeStudyRepository.save(placeStudy);
-    }
-
-    public List<PlaceStudy> findAll() {
-        return placeStudyRepository.findAll();
+    public void update(PlaceStudy updatedPlaceStudy) {
+        placeStudyRepository.save(updatedPlaceStudy);
     }
 }

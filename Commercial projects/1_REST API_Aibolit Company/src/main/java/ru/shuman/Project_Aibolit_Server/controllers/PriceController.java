@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/prices")
@@ -30,6 +30,9 @@ public class PriceController {
     private final PriceValidator priceValidator;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public PriceController(PriceService priceService, PriceIdValidator priceIdValidator, PriceValidator priceValidator,
                            ModelMapper modelMapper) {
@@ -39,6 +42,10 @@ public class PriceController {
         this.modelMapper = modelMapper;
     }
 
+    /*
+    Метод формирует и возвращает список прайсов в обертке ResponseEntity, в URL может быть параметр запроса published,
+    тогда возвращает список с учетом этого
+     */
     @GetMapping
     public ResponseEntity<List<PriceDTO>> sendListPrices(@RequestParam(value = "published", required = false) Boolean published) {
 
@@ -54,6 +61,11 @@ public class PriceController {
         return new ResponseEntity<>(priceDTOList, HttpStatus.OK);
     }
 
+    /*
+    Метод возвращает один прайс по id в обертке ResponseEntity, id берем из url,
+    при помощи @ModelAttribute создаем пустой объект типа Price, устанавливаем в нем переданный id, далее валидируем id,
+    находим прайс и возвращаем его
+     */
     @GetMapping("/{id}")
     public ResponseEntity<PriceDTO> sendOnePrice(@PathVariable(value = "id") int priceId,
                                                  @ModelAttribute(value = "price") Price price,
@@ -63,7 +75,7 @@ public class PriceController {
 
         priceIdValidator.validate(price, bindingResult);
 
-        collectErrorsToString(bindingResult, PriceNotFoundException.class);
+        checkingForErrorsAndThrowsException(bindingResult, PriceNotFoundException.class);
 
         PriceDTO priceDTO = convertToPriceDTO(priceService.findById(priceId).get());
 
@@ -71,6 +83,10 @@ public class PriceController {
 
     }
 
+    /*
+    Метод создает новый прайс, на вход поступает объект PriceDTO в виде json, принимаем его, валидируем его,
+    в случае отсутствия ошибок при валидации создаем новый прайс, возвращаем код 200 в обертке ResponseEntity
+     */
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid PriceDTO priceDTO,
                                              BindingResult bindingResult) {
@@ -79,31 +95,37 @@ public class PriceController {
 
         priceValidator.validate(price, bindingResult);
 
-        collectErrorsToString(bindingResult, PriceNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, PriceNotCreatedOrUpdatedException.class);
 
         priceService.create(price);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /*
+    Метод изменяет существующий прайс, в URL передается id и в виде json объект PriceDTO с новыми данными
+    для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращаем код 200 в обертке ResponseEntity
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int priceId,
                                              @RequestBody @Valid PriceDTO priceDTO,
                                              BindingResult bindingResult) {
-
+        priceDTO.setId(priceId);
         Price price = convertToPrice(priceDTO);
 
         priceIdValidator.validate(price, bindingResult);
         priceValidator.validate(price, bindingResult);
 
-        collectErrorsToString(bindingResult, PriceNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, PriceNotCreatedOrUpdatedException.class);
 
         priceService.update(price);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения PriceNotFound
+    /*
+    Метод обработчик исключения PriceNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<PriceErrorResponse> handleException(PriceNotFoundException e) {
         PriceErrorResponse response = new PriceErrorResponse(
@@ -114,7 +136,9 @@ public class PriceController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения PriceNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения PriceNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<PriceErrorResponse> handleException(PriceNotCreatedOrUpdatedException e) {
         PriceErrorResponse response = new PriceErrorResponse(
@@ -125,12 +149,16 @@ public class PriceController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Price convertToPrice(PriceDTO priceDTO) {
         return this.modelMapper.map(priceDTO, Price.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private PriceDTO convertToPriceDTO(Price price) {
         return this.modelMapper.map(price, PriceDTO.class);
     }

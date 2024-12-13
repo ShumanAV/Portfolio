@@ -1,10 +1,9 @@
 package ru.shuman.Project_Aibolit_Server.services;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.mockito.stubbing.Answer;
 import ru.shuman.Project_Aibolit_Server.models.*;
 import ru.shuman.Project_Aibolit_Server.repositories.PatientRepository;
@@ -19,157 +18,176 @@ import static org.mockito.Mockito.*;
 
 class PatientServiceTest {
 
-    private final PatientRepository patientRepository;
-    private final PlaceStudyService placeStudyService;
-    private final ParentService parentService;
-    private final DocumentService documentService;
-    private final AddressService addressService;
-    private final BloodService bloodService;
-    private final GenderService genderService;
-    private final PatientService patientService;
+    @Mock
+    private PatientRepository patientRepository;
+    @Mock
+    private PlaceStudyService placeStudyService;
+    @Mock
+    private ParentService parentService;
+    @Mock
+    private DocumentService documentService;
+    @Mock
+    private AddressService addressService;
+    @Mock
+    private BloodService bloodService;
+    @Mock
+    private GenderService genderService;
+    @InjectMocks
+    private PatientService patientService;
 
-    private PatientServiceTest() {
-        patientRepository = mock(PatientRepository.class);
-        placeStudyService = mock(PlaceStudyService.class);
-        parentService = mock(ParentService.class);
-        documentService = mock(DocumentService.class);
-        addressService = mock(AddressService.class);
-        bloodService = mock(BloodService.class);
-        genderService = mock(GenderService.class);
-        patientService = new PatientService(patientRepository, placeStudyService, parentService,
-                documentService, addressService, bloodService, genderService);
+    @BeforeEach
+    public void init() {
+        MockitoAnnotations.initMocks(this);
     }
 
     /**
      * Метод тестирует метод findById в сервисе PatientService, задаем поведение метода findById в репозитории
      * patientRepository, если запускаем метод findById с входным параметром в виде любого объекта типа Integer,
-     * он возвращает пустой объект типа Patient в обертке Optional,
-     * запускаем метод в сервисе и с помощью captor'a отслеживаем, какой checkId был передан при запуске
-     * в метод findById сервиса
+     * он возвращает объект типа Patient в обертке Optional, запускаем метод в сервисе и сравниваем результат
+     * возврата из метода и mockPatient,
+     * с помощью captor'a отслеживаем, какой id был передан при запуске в метод findById сервиса
      */
 
     @Test
-    void findByIdShouldReturnEmptyPatient() {
-        Optional<Patient> emptyPatient = Optional.of(new Patient());
-        when(patientRepository.findById(anyInt())).thenReturn(emptyPatient);
+    void findByIdShouldReturnPatient() {
+        Optional<Patient> mockPatient = Optional.of(new Patient());
+        when(patientRepository.findById(anyInt())).thenReturn(mockPatient);
 
-        int checkId = 1;
-        patientService.findById(checkId);
+        int patientId = 1;
+        Optional<Patient> resultPatient = patientService.findById(patientId);
+
+        Assertions.assertEquals(mockPatient, resultPatient);
+
         ArgumentCaptor<Integer> captor = ArgumentCaptor.forClass(Integer.class);
         verify(patientRepository).findById(captor.capture());
-        int argument = captor.getValue();
+        int checkedId = captor.getValue();
 
-        Assertions.assertEquals(checkId, argument);
+        Assertions.assertEquals(patientId, checkedId);
     }
 
     /**
      * Метод тестирует метод findByPhone в сервисе PatientService, задаем поведение метода findByPhone в репозитории
      * patientRepository, если запускаем метод findByPhone с входным параметром в виде любого объекта типа String,
-     * он возвращает пустой объект типа Patient в обертке Optional,
-     * запускаем метод в сервисе и с помощью captor'a отслеживаем, какой checkPhone был передан при запуске
-     * в метод findByPhone сервиса
+     * он возвращает пустой объект типа Patient в обертке Optional, запускаем метод в сервисе и сравниваем результат
+     * возврата из метода и mockPatient,
+     * с помощью captor'a отслеживаем, какой номер телефона был передан при запуске в метод findByPhone сервиса
      */
 
     @Test
-    void findByPhoneShouldReturnEmptyPatient() {
-        Optional<Patient> emptyPatient = Optional.of(new Patient());
-        when(patientRepository.findByPhone(anyString())).thenReturn(emptyPatient);
+    void findByPhoneShouldReturnPatient() {
+        Optional<Patient> mockPatient = Optional.of(new Patient());
+        when(patientRepository.findByPhone(anyString())).thenReturn(mockPatient);
 
-        String checkPhone = "+79998887755";
-        patientService.findByPhone(checkPhone);
+        String patientPhone = "+79998887755";
+        Optional<Patient> resultPatient = patientService.findByPhone(patientPhone);
+
+        Assertions.assertEquals(mockPatient, resultPatient);
+
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(patientRepository).findByPhone(captor.capture());
-        String argument = captor.getValue();
+        String checkedPhone = captor.getValue();
 
-        Assertions.assertEquals(checkPhone, argument);
+        Assertions.assertEquals(patientPhone, checkedPhone);
     }
 
     /**
      * Метод тестирует метод findByEmail в сервисе PatientService, задаем поведение метода findByEmail в репозитории
      * patientRepository, если запускаем метод findByEmail с входным параметром в виде любого объекта типа String,
-     * он возвращает пустой объект типа Patient в обертке Optional,
-     * запускаем метод в сервисе и с помощью captor'a отслеживаем, какой checkEmail был передан при запуске
-     * в метод findByEmail сервиса
+     * он возвращает пустой объект типа Patient в обертке Optional, запускаем метод в сервисе и сравниваем результат
+     * возврата из метода и mockPatient,
+     * с помощью captor'a отслеживаем, какой имэйл был передан при запуске в метод findByEmail сервиса
      */
 
     @Test
-    void findByEmailShouldReturnEmptyPatient() {
-        Optional<Patient> emptyPatient = Optional.of(new Patient());
-        when(patientRepository.findByEmail(anyString())).thenReturn(emptyPatient);
+    void findByEmailShouldReturnPatient() {
+        Optional<Patient> mockPatient = Optional.of(new Patient());
+        when(patientRepository.findByEmail(anyString())).thenReturn(mockPatient);
 
-        String checkEmail = "test@mail.ru";
-        patientService.findByEmail(checkEmail);
+        String patientEmail = "test@mail.ru";
+        Optional<Patient> resultPatient = patientService.findByEmail(patientEmail);
+
+        Assertions.assertEquals(mockPatient, resultPatient);
+
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(patientRepository).findByEmail(captor.capture());
-        String argument = captor.getValue();
+        String checkedEmail = captor.getValue();
 
-        Assertions.assertEquals(checkEmail, argument);
+        Assertions.assertEquals(patientEmail, checkedEmail);
     }
 
     /**
      * Метод тестирует метод findByPolicy в сервисе PatientService, задаем поведение метода findByPolicy в репозитории
      * patientRepository, если запускаем метод findByPolicy с входным параметром в виде любого объекта типа String,
-     * он возвращает пустой объект типа Patient в обертке Optional,
-     * запускаем метод в сервисе и с помощью captor'a отслеживаем, какой checkPolicy был передан при запуске
-     * в метод findByPolicy сервиса
+     * он возвращает пустой объект типа Patient в обертке Optional, запускаем метод в сервисе и сравниваем результат
+     * возврата из метода и mockPatient,
+     * с помощью captor'a отслеживаем, какой номер полиса был передан при запуске в метод findByPolicy сервиса
      */
 
     @Test
-    void findByPolicyShouldReturnEmptyPatient() {
-        Optional<Patient> emptyPatient = Optional.of(new Patient());
-        when(patientRepository.findByPolicy(anyString())).thenReturn(emptyPatient);
+    void findByPolicyShouldReturnPatient() {
+        Optional<Patient> mockPatient = Optional.of(new Patient());
+        when(patientRepository.findByPolicy(anyString())).thenReturn(mockPatient);
 
-        String checkPolicy = "123456789";
-        patientService.findByPolicy(checkPolicy);
+        String patientPolicy = "123456789";
+        Optional<Patient> resultPatient = patientService.findByPolicy(patientPolicy);
+
+        Assertions.assertEquals(mockPatient, resultPatient);
+
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(patientRepository).findByPolicy(captor.capture());
-        String argument = captor.getValue();
+        String checkedPolicy = captor.getValue();
 
-        Assertions.assertEquals(checkPolicy, argument);
+        Assertions.assertEquals(patientPolicy, checkedPolicy);
     }
 
     /**
      * Метод тестирует метод findBySnils в сервисе PatientService, задаем поведение метода findBySnils в репозитории
      * patientRepository, если запускаем метод findBySnils с входным параметром в виде любого объекта типа String,
-     * он возвращает пустой объект типа Patient в обертке Optional,
-     * запускаем метод в сервисе и с помощью captor'a отслеживаем, какой checkSnils был передан при запуске
-     * в метод findBySnils сервиса
+     * он возвращает пустой объект типа Patient в обертке Optional, запускаем метод в сервисе и сравниваем результат
+     * возврата из метода и mockPatient,
+     * с помощью captor'a отслеживаем, какой номер СНИЛС был передан при запуске в метод findBySnils сервиса
      */
 
     @Test
-    void findBySnilsShouldReturnEmptyPatient() {
-        Optional<Patient> emptyPatient = Optional.of(new Patient());
-        when(patientRepository.findBySnils(anyString())).thenReturn(emptyPatient);
+    void findBySnilsShouldReturnPatient() {
+        Optional<Patient> mockPatient = Optional.of(new Patient());
+        when(patientRepository.findBySnils(anyString())).thenReturn(mockPatient);
 
-        String checkSnils = "VI-OM 123456";
-        patientService.findBySnils(checkSnils);
+        String patientSnils = "VI-OM 123456";
+        Optional<Patient> resultPatient = patientService.findBySnils(patientSnils);
+
+        Assertions.assertEquals(mockPatient, resultPatient);
+
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(patientRepository).findBySnils(captor.capture());
-        String argument = captor.getValue();
+        String checkedSnils = captor.getValue();
 
-        Assertions.assertEquals(checkSnils, argument);
+        Assertions.assertEquals(patientSnils, checkedSnils);
     }
 
     /**
      * Метод тестирует метод findByInn в сервисе PatientService, задаем поведение метода findByInn в репозитории
      * patientRepository, если запускаем метод findByInn с входным параметром в виде любого объекта типа String,
-     * он возвращает пустой объект типа Patient в обертке Optional,
-     * запускаем метод в сервисе и с помощью captor'a отслеживаем, какой checkInn был передан при запуске
-     * в метод findByInn сервиса
+     * он возвращает пустой объект типа Patient в обертке Optional, запускаем метод в сервисе и сравниваем результат
+     * возврата из метода и mockPatient,
+     * с помощью captor'a отслеживаем, какой номер ИНН был передан при запуске в метод findByInn сервиса
      */
 
     @Test
-    void findByInnShouldReturnEmptyPatient() {
-        Optional<Patient> emptyPatient = Optional.of(new Patient());
-        when(patientRepository.findByInn(anyString())).thenReturn(emptyPatient);
+    void findByInnShouldReturnPatient() {
+        Optional<Patient> mockPatient = Optional.of(new Patient());
+        when(patientRepository.findByInn(anyString())).thenReturn(mockPatient);
 
-        String checkInn = "701702999555";
-        patientService.findByInn(checkInn);
+        String patientInn = "701702999555";
+        Optional<Patient> resultPatient = patientService.findByInn(patientInn);
+
+        Assertions.assertEquals(mockPatient, resultPatient);
+
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(patientRepository).findByInn(captor.capture());
-        String argument = captor.getValue();
+        String checkedInn = captor.getValue();
 
-        Assertions.assertEquals(checkInn, argument);
+        Assertions.assertEquals(patientInn, checkedInn);
     }
 
     /**
@@ -183,7 +201,9 @@ class PatientServiceTest {
         List<Patient> emptyList = new ArrayList<>();
         when(patientRepository.findAll()).thenReturn(emptyList);
 
-        Assertions.assertEquals(emptyList, patientService.findAll());
+        List<Patient> resultList = patientService.findAll();
+
+        Assertions.assertEquals(emptyList, resultList);
     }
 
     /**
@@ -197,13 +217,15 @@ class PatientServiceTest {
         List<Patient> emptyList = new ArrayList<>();
         when(patientRepository.findByPublished(true)).thenReturn(emptyList);
 
-        Assertions.assertEquals(emptyList, patientService.findAllByPublished(true));
+        List<Patient> resultList = patientService.findAllByPublished(true);
+
+        Assertions.assertEquals(emptyList, resultList);
     }
 
     /**
      * Метод тестирует метод search в сервисе PatientService, задаем поведение методов:
      * findByFirstnameStartingWith, findByLastnameStartingWith, findByPhoneContaining в репозитории
-     * patientRepository, если запускаем данные методы, каждый из них возвращает пустой лист, параметризированный Patient,
+     * patientRepository, если запускаем данные методы, каждый из них возвращает пустой лист, параметризиpованный Patient,
      * запускаем метод в сервисе и сравниваем, то что возвращено и пустой лист
      */
 
@@ -216,7 +238,9 @@ class PatientServiceTest {
         when(patientRepository.findByLastnameStartingWith(textSearch)).thenReturn(emptyList);
         when(patientRepository.findByPhoneContaining(textSearch)).thenReturn(emptyList);
 
-        Assertions.assertEquals(emptyList, patientService.search(textSearch));
+        List<Patient> resultList = patientService.search(textSearch);
+
+        Assertions.assertEquals(emptyList, resultList);
     }
 
     /**
@@ -251,7 +275,7 @@ class PatientServiceTest {
      */
 
     @Test
-    void createShouldBeRunningPatientRepository() {
+    void createShouldBeRunning() {
         PlaceStudy emptyPlaceStudy = new PlaceStudy();
         Document emptyDocument = new Document();
         Address emptyAddress = new Address();
@@ -260,16 +284,15 @@ class PatientServiceTest {
         doNothing().when(documentService).create(emptyDocument);
         doNothing().when(addressService).create(emptyAddress);
 
-        Patient emptyPatient = new Patient();
-        emptyPatient.setPlaceStudy(emptyPlaceStudy);
-        emptyPatient.setDocument(emptyDocument);
-        emptyPatient.setAddress(emptyAddress);
-        emptyPatient.setParents(new ArrayList<>());
+        Patient mockPatient = new Patient();
+        mockPatient.setPlaceStudy(emptyPlaceStudy);
+        mockPatient.setDocument(emptyDocument);
+        mockPatient.setAddress(emptyAddress);
+        mockPatient.setParents(new ArrayList<>());
 
-        when(patientRepository.save(emptyPatient)).thenReturn(emptyPatient);
-        patientService.create(emptyPatient);
+        patientService.create(mockPatient);
 
-        verify(patientRepository).save(emptyPatient);
+        verify(patientRepository).save(mockPatient);
     }
 
     /**
@@ -290,92 +313,29 @@ class PatientServiceTest {
         doNothing().when(documentService).create(emptyDocument);
         doNothing().when(addressService).create(emptyAddress);
 
-        Patient emptyPatient = new Patient();
-        emptyPatient.setPlaceStudy(emptyPlaceStudy);
-        emptyPatient.setDocument(emptyDocument);
-        emptyPatient.setAddress(emptyAddress);
-        emptyPatient.setParents(new ArrayList<>());
+        Patient mockPatient = new Patient();
+        mockPatient.setPlaceStudy(emptyPlaceStudy);
+        mockPatient.setDocument(emptyDocument);
+        mockPatient.setAddress(emptyAddress);
+        mockPatient.setParents(new ArrayList<>());
 
-        when(patientRepository.save(emptyPatient)).thenReturn(emptyPatient);
-        patientService.create(emptyPatient);
+        patientService.create(mockPatient);
 
-        Assertions.assertNotNull(emptyPatient.getCreatedAt());
-        Assertions.assertNotNull(emptyPatient.getUpdatedAt());
-        Assertions.assertNotNull(emptyPatient.getPlaceStudy().getPatient());
-        Assertions.assertNotNull(emptyPatient.getDocument().getPatient());
-        Assertions.assertNotNull(emptyPatient.getAddress().getPatient());
+        Assertions.assertNotNull(mockPatient.getCreatedAt());
+        Assertions.assertNotNull(mockPatient.getUpdatedAt());
+        Assertions.assertNotNull(mockPatient.getPlaceStudy().getPatient());
+        Assertions.assertNotNull(mockPatient.getDocument().getPatient());
+        Assertions.assertNotNull(mockPatient.getAddress().getPatient());
     }
 
     /**
-     * Метод тестирует метод update в сервисе PatientService, т.к. он void, проверяем факт запуска мока
-     * patientRepository и метода в нем save(emptyPatient), при обновлении пациента осуществляются запуски методов
-     * update следующих сервисов: PlaceStudyService, DocumentService, AddressService, поэтому при помощи их моков
-     * задаем поведение этим методам ничего не делать
-     */
-
-    @Test
-    void updateShouldBeRunningPatientRepository() {
-        PlaceStudy emptyPlaceStudy = new PlaceStudy();
-        Document emptyDocument = new Document();
-        Address emptyAddress = new Address();
-
-        doNothing().when(placeStudyService).update(emptyPlaceStudy);
-        doNothing().when(documentService).update(emptyDocument);
-        doNothing().when(addressService).update(emptyAddress);
-
-        Patient emptyPatient = new Patient();
-        emptyPatient.setPlaceStudy(emptyPlaceStudy);
-        emptyPatient.setDocument(emptyDocument);
-        emptyPatient.setAddress(emptyAddress);
-        emptyPatient.setParents(new ArrayList<>());
-        when(patientRepository.save(emptyPatient)).thenReturn(emptyPatient);
-
-        patientService.update(emptyPatient);
-
-        verify(patientRepository).save(emptyPatient);
-    }
-
-    /**
-     * Метод тестирует метод update в сервисе PatientService, при сохранении пациента осуществляются запуски методов
-     * update следующих сервисов: PlaceStudyService, DocumentService, AddressService, поэтому при помощи их моков
-     * задаем поведение этим методам ничего не делать, также при обновлении пациента должны заполняться следующие
-     * поля у пациента: UpdatedAt, а также для кэша patient у следующих полей: placeStudy, document, address,
-     * поэтому проверяем не null ли они
-     */
-
-    @Test
-    void updateShouldFieldsNotNull() {
-        PlaceStudy emptyPlaceStudy = new PlaceStudy();
-        Document emptyDocument = new Document();
-        Address emptyAddress = new Address();
-
-        doNothing().when(placeStudyService).update(emptyPlaceStudy);
-        doNothing().when(documentService).update(emptyDocument);
-        doNothing().when(addressService).update(emptyAddress);
-
-        Patient emptyPatient = new Patient();
-        emptyPatient.setPlaceStudy(emptyPlaceStudy);
-        emptyPatient.setDocument(emptyDocument);
-        emptyPatient.setAddress(emptyAddress);
-        emptyPatient.setParents(new ArrayList<>());
-        when(patientRepository.save(emptyPatient)).thenReturn(emptyPatient);
-
-        patientService.update(emptyPatient);
-
-        Assertions.assertNotNull(emptyPatient.getUpdatedAt());
-        Assertions.assertNotNull(emptyPatient.getPlaceStudy().getPatient());
-        Assertions.assertNotNull(emptyPatient.getDocument().getPatient());
-        Assertions.assertNotNull(emptyPatient.getAddress().getPatient());
-    }
-
-    /**
-     * Метод тестирует метод setCallingsForPatient, который принимает на вход параметры типа Calling и Patient,
-     * если в метод setCallingsForPatient передаем новый пустой объект типа Calling и Patient, то проверяем, что был
+     * Метод тестирует метод addCallingAtListForPatient, который принимает на вход параметры типа Calling и Patient,
+     * если в метод addCallingAtListForPatient передаем новый пустой объект типа Calling и Patient, то проверяем, что был
      * вызван метод GeneralMethods.addObjectOneInListForObjectTwo с любыми входными параметрами
      */
 
     @Test
-    void setCallingsForPatientShouldRunningGeneralMethods() {
+    void addCallingAtListForPatientShouldRunningGeneralMethods() {
         try (MockedStatic<GeneralMethods> mock = Mockito.mockStatic(GeneralMethods.class)) {
             mock.when(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any())).
                     thenAnswer((Answer<Void>) invocation -> null);
@@ -387,13 +347,13 @@ class PatientServiceTest {
     }
 
     /**
-     * Метод тестирует метод setContractsForPatient, который принимает на вход параметры типа Contract и Patient,
-     * если в метод setContractsForPatient передаем новый пустой объект типа Contract и Patient, то проверяем, что был
+     * Метод тестирует метод addContractAtListForPatient, который принимает на вход параметры типа Contract и Patient,
+     * если в метод addContractAtListForPatient передаем новый пустой объект типа Contract и Patient, то проверяем, что был
      * вызван метод GeneralMethods.addObjectOneInListForObjectTwo с любыми входными параметрами
      */
 
     @Test
-    void setContractsForPatientShouldRunningGeneralMethods() {
+    void addContractAtListForPatientShouldRunningGeneralMethods() {
         try (MockedStatic<GeneralMethods> mock = Mockito.mockStatic(GeneralMethods.class)) {
             mock.when(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any())).
                     thenAnswer((Answer<Void>) invocation -> null);

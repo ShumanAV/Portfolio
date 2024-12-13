@@ -14,6 +14,9 @@ public class PlaceStudyIdValidator implements Validator {
 
     private final PlaceStudyService placeStudyService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public PlaceStudyIdValidator(PlaceStudyService placeStudyService) {
         this.placeStudyService = placeStudyService;
@@ -28,11 +31,14 @@ public class PlaceStudyIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         PlaceStudy placeStudy = (PlaceStudy) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, placeStudy.getClass());
 
+        //проверяем есть ли id у места учебы
         if (placeStudy.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У места учебы пациента отсутствует id!");
 
+            //проверяем есть ли место учебы в БД с таким id
         } else if (placeStudyService.findById(placeStudy.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id": field, "", "Места учебы пациента с таким id не существует!");
         }

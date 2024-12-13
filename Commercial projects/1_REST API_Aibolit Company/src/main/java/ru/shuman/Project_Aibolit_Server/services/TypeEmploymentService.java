@@ -11,41 +11,63 @@ import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+
 @Service
 @Transactional(readOnly = true)
 public class TypeEmploymentService {
 
     private final TypeEmploymentRepository typeEmploymentRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeEmploymentService(TypeEmploymentRepository typeEmploymentRepository) {
         this.typeEmploymentRepository = typeEmploymentRepository;
     }
 
-    public Optional<TypeEmployment> findById(Integer idTypeEmployment) {
-        return typeEmploymentRepository.findById(idTypeEmployment);
-    }
-
-    public void addParentAtListForTypeEmployment(Parent parent, TypeEmployment typeEmployment) {
-        GeneralMethods.addObjectOneInListForObjectTwo(parent, typeEmployment, this);
-    }
-
-    @Transactional
-    public void create(TypeEmployment typeEmployment) {
-        typeEmploymentRepository.save(typeEmployment);
-    }
-
-    @Transactional
-    public void update(TypeEmployment typeEmployment) {
-        typeEmploymentRepository.save(typeEmployment);
-    }
-
+    /*
+    Метод формирует список всех типов занятости и возвращает его
+    */
     public List<TypeEmployment> findAll() {
         return typeEmploymentRepository.findAll();
     }
 
+    /*
+    Метод находит тип занятости по названию и возвращает его в обертке Optional
+     */
+    public Optional<TypeEmployment> findByName(String name) {
+        return typeEmploymentRepository.findByName(name);
+    }
+
+    /*
+    Метод находит тип занятости по id и возвращает его в обертке Optional
+     */
+    public Optional<TypeEmployment> findById(Integer idTypeEmployment) {
+        return typeEmploymentRepository.findById(idTypeEmployment);
+    }
+
+    /*
+    Метод сохраняет новый тип занятости в БД
+     */
     @Transactional
-    public void delete(TypeEmployment typeEmployment) {
-        typeEmploymentRepository.delete(typeEmployment);
+    public void create(TypeEmployment newTypeEmployment) {
+        typeEmploymentRepository.save(newTypeEmployment);
+    }
+
+    /*
+    Метод сохраняет измененный тип занятости в БД
+     */
+    @Transactional
+    public void update(TypeEmployment updatedTypeEmployment) {
+        typeEmploymentRepository.save(updatedTypeEmployment);
+    }
+
+    /*
+    Метод добавляет родителя пациента в список родителей для типа занятости, делается это для кэша
+    */
+    public void addParentAtListForTypeEmployment(Parent parent, TypeEmployment typeEmployment) {
+        addObjectOneInListForObjectTwo(parent, typeEmployment, this);
     }
 }

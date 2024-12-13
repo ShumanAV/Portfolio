@@ -14,6 +14,9 @@ public class TypeRelationshipWithPatientIdValidator implements Validator {
 
     private final TypeRelationshipWithPatientService typeRelationshipWithPatientService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeRelationshipWithPatientIdValidator(TypeRelationshipWithPatientService typeRelationshipWithPatientService) {
         this.typeRelationshipWithPatientService = typeRelationshipWithPatientService;
@@ -28,11 +31,14 @@ public class TypeRelationshipWithPatientIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         TypeRelationshipWithPatient typeRelationship = (TypeRelationshipWithPatient) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, typeRelationship.getClass());
 
+        //проверяем есть ли id у типа отношений родителя с пациентом
         if (typeRelationship.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У типа отношений родителя с пациентом отсутствует id!");
 
+            //проверяем есть ли тип отношений родителя с пациентом в БД с таким id
         } else if (typeRelationshipWithPatientService.findById(typeRelationship.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id": field, "", "Тип отношения родителя с пациентом с таким id не существует!");
         }

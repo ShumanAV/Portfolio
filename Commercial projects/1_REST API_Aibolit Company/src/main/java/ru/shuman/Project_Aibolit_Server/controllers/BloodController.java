@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/bloods")
@@ -30,6 +30,9 @@ public class BloodController {
     private final BloodValidator bloodValidator;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public BloodController(BloodService bloodService, BloodIdValidator bloodIdValidator, BloodValidator bloodValidator,
                            ModelMapper modelMapper) {
@@ -43,7 +46,7 @@ public class BloodController {
     Метод формирует и возвращает список групп крови в обертке ResponseEntity
      */
     @GetMapping
-    public ResponseEntity<List<BloodDTO>> sendListBlood() {
+    public ResponseEntity<List<BloodDTO>> sendListBloods() {
 
         List<Blood> bloodList = bloodService.findAll();
 
@@ -53,7 +56,7 @@ public class BloodController {
     }
 
     /*
-    Метод возвращает группу крови по id в обертке ResponseEntity, id берем из url,
+    Метод возвращает одну группу крови по id в обертке ResponseEntity, id берем из url,
     при помощи @ModelAttribute создаем пустой объект типа Blood, устанавливаем в нем переданный id, далее валидируем id,
     находим группу крови и возвращаем ее
      */
@@ -66,7 +69,7 @@ public class BloodController {
 
         bloodIdValidator.validate(blood, bindingResult);
 
-        collectErrorsToString(bindingResult, BloodNotFoundException.class);
+        checkingForErrorsAndThrowsException(bindingResult, BloodNotFoundException.class);
 
         BloodDTO bloodDTO = convertToBloodDTO(bloodService.findById(bloodId).get());
 
@@ -75,8 +78,8 @@ public class BloodController {
     }
 
     /*
-    Метод создает новую группу крови, на вход поступает объект Blood в виде json, принимаем его, валидируем его,
-    в случае отсутствия ошибок при валидации создаем новую группу крови, возвращает код 200 в обертке ResponseEntity
+    Метод создает новую группу крови, на вход поступает объект BloodDTO в виде json, принимаем его, валидируем его,
+    в случае отсутствия ошибок при валидации создаем новую группу крови, возвращаем код 200 в обертке ResponseEntity
      */
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid BloodDTO bloodDTO,
@@ -86,7 +89,7 @@ public class BloodController {
 
         bloodValidator.validate(blood, bindingResult);
 
-        collectErrorsToString(bindingResult, BloodNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, BloodNotCreatedOrUpdatedException.class);
 
         bloodService.create(blood);
 
@@ -94,27 +97,30 @@ public class BloodController {
     }
 
     /*
-    Метод изменяет существующую группу крови, в URL передается id и в виде json объект Blood с новыми данными
-    для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращает код 200 в обертке ResponseEntity
+    Метод изменяет существующую группу крови, в URL передается id и в виде json объект BloodDTO с новыми данными
+    для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращаем код 200 в обертке ResponseEntity
      */
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int bloodId,
                                              @RequestBody @Valid BloodDTO bloodDTO,
                                              BindingResult bindingResult) {
 
+        bloodDTO.setId(bloodId);
         Blood blood = convertToBlood(bloodDTO);
 
         bloodIdValidator.validate(blood, bindingResult);
         bloodValidator.validate(blood, bindingResult);
 
-        collectErrorsToString(bindingResult, BloodNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, BloodNotCreatedOrUpdatedException.class);
 
         bloodService.update(blood);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения BloodNotFoundException
+    /*
+    Метод обработчик исключения BloodNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<BloodErrorResponse> handleException(BloodNotFoundException e) {
         BloodErrorResponse response = new BloodErrorResponse(
@@ -125,7 +131,9 @@ public class BloodController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения BloodNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения BloodNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<BloodErrorResponse> handleException(BloodNotCreatedOrUpdatedException e) {
         BloodErrorResponse response = new BloodErrorResponse(
@@ -136,12 +144,16 @@ public class BloodController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Blood convertToBlood(BloodDTO bloodDTO) {
         return this.modelMapper.map(bloodDTO, Blood.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private BloodDTO convertToBloodDTO(Blood blood) {
         return this.modelMapper.map(blood, BloodDTO.class);
     }

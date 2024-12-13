@@ -14,6 +14,9 @@ public class ContractIdValidator implements Validator {
 
     private final ContractService contractService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public ContractIdValidator(ContractService contractService) {
         this.contractService = contractService;
@@ -28,13 +31,13 @@ public class ContractIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Contract contract = (Contract) o;
 
-        String field = searchNameFieldInParentEntity(errors, contract.getClass());
-
+        //проверяем есть ли id у договора
         if (contract.getId() == null) {
-            errors.rejectValue(field == null ? "id" : field, "", "У договора отсутствует id!");
+            errors.rejectValue("id", "", "У договора отсутствует id!");
 
+            //если id есть, проверяем есть ли договор в БД с таким id
         } else if (contractService.findById(contract.getId()).isEmpty()) {
-            errors.rejectValue(field == null ? "id": field, "", "Договора с таким id не существует!");
+            errors.rejectValue("id", "", "Договора с таким id не существует!");
         }
     }
 }

@@ -6,9 +6,12 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -25,14 +28,17 @@ public class Specialization {
     private Integer id;
 
     @Column(name = "name")
+    @NotEmpty(message = "Наименование специализации отсутствует или не заполнено")
     @Size(max = 100, message = "Наименование специализации должно быть не более 100 символов")
     private String name;
 
     @Column(name = "description")
+    @NotNull(message = "Описание специализации отсутствует")
     private String description;
 
     @Column(name = "published")
-    private boolean published;
+    @NotNull(message = "Поле published отсутствует")
+    private Boolean published;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -43,4 +49,13 @@ public class Specialization {
     @OneToMany(mappedBy = "specialization")
     private List<Doctor> doctors;
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+
+        Specialization that = (Specialization) object;
+
+        return Objects.equals(name, that.name);
+    }
 }

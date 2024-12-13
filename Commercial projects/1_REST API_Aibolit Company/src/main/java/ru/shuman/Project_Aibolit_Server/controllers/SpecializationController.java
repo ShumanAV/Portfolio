@@ -19,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/specializations")
@@ -30,6 +30,9 @@ public class SpecializationController {
     private final SpecializationValidator specializationValidator;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public SpecializationController(SpecializationService specializationService,
                                     SpecializationIdValidator specializationIdValidator,
@@ -40,6 +43,10 @@ public class SpecializationController {
         this.modelMapper = modelMapper;
     }
 
+    /*
+    Метод возвращает список всех специализаций в обертке ResponseEntity,
+    на вход может приходить параметр запроса published, список передается с учетом данного параметра
+     */
     @GetMapping
     public ResponseEntity<List<SpecializationDTO>> sendListSpecializations(@RequestParam(value = "published", required = false) Boolean published) {
 
@@ -56,6 +63,9 @@ public class SpecializationController {
         return new ResponseEntity<>(specializationDTOList, HttpStatus.OK);
     }
 
+    /*
+    Метод возвращает одну специализацию по id в обертке ResponseEntity, перед возвратом делается валидация id
+     */
     @GetMapping("/{id}")
     public ResponseEntity<SpecializationDTO> sendOneSpecialization(@PathVariable(value = "id") int specializationId,
                                                                    @ModelAttribute(value = "specialization") Specialization specialization,
@@ -65,7 +75,7 @@ public class SpecializationController {
 
         specializationIdValidator.validate(specialization, bindingResult);
 
-        collectErrorsToString(bindingResult, SpecializationNotFoundException.class);
+        checkingForErrorsAndThrowsException(bindingResult, SpecializationNotFoundException.class);
 
         SpecializationDTO specializationDTO = convertToSpecializationDTO(specializationService.findById(specializationId).get());
 
@@ -73,6 +83,10 @@ public class SpecializationController {
 
     }
 
+    /*
+    Метод создает новую специализацию, на вход приходит новая специализация типа SpecializationDTO,
+    валидируется, в случае отсутствия ошибок сохраняется и возвращает ответ 200 в обертке ResponseEntity
+     */
     @PostMapping
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid SpecializationDTO specializationDTO,
                                              BindingResult bindingResult) {
@@ -81,31 +95,38 @@ public class SpecializationController {
 
         specializationValidator.validate(specialization, bindingResult);
 
-        collectErrorsToString(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
 
         specializationService.create(specialization);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /*
+    Метод изменяет существующую специализацию, в URL передается id и в виде json объект SpecializationDTO с новыми данными
+    для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращает код 200 в обертке ResponseEntity
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int specializationId,
                                              @RequestBody @Valid SpecializationDTO specializationDTO,
                                              BindingResult bindingResult) {
 
+        specializationDTO.setId(specializationId);
         Specialization specialization = convertToSpecialization(specializationDTO);
 
         specializationIdValidator.validate(specialization, bindingResult);
         specializationValidator.validate(specialization, bindingResult);
 
-        collectErrorsToString(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, SpecializationNotCreatedOrUpdatedException.class);
 
         specializationService.update(specialization);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // Метод обработчик исключения SpecializationNotFound
+    /*
+    Метод обработчик исключения SpecializationNotFoundException
+     */
     @ExceptionHandler
     private ResponseEntity<SpecializationErrorResponse> handleException(SpecializationNotFoundException e) {
         SpecializationErrorResponse response = new SpecializationErrorResponse(
@@ -116,7 +137,9 @@ public class SpecializationController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения SpecializationNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения SpecializationNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<SpecializationErrorResponse> handleException(SpecializationNotCreatedOrUpdatedException e) {
         SpecializationErrorResponse response = new SpecializationErrorResponse(
@@ -127,12 +150,16 @@ public class SpecializationController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Specialization convertToSpecialization(SpecializationDTO specializationDTO) {
         return this.modelMapper.map(specializationDTO, Specialization.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private SpecializationDTO convertToSpecializationDTO(Specialization specialization) {
         return this.modelMapper.map(specialization, SpecializationDTO.class);
     }

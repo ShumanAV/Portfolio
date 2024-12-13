@@ -5,10 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.Contract;
 import ru.shuman.Project_Aibolit_Server.repositories.ContractRepository;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,6 +22,9 @@ public class ContractService {
     private final PatientService patientService;
     private final TypeContractService typeContractService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public ContractService(ContractRepository contractRepository, DoctorService doctorService, PatientService patientService,
                            TypeContractService typeContractService) {
@@ -28,50 +34,88 @@ public class ContractService {
         this.typeContractService = typeContractService;
     }
 
+    /*
+    Метод ищет договор по id и возвращет его в обертке Optional
+     */
     public Optional<Contract> findById(Integer contractId) {
         return contractRepository.findById(contractId);
     }
 
+    /*
+    Метод формирует и возвращает список всех договоров из бД
+     */
     public List<Contract> findAll() {
         return contractRepository.findAll();
     }
 
+    /*
+    Метод сохраняет новый договор в БД, записывает дату и время создания и изменения договора, создает или апдейтит
+    пациента указанного в договоре, для кэша добавляет данный договор в сущности: для доктора, пациента, типа договора
+     */
     @Transactional
-    public void create(Contract contract) {
+    public void create(Contract newContract) {
 
-        contract.setCreatedAt(LocalDateTime.now());
-        contract.setUpdatedAt(LocalDateTime.now());
+        //Записываем дату и время создания и изменения
+        newContract.setCreatedAt(LocalDateTime.now());
+        newContract.setUpdatedAt(LocalDateTime.now());
 
-        doctorService.addContractAtListForDoctor(contract, contract.getDoctor());
+        //для кэша, добавляем данный договор в список договоров для доктора указанного в договоре
+        doctorService.addContractAtListForDoctor(newContract, newContract.getDoctor());
 
-        patientService.addContractAtListForPatient(contract, contract.getPatient());
-        if (contract.getPatient().getId() == null) {
-            patientService.create(contract.getPatient());
+        //если id пациента null, это значит что пациент создан новый, поэтому нужно создать и пациента тоже,
+        // если id не null, значит пациент выбран уже существующий, в этом случае его нужно апдейтить
+        if (newContract.getPatient().getId() == null) {
+            patientService.create(newContract.getPatient());
         } else {
-            patientService.update(contract.getPatient());
+            patientService.update(newContract.getPatient());
         }
 
-        typeContractService.addContractAtListForTypeContract(contract, contract.getTypeContract());
+        //для кэша, добавляем данный договор в список договоров для пациента указанного в договоре, данная строка должна быть ниже
+        // создания пациента, т.к. в методе потребуется id пациента
+        patientService.addContractAtListForPatient(newContract, newContract.getPatient());
 
-        contractRepository.save(contract);
+        //для кэша, добавляем данный договор в список договоров для типа договора указанного в договоре
+        typeContractService.addContractAtListForTypeContract(newContract, newContract.getTypeContract());
+
+        //сохраняем новый договор в БД
+        contractRepository.save(newContract);
     }
 
+    /*
+    Метод сохраняет измененный договор в БД, находит существующий договор в БД, копирует все значения полей из измененного
+     договора в существующий, обновляем время изменения договора, создает или апдейтит пациента указанного в договоре,
+     для кэша добавляет данный договор в сущности: для доктора, пациента, типа договора
+     */
     @Transactional
-    public void update(Contract contract) {
+    public void update(Contract updatedContract) {
 
-        contract.setUpdatedAt(LocalDateTime.now());
+        //находим существующий договор в БД по id
+        Contract existingContract = contractRepository.findById(updatedContract.getId()).get();
 
-        doctorService.addContractAtListForDoctor(contract, contract.getDoctor());
+        //копируем значения всех полей кроме тех, которые не null, из изменяемого договора в существующий
+        copyNonNullProperties(updatedContract, existingContract);
 
-        patientService.addContractAtListForPatient(contract, contract.getPatient());
-        if (contract.getPatient().getId() == null) {
-            patientService.create(contract.getPatient());
+        //обновляем дату и время изменения договора
+        existingContract.setUpdatedAt(LocalDateTime.now());
+
+        //для кэша добавляем договор в список договоров для доктора указанного в договоре
+        doctorService.addContractAtListForDoctor(existingContract, existingContract.getDoctor());
+
+        //если id пациента равен null, это значит, что пациент создан новый и его нужно создать, если не null, значит
+        // пациент выбран существующий и поэтому его нужно апдейтить
+        if (existingContract.getPatient().getId() == null) {
+            patientService.create(existingContract.getPatient());
         } else {
-            patientService.update(contract.getPatient());
+            patientService.update(existingContract.getPatient());
         }
 
-        typeContractService.addContractAtListForTypeContract(contract, contract.getTypeContract());
+        //для кэша добавляем договор в список договоров для пациента указанного в договоре, эта строка должна быть ниже
+        // создания пациента, т.к. в методе понадобится его id
+        patientService.addContractAtListForPatient(existingContract, existingContract.getPatient());
 
-        contractRepository.save(contract);
+        //для кэша добавляем договор в список договоров для типа договора указанного в договоре
+        typeContractService.addContractAtListForTypeContract(existingContract, existingContract.getTypeContract());
+
+        //сохранять существующий договор не нужно, т.к. он находится в персистенс контексте
     }
 }

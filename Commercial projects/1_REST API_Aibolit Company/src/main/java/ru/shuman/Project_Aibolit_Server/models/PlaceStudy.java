@@ -6,8 +6,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 @Getter
 @Setter
@@ -24,7 +25,8 @@ public class PlaceStudy {
     private Integer id;
 
     @Column(name = "name")
-    @Size(max = 100, message = "Наименование места учебы должно быть не более 100 символов")
+    @NotEmpty(message = "Наименование места учебы пациента отсутствует или не заполнено")
+    @Size(max = 100, message = "Наименование места учебы пациента должно быть не более 100 символов")
     private String name;
 
     @OneToOne(mappedBy = "placeStudy")

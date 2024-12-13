@@ -27,6 +27,9 @@ public class RoleController {
     private final RoleValidator roleValidator;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public RoleController(RoleService roleService, RoleIdValidator roleIdValidator, RoleValidator roleValidator,
                           ModelMapper modelMapper) {
@@ -36,6 +39,9 @@ public class RoleController {
         this.modelMapper = modelMapper;
     }
 
+    /*
+    Метод формирует и возвращает список ролей в обертке ResponseEntity
+     */
     @GetMapping
     public ResponseEntity<List<RoleDTO>> sendListRoles() {
 
@@ -46,83 +52,16 @@ public class RoleController {
         return new ResponseEntity<>(roleDTOList, HttpStatus.OK);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<PriceDTO> sendOnePrice(@PathVariable(value = "id") int priceId,
-//                                                 @ModelAttribute(value = "price") Price price,
-//                                                 BindingResult bindingResult) {
-//
-//        price.setId(priceId);
-//
-//        priceIdValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotFound.class);
-//
-//        PriceDTO priceDTO = convertToPriceDTO(priceService.findById(priceId).get());
-//
-//        return new ResponseEntity<>(priceDTO, HttpStatus.OK);
-//
-//    }
-//
-//    @PostMapping
-//    public ResponseEntity<HttpStatus> create(@RequestBody @Valid PriceDTO priceDTO,
-//                                             BindingResult bindingResult) {
-//
-//        Price price = convertToPrice(priceDTO);
-//
-//        priceValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
-//
-//        priceService.create(price);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int priceId,
-//                                             @RequestBody @Valid PriceDTO priceDTO,
-//                                             BindingResult bindingResult) {
-//
-//        Price price = convertToPrice(priceDTO);
-//
-//        priceIdValidator.validate(price, bindingResult);
-//        priceValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
-//
-//        priceService.update(price);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    // Метод обработчик исключения PriceNotFound
-//    @ExceptionHandler
-//    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotFound(PriceNotFound e) {
-//        PriceErrorResponse response = new PriceErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    // Метод обработчик исключения PriceNotCreatedOrUpdatedException
-//    @ExceptionHandler
-//    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotCreated(PriceNotCreatedOrUpdatedException e) {
-//        PriceErrorResponse response = new PriceErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Role convertToRole(RoleDTO roleDTO) {
         return this.modelMapper.map(roleDTO, Role.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private RoleDTO convertToRoleDTO(Role role) {
         return this.modelMapper.map(role, RoleDTO.class);
     }

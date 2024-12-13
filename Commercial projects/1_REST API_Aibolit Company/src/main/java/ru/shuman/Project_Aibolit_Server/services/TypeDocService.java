@@ -10,44 +10,63 @@ import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+
 @Service
 @Transactional(readOnly = true)
 public class TypeDocService {
 
     private final TypeDocRepository typeDocRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeDocService(TypeDocRepository typeDocRepository) {
         this.typeDocRepository = typeDocRepository;
     }
 
-    public Optional<TypeDoc> findById(String typeDocId) {
-        return typeDocRepository.findById(typeDocId);
+    /*
+    Метод формирует список всех типов документов и возвращает его
+    */
+    public List<TypeDoc> findAll() {
+        return typeDocRepository.findAll();
     }
 
+    /*
+    Метод находит тип документа по id и возвращает его в обертке Optional
+     */
     public Optional<TypeDoc> findById(Integer typeDocId) {
         return typeDocRepository.findById(typeDocId);
     }
 
+    /*
+    Метод находит тип документа по названию и возвращает его в обертке Optional
+     */
     public Optional<TypeDoc> findByName(String name) {
         return typeDocRepository.findByName(name);
     }
 
+    /*
+    Метод сохраняет новый тип документа в БД
+     */
+    @Transactional
+    public void create(TypeDoc newTypeDoc) {
+        typeDocRepository.save(newTypeDoc);
+    }
+
+    /*
+    Метод сохраняет измененный тип документа в БД
+     */
+    @Transactional
+    public void update(TypeDoc updatedTypeDoc) {
+        typeDocRepository.save(updatedTypeDoc);
+    }
+
+    /*
+    Метод добавляет документ в список документов для типа документа, делается это для кэша
+    */
     public void addDocumentAtListForTypeDoc(Document document, TypeDoc typeDoc) {
-        GeneralMethods.addObjectOneInListForObjectTwo(document, typeDoc, this);
-    }
-
-    @Transactional
-    public void create(TypeDoc typeDoc) {
-        typeDocRepository.save(typeDoc);
-    }
-
-    @Transactional
-    public void update(TypeDoc typeDoc) {
-        typeDocRepository.save(typeDoc);
-    }
-
-    public List<TypeDoc> findAll() {
-        return typeDocRepository.findAll();
+        addObjectOneInListForObjectTwo(document, typeDoc, this);
     }
 }

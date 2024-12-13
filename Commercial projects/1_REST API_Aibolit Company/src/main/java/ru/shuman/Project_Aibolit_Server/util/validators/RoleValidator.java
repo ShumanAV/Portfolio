@@ -13,6 +13,9 @@ public class RoleValidator implements Validator {
 
     private final RoleService roleService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public RoleValidator(RoleService roleService) {
         this.roleService = roleService;
@@ -25,5 +28,6 @@ public class RoleValidator implements Validator {
 
     @Override
     public void validate(Object o, Errors errors) {
+        //т.к. роли создаем напрямую из бэка, валидации роли нет
     }
 }

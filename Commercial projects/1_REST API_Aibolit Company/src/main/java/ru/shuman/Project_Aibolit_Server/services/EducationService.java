@@ -11,36 +11,64 @@ import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+
 @Service
 @Transactional(readOnly = true)
 public class EducationService {
 
     private final EducationRepository educationRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public EducationService(EducationRepository educationRepository) {
         this.educationRepository = educationRepository;
     }
 
+    /*
+    Метод формирует и возвращает список всех типов образования
+     */
+    public List<Education> findAll() {
+        return educationRepository.findAll();
+    }
+
+    /*
+    Метод ищет тип образования по названию и возвращает его в обертке Optional
+     */
+    public Optional<Education> findByName(String name) {
+        return educationRepository.findByName(name);
+    }
+
+    /*
+    Метод ищет тип образования по id и возвращает его в обертке Optional
+     */
     public Optional<Education> findById(Integer educationId) {
         return educationRepository.findById(educationId);
     }
 
+    /*
+    Метод сохраняет новый тип образования в БД
+     */
+    @Transactional
+    public void create(Education newEducation) {
+        educationRepository.save(newEducation);
+    }
+
+    /*
+    Метод сохраняет измененный тип образования в БД
+     */
+    @Transactional
+    public void update(Education updatedEducation) {
+        educationRepository.save(updatedEducation);
+    }
+
+    /*
+    Метод добавляет родителя пациента в список родителей для типа образования указанного у родителя, делается это для кэша
+     */
     public void addParentAtListForEducation(Parent parent, Education education) {
-        GeneralMethods.addObjectOneInListForObjectTwo(parent, education, this);
+        addObjectOneInListForObjectTwo(parent, education, this);
     }
 
-    @Transactional
-    public void create(Education education) {
-        educationRepository.save(education);
-    }
-
-    @Transactional
-    public void update(Education education) {
-        educationRepository.save(education);
-    }
-
-    public List<Education> findAll() {
-        return educationRepository.findAll();
-    }
 }

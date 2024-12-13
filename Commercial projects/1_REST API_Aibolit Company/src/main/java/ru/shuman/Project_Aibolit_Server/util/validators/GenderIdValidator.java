@@ -28,11 +28,14 @@ public class GenderIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Gender gender = (Gender) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, gender.getClass());
 
+        //проверяем есть ли id у гендера
         if (gender.getId() == null) {
             errors.rejectValue(field == null ? "id": field, "", "У гендера отсутствует id!");
 
+            //проверяем есть ли гендер в БД с таким id
         } else if (genderService.findById(gender.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id": field, "", "Гендер с таким id не существует!");
         }

@@ -12,6 +12,7 @@ public class ProjectAibolitServerApplication {
 		SpringApplication.run(ProjectAibolitServerApplication.class, args);
 	}
 
+	//создадим бин ModelMapper для конвертации модели в DTO и наоборот
 	@Bean
 	public ModelMapper modelMapper() {
 		return new ModelMapper();

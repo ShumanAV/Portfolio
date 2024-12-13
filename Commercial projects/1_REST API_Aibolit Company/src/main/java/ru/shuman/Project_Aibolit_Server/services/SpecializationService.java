@@ -12,58 +12,86 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.addObjectOneInListForObjectTwo;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
+
 @Service
 @Transactional(readOnly = true)
 public class SpecializationService {
 
     private final SpecializationRepository specializationRepository;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public SpecializationService(SpecializationRepository specializationRepository) {
         this.specializationRepository = specializationRepository;
     }
 
+    /*
+    Метод ищет специализацию по имени и возвращает ее в обертке Optional
+     */
     public Optional<Specialization> findByName(String name) {
         return specializationRepository.findByName(name);
     }
 
+    /*
+    Метод ищет специализацию по id и возвращает ее в обертке Optional
+     */
     public Optional<Specialization> findById(Integer specializationId) {
         return specializationRepository.findById(specializationId);
     }
 
+    /*
+    Метод формирует и возвращает список всех специализаций
+    */
     public List<Specialization> findAll() {
         return specializationRepository.findAll();
     }
 
+    /*
+    Метод формирует и возвращает список всех специализаций с учетом флага published
+     */
     public List<Specialization> findAllByPublished(Boolean published) {
         return specializationRepository.findByPublished(published);
     }
 
+    /*
+    Метод сохраняет новую специализацию в БД, заполняет дату и время создания и изменения
+     */
     @Transactional
-    public void create(Specialization specialization) {
+    public void create(Specialization newSpecialization) {
 
-        specialization.setCreatedAt(LocalDateTime.now());
-        specialization.setUpdatedAt(LocalDateTime.now());
+        //записываем дату и время создания и изменения специализации
+        newSpecialization.setCreatedAt(LocalDateTime.now());
+        newSpecialization.setUpdatedAt(LocalDateTime.now());
 
-        specializationRepository.save(specialization);
-    }
-
-    @Transactional
-    public void update(Specialization specialization) {
-
-        specialization.setUpdatedAt(LocalDateTime.now());
-
-        specializationRepository.save(specialization);
+        //сохраняем новую специализацию в БД
+        specializationRepository.save(newSpecialization);
     }
 
     /*
-    Метод осуществляет поиск в БД выбранной специализации со списком докторов,
-    при наличии, и добавление в этот список данного доктора, если список докторов равен null, то создается
-    new ArrayList<>().
-    Делается это как для кэша, так и с целью выявления наличия списка докторов у данной специализации и добавление нового.
-    */
+    Метод сохраняет измененную специализацию, копирует значения всех не null полей из изменяемой специализации
+     в существующую в БД, id и время создания остаются без изменений
+     */
+    @Transactional
+    public void update(Specialization updatedSpecialization) {
 
+        //находим существующую специализацию в БД по id
+        Specialization existingSpecialization = specializationRepository.findById(updatedSpecialization.getId()).get();
+
+        //копируем значения всех полей кроме тех, которые null, из измененного типа договора в существующий
+        copyNonNullProperties(updatedSpecialization, existingSpecialization);
+
+        //обновляем дату и время изменения специализации
+        existingSpecialization.setUpdatedAt(LocalDateTime.now());
+    }
+
+    /*
+    Метод добавляет доктора в список докторов для специализации, делается это как для кэша
+    */
     public void addDoctorAtListForSpecialization(Doctor doctor, Specialization specialization) {
-        GeneralMethods.addObjectOneInListForObjectTwo(doctor, specialization, this);
+        addObjectOneInListForObjectTwo(doctor, specialization, this);
     }
 }

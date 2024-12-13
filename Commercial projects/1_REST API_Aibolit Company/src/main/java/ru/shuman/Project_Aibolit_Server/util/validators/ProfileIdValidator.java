@@ -14,6 +14,9 @@ public class ProfileIdValidator implements Validator {
 
     private final ProfileService profileService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public ProfileIdValidator(ProfileService profileService) {
         this.profileService = profileService;
@@ -28,11 +31,14 @@ public class ProfileIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Profile profile = (Profile) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, profile.getClass());
 
+        //проверяем есть ли id у группы крови
         if (profile.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У профиля отсутствует id!");
 
+            //проверяем есть ли профиль в БД с таким id
         } else if (profileService.findById(profile.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id": field, "", "Профиля с таким id не существует!");
         }

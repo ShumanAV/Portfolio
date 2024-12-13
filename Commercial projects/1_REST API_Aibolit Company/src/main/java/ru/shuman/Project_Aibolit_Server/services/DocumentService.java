@@ -15,29 +15,45 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final TypeDocService typeDocService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public DocumentService(DocumentRepository documentRepository, TypeDocService typeDocService) {
         this.documentRepository = documentRepository;
         this.typeDocService = typeDocService;
     }
 
+    /*
+    Метод ищет документ по id и возвращает его в обертке Optional
+     */
     public Optional<Document> findById(Integer documentId) {
         return documentRepository.findById(documentId);
     }
 
+    /*
+    Метод сохраняет новый документ в БД
+     */
     @Transactional
-    public void create(Document document) {
+    public void create(Document newDocument) {
 
-        typeDocService.addDocumentAtListForTypeDoc(document, document.getTypeDoc());
+        //для кэша добавляем документ в список документов у типа документа
+        typeDocService.addDocumentAtListForTypeDoc(newDocument, newDocument.getTypeDoc());
 
-        documentRepository.save(document);
+        //сохраняем новый документ
+        documentRepository.save(newDocument);
     }
 
+    /*
+    Метод сохраняет измененный документ в БД
+     */
     @Transactional
-    public void update(Document document) {
+    public void update(Document updatedDocument) {
 
-        typeDocService.addDocumentAtListForTypeDoc(document, document.getTypeDoc());
+        //для кэша добавляем документ в список документов для типа документа
+        typeDocService.addDocumentAtListForTypeDoc(updatedDocument, updatedDocument.getTypeDoc());
 
-        documentRepository.save(document);
+        //сохраняем измененный документ
+        documentRepository.save(updatedDocument);
     }
 }

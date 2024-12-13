@@ -7,9 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.shuman.Project_Aibolit_Server.models.Doctor;
 import ru.shuman.Project_Aibolit_Server.models.Profile;
 import ru.shuman.Project_Aibolit_Server.repositories.ProfileRepository;
+import ru.shuman.Project_Aibolit_Server.util.GeneralMethods;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.copyNonNullProperties;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,6 +22,9 @@ public class ProfileService {
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public ProfileService(ProfileRepository profileRepository, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.profileRepository = profileRepository;
@@ -47,41 +53,54 @@ public class ProfileService {
     наличия списка профилей у роли и для кэша - у роли добавляется в список профилей данный профиль.
      */
     @Transactional
-    public void create(Profile profile) {
+    public void create(Profile newProfile) {
 
-        String encodedPassword = passwordEncoder.encode(profile.getPassword());
-        profile.setPassword(encodedPassword);
+        //зашифровываем пароль указанный в новом профиле и устанавливаем его в профиль
+        String encodedPassword = passwordEncoder.encode(newProfile.getPassword());
+        newProfile.setPassword(encodedPassword);
 
-        profile.setCreatedAt(LocalDateTime.now());
-        profile.setUpdatedAt(LocalDateTime.now());
+        //записываем в профиль дату и время создания и изменения
+        newProfile.setCreatedAt(LocalDateTime.now());
+        newProfile.setUpdatedAt(LocalDateTime.now());
 
-        roleService.addProfileAtListForRole(profile, profile.getRole());
+        //добавляем профиль в список профилей для роли указанной в профиле
+        roleService.addProfileAtListForRole(newProfile, newProfile.getRole());
 
-        profileRepository.save(profile);
+        //сохраняем новый профиль в БД
+        profileRepository.save(newProfile);
     }
 
     /*
-    Метод update обновляет входящий с формы профиль, точнее заполняет данный профиль данными:
-    идентификатор, берется у существующего профиля из БД, если пароль у входящего профиля отличается от пароля в БД,
-    то обновляется зашифрованный пароль, дата и время изменения, также для выявления
-    наличия списка профилей у роли и для кэша - у роли добавляется в список профилей данный профиль.
-    Профиль сохраняется.
+    Метод update сохраняет измененный профиль, переносит все изменения в существующий профиль в БД:
+    идентификатор и время создания остаются без изменений у существующего профиля,
+    в существующем профиле в БД обновляется зашифрованный пароль из измененного профиля, т.к. он мог быть изменен,
+    дата и время изменения, также для кэша - у роли добавляется измененнный профиль в список профилей,
+    а также если роль была изменена у профиля, из списка профилей у старой роли удаляется существующий профиль.
     */
     @Transactional
-    public void update(Profile existingProfile, Profile updatedProfile) {
+    public void update(Profile updatedProfile) {
 
-        updatedProfile.setId(existingProfile.getId());
+        //находим существующий профиль в БД по id
+        Profile existingProfile = profileRepository.findById(updatedProfile.getId()).get();
 
-        if (!existingProfile.getPassword().equals(updatedProfile.getPassword())) {
-            String encodedPassword = passwordEncoder.encode(updatedProfile.getPassword());
-            updatedProfile.setPassword(encodedPassword);
+        //для кэша, если в измененном профиле изменили роль, т.е. у существующего профиля и у измененного роль
+        //отличается, то тогда удалим существующий профиль из списка профилей у старой роли
+        if (!existingProfile.getRole().equals(updatedProfile.getRole())) {
+            existingProfile.getRole().getProfiles().remove(existingProfile);
         }
 
-        updatedProfile.setUpdatedAt(LocalDateTime.now());
+        //зашифровываем пароль из измененного профиля и записываем его обратно в измененный профиль
+        String encodedUpdatedPassword = passwordEncoder.encode(updatedProfile.getPassword());
+        updatedProfile.setPassword(encodedUpdatedPassword);
 
-        roleService.addProfileAtListForRole(updatedProfile, updatedProfile.getRole());
+        //копируем значения всех полей кроме тех, которые null из измененного профиля в существующий в БД
+        copyNonNullProperties(updatedProfile, existingProfile);
 
-        profileRepository.save(updatedProfile);
+        //обновляем дату и время изменения в существующем профиле
+        existingProfile.setUpdatedAt(LocalDateTime.now());
+
+        //для кэша, добавим или заменим измененный существующий профиль в списке профилей в указанной роли в профиле
+        roleService.addProfileAtListForRole(existingProfile, existingProfile.getRole());
     }
 
     // Метод удаляет входящий профиль

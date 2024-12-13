@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -18,14 +19,15 @@ import java.util.List;
 
 @Entity
 @Table(name = "type_doc")
-public class TypeDoc implements Serializable {
+public class TypeDoc {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @Id
     @Column(name = "name")
-    @NotNull(message = "Наименование типа документа не должно быть пустым")
+    @NotEmpty(message = "Наименование типа документа отсутствует или не заполнено")
     @Size(max = 255, message = "Наименование типа документа должно быть не более 255 символов")
     private String name;
 

@@ -4,20 +4,25 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.TypeContractDTO;
 import ru.shuman.Project_Aibolit_Server.models.TypeContract;
 import ru.shuman.Project_Aibolit_Server.services.TypeContractService;
+import ru.shuman.Project_Aibolit_Server.util.errors.TypeContractErrorResponse;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.TypeContractNotCreatedOrUpdatedException;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.TypeContractNotFoundException;
 import ru.shuman.Project_Aibolit_Server.util.validators.TypeContractIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.TypeContractValidator;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
+
 @RestController
-@RequestMapping("/typecontracts")
+@RequestMapping("/typesContracts")
 public class TypeContractController {
 
     private final TypeContractService typeContractService;
@@ -25,6 +30,9 @@ public class TypeContractController {
     private final TypeContractValidator typeContractValidator;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public TypeContractController(TypeContractService typeContractService, TypeContractIdValidator typeContractIdValidator,
                                   TypeContractValidator typeContractValidator, ModelMapper modelMapper) {
@@ -34,6 +42,9 @@ public class TypeContractController {
         this.modelMapper = modelMapper;
     }
 
+    /*
+    Метод формирует и возвращает список типов договоров в обертке ResponseEntity
+     */
     @GetMapping
     public ResponseEntity<List<TypeContractDTO>> sendListTypesContracts() {
 
@@ -44,83 +55,104 @@ public class TypeContractController {
         return new ResponseEntity<>(typeContractDTOList, HttpStatus.OK);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<PriceDTO> sendOnePrice(@PathVariable(value = "id") int priceId,
-//                                                 @ModelAttribute(value = "price") Price price,
-//                                                 BindingResult bindingResult) {
-//
-//        price.setId(priceId);
-//
-//        priceIdValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotFound.class);
-//
-//        PriceDTO priceDTO = convertToPriceDTO(priceService.findById(priceId).get());
-//
-//        return new ResponseEntity<>(priceDTO, HttpStatus.OK);
-//
-//    }
-//
-//    @PostMapping
-//    public ResponseEntity<HttpStatus> create(@RequestBody @Valid PriceDTO priceDTO,
-//                                             BindingResult bindingResult) {
-//
-//        Price price = convertToPrice(priceDTO);
-//
-//        priceValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
-//
-//        priceService.create(price);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int priceId,
-//                                             @RequestBody @Valid PriceDTO priceDTO,
-//                                             BindingResult bindingResult) {
-//
-//        Price price = convertToPrice(priceDTO);
-//
-//        priceIdValidator.validate(price, bindingResult);
-//        priceValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
-//
-//        priceService.update(price);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    // Метод обработчик исключения PriceNotFound
-//    @ExceptionHandler
-//    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotFound(PriceNotFound e) {
-//        PriceErrorResponse response = new PriceErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    // Метод обработчик исключения PriceNotCreatedOrUpdatedException
-//    @ExceptionHandler
-//    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotCreated(PriceNotCreatedOrUpdatedException e) {
-//        PriceErrorResponse response = new PriceErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
+    /*
+    Метод возвращает один тип договора по id в обертке ResponseEntity, id берем из url,
+    при помощи @ModelAttribute создаем пустой объект типа TypeContract, устанавливаем в нем переданный id, далее валидируем id,
+    находим тип договора и возвращаем его
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<TypeContractDTO> sendOneTypeContract(@PathVariable(value = "id") int typeContractId,
+                                                               @ModelAttribute(value = "typeContract") TypeContract typeContract,
+                                                               BindingResult bindingResult) {
 
-    // Метод конверсии из DTO в модель
+        typeContract.setId(typeContractId);
+
+        typeContractIdValidator.validate(typeContract, bindingResult);
+
+        checkingForErrorsAndThrowsException(bindingResult, TypeContractNotFoundException.class);
+
+        TypeContractDTO typeContractDTO = convertToTypeContractDTO(typeContractService.findById(typeContractId).get());
+
+        return new ResponseEntity<>(typeContractDTO, HttpStatus.OK);
+
+    }
+
+    /*
+    Метод создает новый тип договора, на вход поступает объект TypeContractDTO в виде json, принимаем его, валидируем его,
+    в случае отсутствия ошибок при валидации создаем новый тип договора, возвращаем код 200 в обертке ResponseEntity
+     */
+    @PostMapping
+    public ResponseEntity<HttpStatus> create(@RequestBody @Valid TypeContractDTO typeContractDTO,
+                                             BindingResult bindingResult) {
+
+        TypeContract typeContract = convertToTypeContract(typeContractDTO);
+
+        typeContractValidator.validate(typeContract, bindingResult);
+
+        checkingForErrorsAndThrowsException(bindingResult, TypeContractNotCreatedOrUpdatedException.class);
+
+        typeContractService.create(typeContract);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /*
+    Метод изменяет существующий тип договора, в URL передается id и в виде json объект TypeContractDTO с новыми данными
+    для изменения, валидируем его, при отсутствии ошибок сохраняем изменения, возвращаем код 200 в обертке ResponseEntity
+     */
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int typeContractId,
+                                             @RequestBody @Valid TypeContractDTO typeContractDTO,
+                                             BindingResult bindingResult) {
+        typeContractDTO.setId(typeContractId);
+        TypeContract typeContract = convertToTypeContract(typeContractDTO);
+
+        typeContractIdValidator.validate(typeContract, bindingResult);
+        typeContractValidator.validate(typeContract, bindingResult);
+
+        checkingForErrorsAndThrowsException(bindingResult, TypeContractNotCreatedOrUpdatedException.class);
+
+        typeContractService.update(typeContract);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /*
+    Метод обработчик исключения TypeContractNotFoundException
+     */
+    @ExceptionHandler
+    private ResponseEntity<TypeContractErrorResponse> handleException(TypeContractNotFoundException e) {
+        TypeContractErrorResponse response = new TypeContractErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /*
+    Метод обработчик исключения TypeContractNotCreatedOrUpdatedException
+     */
+    @ExceptionHandler
+    private ResponseEntity<TypeContractErrorResponse> handleException(TypeContractNotCreatedOrUpdatedException e) {
+        TypeContractErrorResponse response = new TypeContractErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /*
+    Метод конверсии из DTO в модель
+     */
     private TypeContract convertToTypeContract(TypeContractDTO typeContractDTO) {
         return this.modelMapper.map(typeContractDTO, TypeContract.class);
     }
 
-    // Метод конверсии из модели в DTO
+    /*
+    Метод конверсии из модели в DTO
+     */
     private TypeContractDTO convertToTypeContractDTO(TypeContract typeContract) {
         return this.modelMapper.map(typeContract, TypeContractDTO.class);
     }

@@ -12,6 +12,9 @@ public class JournalValidator implements Validator {
 
     private final JournalService journalService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public JournalValidator(JournalService journalService) {
         this.journalService = journalService;

@@ -14,6 +14,9 @@ public class JournalIdValidator implements Validator {
 
     private final JournalService journalService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public JournalIdValidator(JournalService journalService) {
         this.journalService = journalService;
@@ -28,11 +31,14 @@ public class JournalIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Journal journal = (Journal) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, journal.getClass());
 
+        //проверяем есть ли id у карточки вызова врача
         if (journal.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У дневника отсутствует id!");
 
+            //проверяем есть ли карточка вызова врача в БД с таким id
         } else if (journalService.findById(journal.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id": field, "", "Дневника с таким id не существует!");
         }

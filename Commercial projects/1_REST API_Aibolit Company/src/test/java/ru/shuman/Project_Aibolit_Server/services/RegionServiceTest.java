@@ -28,63 +28,49 @@ class RegionServiceTest {
     }
 
     /**
-     * Метод тестирует метод findById, который принимает на вход параметр типа String сервиса RegionService,
-     * если в метод findById передаем любой регион, то он должен вернуть нам пустой объект типа Region в обертке
-     * Optional, далее отслеживаем, что был вызван метод findById с регионом checkedRegion = "Tomsk"
+     * Метод тестирует метод findById сервиса RegionService,
+     * который принимает на вход параметр типа Integer, если в метод findById передаем любой Int,
+     * то он должен вернуть нам объект типа Region в обертке Optional, далее отслеживаем, что был вызван метод findById
+     * с id checkedId = 1
      */
 
     @Test
-    void findByIdShouldReturnEmptyRegionAndCheckedRegion() {
-        Optional<Region> emptyRegion = Optional.of(new Region());
-        when(regionRepository.findById(anyString())).thenReturn(emptyRegion);
+    void findByIdShouldReturnRegionAndCheckedRegion() {
+        int regionId = 1;
+        Optional<Region> mockRegion = Optional.of(new Region());
+        mockRegion.get().setId(regionId);
+        when(regionRepository.findById(anyInt())).thenReturn(mockRegion);
 
-        String checkedRegion = "Tomsk";
-        Assertions.assertEquals(emptyRegion, regionService.findById(checkedRegion));
+        Optional<Region> resultRegion = regionService.findById(regionId);
 
-        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-        verify(regionRepository).findById(captor.capture());
-        String checkedArgument = captor.getValue();
-        Assertions.assertEquals(checkedRegion, checkedArgument);
-    }
-
-    /**
-     * Метод тестирует метод findById, который принимает на вход параметр типа Integer сервиса RegionService,
-     * если в метод findById передаем любой id региона, то он должен вернуть нам пустой объект типа Region в обертке
-     * Optional, далее отслеживаем, что был вызван метод findById с идентификатором региона checkedId = 1
-     */
-
-    @Test
-    void findByIdShouldReturnEmptyRegionAndCheckedId() {
-        Optional<Region> emptyRegion = Optional.of(new Region());
-        when(regionRepository.findById(anyInt())).thenReturn(emptyRegion);
-
-        Integer checkedId = 1;
-        Assertions.assertEquals(emptyRegion, regionService.findById(checkedId));
+        Assertions.assertEquals(mockRegion,resultRegion);
 
         ArgumentCaptor<Integer> captor = ArgumentCaptor.forClass(Integer.class);
         verify(regionRepository).findById(captor.capture());
-        Integer checkedArgument = captor.getValue();
-        Assertions.assertEquals(checkedId, checkedArgument);
+        Integer checkedId = captor.getValue();
+        Assertions.assertEquals(regionId, checkedId);
     }
 
     /**
-     * Метод тестирует метод findByName, который принимает на вход параметр типа String сервиса RegionService,
-     * если в метод findByName передаем любое имя региона, то он должен вернуть нам пустой объект типа Region в обертке
+     * Метод тестирует метод findByName сервиса RegionService, который принимает на вход параметр типа String,
+     * если в метод findByName передаем любое имя региона, то он должен вернуть нам объект типа Region в обертке
      * Optional, далее отслеживаем, что был вызван метод findByName с именем региона checkedName = "Tomsk"
      */
 
     @Test
-    void findByNameShouldReturnEmptyRegion() {
-        Optional<Region> emptyRegion = Optional.of(new Region());
-        when(regionRepository.findByName(anyString())).thenReturn(emptyRegion);
+    void findByNameShouldReturnRegion() {
+        Optional<Region> mockRegion = Optional.of(new Region());
+        when(regionRepository.findByName(anyString())).thenReturn(mockRegion);
 
-        String checkedName = "Tomsk";
-        Assertions.assertEquals(emptyRegion, regionService.findByName(checkedName));
+        String regionName = "Tomsk";
+        Optional<Region> resultRegion = regionService.findByName(regionName);
+
+        Assertions.assertEquals(mockRegion, resultRegion);
 
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(regionRepository).findByName(captor.capture());
-        String checkedArgument = captor.getValue();
-        Assertions.assertEquals(checkedName, checkedArgument);
+        String checkedName = captor.getValue();
+        Assertions.assertEquals(regionName, checkedName);
     }
 
     /**
@@ -94,7 +80,7 @@ class RegionServiceTest {
      */
 
     @Test
-    void setAddressesForRegionShouldRunningGeneralMethods() {
+    void addObjectOneInListForObjectTwoShouldRunning() {
         try (MockedStatic<GeneralMethods> mock = Mockito.mockStatic(GeneralMethods.class)) {
             mock.when(() -> GeneralMethods.addObjectOneInListForObjectTwo(any(), any(), any())).
                     thenAnswer((Answer<Void>) invocation -> null);
@@ -109,12 +95,10 @@ class RegionServiceTest {
      * Метод тестирует метод create в сервисе RegionService, т.к. он void, проверяем факт запуска мока
      * regionRepository и метода в нем save(emptyRegion)
      */
-
     @Test
-    void createShouldBeRunningRegionRepository() {
+    void createShouldBeRunning() {
         Region emptyRegion = new Region();
 
-        when(regionRepository.save(emptyRegion)).thenReturn(emptyRegion);
         regionService.create(emptyRegion);
 
         verify(regionRepository).save(emptyRegion);
@@ -124,12 +108,10 @@ class RegionServiceTest {
      * Метод тестирует метод update в сервисе RegionService, т.к. он void, проверяем факт запуска мока
      * regionRepository и метода в нем save(emptyRegion)
      */
-
     @Test
-    void updateShouldBeRunningRegionRepository() {
+    void updateShouldBeRunning() {
         Region emptyRegion = new Region();
 
-        when(regionRepository.save(emptyRegion)).thenReturn(emptyRegion);
         regionService.update(emptyRegion);
 
         verify(regionRepository).save(emptyRegion);
@@ -146,6 +128,8 @@ class RegionServiceTest {
         List<Region> emptyList = new ArrayList<>();
         when(regionRepository.findAll()).thenReturn(emptyList);
 
-        Assertions.assertEquals(emptyList, regionService.findAll());
+        List<Region> resultList = regionService.findAll();
+
+        Assertions.assertEquals(emptyList, resultList);
     }
 }

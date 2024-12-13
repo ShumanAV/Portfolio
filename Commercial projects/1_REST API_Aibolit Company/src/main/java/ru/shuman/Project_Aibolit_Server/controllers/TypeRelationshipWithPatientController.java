@@ -4,125 +4,163 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import ru.shuman.Project_Aibolit_Server.dto.TypeRelationshipWithPatientDTO;
 import ru.shuman.Project_Aibolit_Server.models.TypeRelationshipWithPatient;
 import ru.shuman.Project_Aibolit_Server.services.TypeRelationshipWithPatientService;
+import ru.shuman.Project_Aibolit_Server.util.errors.TypeRelationshipWithPatientErrorResponse;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.TypeRelationshipWithPatientNotCreatedOrUpdatedException;
+import ru.shuman.Project_Aibolit_Server.util.exceptions.TypeRelationshipWithPatientNotFoundException;
 import ru.shuman.Project_Aibolit_Server.util.validators.TypeRelationshipWithPatientIdValidator;
 import ru.shuman.Project_Aibolit_Server.util.validators.TypeRelationshipWithPatientValidator;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
+
 @RestController
-@RequestMapping("/typerelationships")
+@RequestMapping("/typesRelationships")
 public class TypeRelationshipWithPatientController {
 
-    private final TypeRelationshipWithPatientService relationshipService;
-    private final TypeRelationshipWithPatientIdValidator idValidator;
-    private final TypeRelationshipWithPatientValidator validator;
+    private final TypeRelationshipWithPatientService typeRelationshipService;
+    private final TypeRelationshipWithPatientIdValidator typeRelationshipIdValidator;
+    private final TypeRelationshipWithPatientValidator typeRelationshipValidator;
     private final ModelMapper modelMapper;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
-    public TypeRelationshipWithPatientController(TypeRelationshipWithPatientService relationshipService,
-                                                 TypeRelationshipWithPatientIdValidator idValidator,
-                                                 TypeRelationshipWithPatientValidator validator, ModelMapper modelMapper) {
-        this.relationshipService = relationshipService;
-        this.idValidator = idValidator;
-        this.validator = validator;
+    public TypeRelationshipWithPatientController(TypeRelationshipWithPatientService typeRelationshipService,
+                                                 TypeRelationshipWithPatientIdValidator typeRelationshipIdValidator,
+                                                 TypeRelationshipWithPatientValidator typeRelationshipValidator, ModelMapper modelMapper) {
+        this.typeRelationshipService = typeRelationshipService;
+        this.typeRelationshipIdValidator = typeRelationshipIdValidator;
+        this.typeRelationshipValidator = typeRelationshipValidator;
         this.modelMapper = modelMapper;
     }
 
+    /*
+    Метод формирует и возвращает список типов отношений родителей с пациентами в обертке ResponseEntity
+     */
     @GetMapping
     public ResponseEntity<List<TypeRelationshipWithPatientDTO>> sendListTypesRelationshipWithPatient() {
 
-        List<TypeRelationshipWithPatient> relationshipList = relationshipService.findAll();
+        List<TypeRelationshipWithPatient> relationshipList = typeRelationshipService.findAll();
 
-        List<TypeRelationshipWithPatientDTO> relationshipDTOList = relationshipList.stream().map(this::convertToRelationshipDTO).collect(Collectors.toList());
+        List<TypeRelationshipWithPatientDTO> relationshipDTOList = relationshipList.stream().
+                map(this::convertToTypeRelationshipDTO).collect(Collectors.toList());
 
         return new ResponseEntity<>(relationshipDTOList, HttpStatus.OK);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<PriceDTO> sendOnePrice(@PathVariable(value = "id") int priceId,
-//                                                 @ModelAttribute(value = "price") Price price,
-//                                                 BindingResult bindingResult) {
-//
-//        price.setId(priceId);
-//
-//        priceIdValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotFound.class);
-//
-//        PriceDTO priceDTO = convertToPriceDTO(priceService.findById(priceId).get());
-//
-//        return new ResponseEntity<>(priceDTO, HttpStatus.OK);
-//
-//    }
-//
-//    @PostMapping
-//    public ResponseEntity<HttpStatus> create(@RequestBody @Valid PriceDTO priceDTO,
-//                                             BindingResult bindingResult) {
-//
-//        Price price = convertToPrice(priceDTO);
-//
-//        priceValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
-//
-//        priceService.create(price);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int priceId,
-//                                             @RequestBody @Valid PriceDTO priceDTO,
-//                                             BindingResult bindingResult) {
-//
-//        Price price = convertToPrice(priceDTO);
-//
-//        priceIdValidator.validate(price, bindingResult);
-//        priceValidator.validate(price, bindingResult);
-//
-//        StandardMethods.collectStringAboutErrors(bindingResult, PriceNotCreatedOrUpdatedException.class);
-//
-//        priceService.update(price);
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    // Метод обработчик исключения PriceNotFound
-//    @ExceptionHandler
-//    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotFound(PriceNotFound e) {
-//        PriceErrorResponse response = new PriceErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    // Метод обработчик исключения PriceNotCreatedOrUpdatedException
-//    @ExceptionHandler
-//    private ResponseEntity<PriceErrorResponse> handleExceptionPriceNotCreated(PriceNotCreatedOrUpdatedException e) {
-//        PriceErrorResponse response = new PriceErrorResponse(
-//                e.getMessage(),
-//                System.currentTimeMillis()
-//        );
-//
-//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//    }
+    /*
+    Метод возвращает один тип отношения родителей с пациентом по id в обертке ResponseEntity, id берем из url,
+    при помощи @ModelAttribute создаем пустой объект типа TypeRelationshipWithPatient,
+    устанавливаем в нем переданный id, далее валидируем id, находим тип отношений и возвращаем его
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<TypeRelationshipWithPatientDTO> sendOneTypeRelationshipWithPatient(
+            @PathVariable(value = "id") int typeRelationshiptId,
+            @ModelAttribute(value = "typeRelationshipWithPatient") TypeRelationshipWithPatient typeRelationshipWithPatient,
+            BindingResult bindingResult) {
 
-    // Метод конверсии из DTO в модель
-    private TypeRelationshipWithPatient convertToRelationship(TypeRelationshipWithPatientDTO dto) {
+        typeRelationshipWithPatient.setId(typeRelationshiptId);
+
+        typeRelationshipIdValidator.validate(typeRelationshipWithPatient, bindingResult);
+
+        checkingForErrorsAndThrowsException(bindingResult, TypeRelationshipWithPatientNotFoundException.class);
+
+        TypeRelationshipWithPatientDTO typeRelationshipWithPatientDTO =
+                convertToTypeRelationshipDTO(typeRelationshipService.findById(typeRelationshiptId).get());
+
+        return new ResponseEntity<>(typeRelationshipWithPatientDTO, HttpStatus.OK);
+
+    }
+
+    /*
+    Метод создает новый тип отношений родителя с пациентом, на вход поступает объект TypeRelationshipWithPatientDTO
+    в виде json, принимаем его, валидируем его,
+    в случае отсутствия ошибок при валидации создаем новый тип отношений, возвращаем код 200 в обертке ResponseEntity
+     */
+    @PostMapping
+    public ResponseEntity<HttpStatus> create(@RequestBody @Valid TypeRelationshipWithPatientDTO typeRelationshipWithPatientDTO,
+                                             BindingResult bindingResult) {
+
+        TypeRelationshipWithPatient typeRelationshipWithPatient = convertToTypeRelationship(typeRelationshipWithPatientDTO);
+
+        typeRelationshipValidator.validate(typeRelationshipWithPatient, bindingResult);
+
+        checkingForErrorsAndThrowsException(bindingResult, TypeRelationshipWithPatientNotCreatedOrUpdatedException.class);
+
+        typeRelationshipService.create(typeRelationshipWithPatient);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /*
+    Метод изменяет существующий тип отношений родителя с пациентом, в URL передается id и в виде json объект
+    TypeRelationshipWithPatientDTO с новыми данными для изменения, валидируем его, при отсутствии ошибок
+    сохраняем изменения, возвращаем код 200 в обертке ResponseEntity
+     */
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> update(@PathVariable(value = "id") int typeRelationshipWithPatientId,
+                                             @RequestBody @Valid TypeRelationshipWithPatientDTO typeRelationshipWithPatientDTO,
+                                             BindingResult bindingResult) {
+
+        typeRelationshipWithPatientDTO.setId(typeRelationshipWithPatientId);
+        TypeRelationshipWithPatient typeRelationshipWithPatient = convertToTypeRelationship(typeRelationshipWithPatientDTO);
+
+        typeRelationshipIdValidator.validate(typeRelationshipWithPatient, bindingResult);
+        typeRelationshipValidator.validate(typeRelationshipWithPatient, bindingResult);
+
+        checkingForErrorsAndThrowsException(bindingResult, TypeRelationshipWithPatientNotCreatedOrUpdatedException.class);
+
+        typeRelationshipService.update(typeRelationshipWithPatient);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /*
+    Метод обработчик исключения TypeRelationshipWithPatientNotFoundException
+     */
+    @ExceptionHandler
+    private ResponseEntity<TypeRelationshipWithPatientErrorResponse> handleExceptionPriceNotFound(TypeRelationshipWithPatientNotFoundException e) {
+        TypeRelationshipWithPatientErrorResponse response = new TypeRelationshipWithPatientErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /*
+    Метод обработчик исключения TypeRelationshipWithPatientNotCreatedOrUpdatedException
+     */
+    @ExceptionHandler
+    private ResponseEntity<TypeRelationshipWithPatientErrorResponse> handleExceptionPriceNotCreated(TypeRelationshipWithPatientNotCreatedOrUpdatedException e) {
+        TypeRelationshipWithPatientErrorResponse response = new TypeRelationshipWithPatientErrorResponse(
+                e.getMessage(),
+                System.currentTimeMillis()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /*
+    Метод конверсии из DTO в модель
+     */
+    private TypeRelationshipWithPatient convertToTypeRelationship(TypeRelationshipWithPatientDTO dto) {
         return this.modelMapper.map(dto, TypeRelationshipWithPatient.class);
     }
 
-    // Метод конверсии из модели в DTO
-    private TypeRelationshipWithPatientDTO convertToRelationshipDTO(TypeRelationshipWithPatient relationship) {
+    /*
+    Метод конверсии из модели в DTO
+     */
+    private TypeRelationshipWithPatientDTO convertToTypeRelationshipDTO(TypeRelationshipWithPatient relationship) {
         return this.modelMapper.map(relationship, TypeRelationshipWithPatientDTO.class);
     }
 }

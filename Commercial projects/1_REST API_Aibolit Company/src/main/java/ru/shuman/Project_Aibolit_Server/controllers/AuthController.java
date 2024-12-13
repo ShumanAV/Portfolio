@@ -24,7 +24,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.collectErrorsToString;
+import static ru.shuman.Project_Aibolit_Server.util.GeneralMethods.checkingForErrorsAndThrowsException;
 
 @RestController
 @RequestMapping("/auth")
@@ -36,6 +36,9 @@ public class AuthController {
     private final JWTUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public AuthController(DoctorService doctorService, DoctorValidator doctorValidator, ModelMapper modelMapper,
                           JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
@@ -67,7 +70,7 @@ public class AuthController {
 
         doctorValidator.validate(doctor, bindingResult);
 
-        collectErrorsToString(bindingResult, ProfileOrDoctorNotCreatedOrUpdatedException.class);
+        checkingForErrorsAndThrowsException(bindingResult, ProfileOrDoctorNotCreatedOrUpdatedException.class);
 
         doctorService.register(doctor);
 
@@ -80,12 +83,11 @@ public class AuthController {
     Метод принимает JSON с объектом типа AuthenticationDTO authenticationDTO с именем пользователя и паролем.
     В случае неправильного логина и пароля выбрасывает исключение ProfileNotAuthenticatedException
 
-    В случае прохождения аутентификации формирует новый jwt токен и возвращает его в оболочке со статусом 200
-    new ResponseEntity<>(Map.of("jwt-token", token), HttpStatus.OK).
+    В случае прохождения аутентификации формирует новый jwt токен и возвращает его вместе с пользователем в обертке
+    со статусом 200
      */
-
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> performLogin(@RequestBody @Valid AuthenticationDTO authenticationDTO) {
+    public ResponseEntity<Map<String, Object>> performLogin(@RequestBody @Valid AuthenticationDTO authenticationDTO) {
 
         UsernamePasswordAuthenticationToken authInputToken = new UsernamePasswordAuthenticationToken(
                 authenticationDTO.getUsername(),
@@ -100,13 +102,16 @@ public class AuthController {
 
         String token = jwtUtil.generateToken(authenticationDTO.getUsername());
 
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("jwt-token", token);
+        map.put("doctor", convertToDoctorDTO(doctorService.findByProfileUsername(authenticationDTO.getUsername()).get()));
 
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    // Метод обработчик исключения ProfileNotAuthenticatedException
+    /*
+    Метод обработчик исключения ProfileNotAuthenticatedException
+     */
     @ExceptionHandler
     private ResponseEntity<AuthenticationErrorResponse> handleException(ProfileNotAuthenticatedException e) {
         AuthenticationErrorResponse response = new AuthenticationErrorResponse(
@@ -117,7 +122,9 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод обработчик исключения ProfileOrDoctorNotCreatedOrUpdatedException
+    /*
+    Метод обработчик исключения ProfileOrDoctorNotCreatedOrUpdatedException
+     */
     @ExceptionHandler
     private ResponseEntity<DoctorErrorResponse> handleException(ProfileOrDoctorNotCreatedOrUpdatedException e) {
         DoctorErrorResponse response = new DoctorErrorResponse(
@@ -128,9 +135,18 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Метод конверсии из DTO в модель
+    /*
+    Метод конверсии из DTO в модель
+     */
     private Doctor convertToDoctor(DoctorDTO doctorDTO) {
         return this.modelMapper.map(doctorDTO, Doctor.class);
+    }
+
+    /*
+    Метод конверсии из модели в DTO
+     */
+    private DoctorDTO convertToDoctorDTO(Doctor doctor) {
+        return this.modelMapper.map(doctor, DoctorDTO.class);
     }
 
 }

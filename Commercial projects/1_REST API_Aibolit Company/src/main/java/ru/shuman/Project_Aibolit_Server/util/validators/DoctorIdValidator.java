@@ -14,6 +14,9 @@ public class DoctorIdValidator implements Validator {
 
     private final DoctorService doctorService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public DoctorIdValidator(DoctorService doctorService) {
         this.doctorService = doctorService;
@@ -28,14 +31,13 @@ public class DoctorIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Doctor doctor = (Doctor) o;
 
-        String field = searchNameFieldInParentEntity(errors, doctor.getClass());
-
-        // Блок проверки наличия и валидности id у пользователя при его наличии
+        //проверяем есть ли id у доктора
         if (doctor.getId() == null) {
-            errors.rejectValue(field == null ? "id" : field, "", "У пользователя отсутствует id!");
+            errors.rejectValue("id", "", "У пользователя отсутствует id!");
 
+            //проверяем есть ли доктор в БД с таким id
         } else if (doctorService.findById(doctor.getId()).isEmpty()) {
-            errors.rejectValue(field == null ? "id" : field, "", "Пользователя с таким id не существует!");
+            errors.rejectValue("id", "", "Пользователя с таким id не существует!");
         }
     }
 }

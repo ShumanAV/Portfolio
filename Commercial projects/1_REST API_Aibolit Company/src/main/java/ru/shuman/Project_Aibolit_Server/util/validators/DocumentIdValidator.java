@@ -14,6 +14,9 @@ public class DocumentIdValidator implements Validator {
 
     private final DocumentService documentService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public DocumentIdValidator(DocumentService documentService) {
         this.documentService = documentService;
@@ -28,11 +31,14 @@ public class DocumentIdValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Document document = (Document) o;
 
+        //находим название поля в родительской сущности, к которому относится текущая сущность
         String field = searchNameFieldInParentEntity(errors, document.getClass());
 
+        //проверяем есть ли id у документа
         if (document.getId() == null) {
             errors.rejectValue(field == null ? "id" : field, "", "У документа отсутствует id!");
 
+            //проверяем есть ли документ в БД с таким id
         } else if (documentService.findById(document.getId()).isEmpty()) {
             errors.rejectValue(field == null ? "id": field, "", "Документа с таким id не существует!");
         }

@@ -14,13 +14,16 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    private final String SUBJECT = "User details";
-    private final String ISSUER = "Aibolit software";
-    private final int EXPIRATION_DATE_IN_MINUTES = 60;
+    private static final String SUBJECT = "User details";
+    private static final String ISSUER = "Aibolit medical system";
+    private static final int EXPIRATION_DATE_IN_MINUTES = 60 * 24 * 7;
 
     @Value("${jwt_secret}")
     private String secretKey;
 
+    /*
+    Метод генерирует jwt токен
+     */
     public String generateToken(String username) {
         Date exparationDate = Date.from(ZonedDateTime.now().plusMinutes(EXPIRATION_DATE_IN_MINUTES).toInstant());
 
@@ -33,6 +36,9 @@ public class JWTUtil {
                 .sign(Algorithm.HMAC256(secretKey));
     }
 
+    /*
+    Метод валидирует jwt токен и возвращает имя пользователя из токена
+     */
     public String validateTokenAndRetrieveClaim(String token) throws JWTVerificationException {
         JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(secretKey))
                 .withSubject(SUBJECT)

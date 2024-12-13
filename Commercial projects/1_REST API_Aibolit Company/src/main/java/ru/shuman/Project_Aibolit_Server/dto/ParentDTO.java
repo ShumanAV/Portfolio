@@ -3,8 +3,13 @@ package ru.shuman.Project_Aibolit_Server.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -13,58 +18,91 @@ public class ParentDTO {
 
     private Integer id;
 
+    @NotNull(message = "Фамилия отсутствует")
     @Size(max = 100, message = "Фамилия должна быть не более 100 символов")
     private String lastname;
 
+    @NotEmpty(message = "Имя отсутствует или не заполнено")
     @Size(max = 100, message = "Имя должно быть не более 100 символов")
     private String firstname;
 
+    @NotNull(message = "Отчество отсутствует")
     @Size(max = 100, message = "Отчество должно быть не более 100 символов")
     private String patronymic;
 
-    private boolean parentNow;
+    @NotNull(message = "Поле кто сейчас родитель отсутствует")
+    private Boolean parentNow;
 
-    @Size(max = 100, message = "Документ должен быть не более 100 символов")
+    @NotNull(message = "Доверенность отсутствует")
+    @Size(max = 100, message = "Доверенность должна быть не более 100 символов")
     private String powerOfAttorney;
 
+    @NotNull(message = "Номер телефона отсутствует")
     @Size(max = 30, message = "Номер телефона должен быть не более 30 символов")
     private String phone;
 
+    @NotNull(message = "Электронная почта отсутствует")
     @Size(max = 100, message = "Электронная почта должна быть не более 100 символов")
     @Email(message = "Электронная почта должна быть в формате ххх@xxx.xx")
     private String email;
 
-    @Size(max = 50, message = "Полис должен быть не более 50 символов")
+    @NotNull(message = "Медицинский полис отсутствует")
+    @Size(max = 50, message = "Медицинский полис должен быть не более 50 символов")
     private String policy;
 
+    @NotNull(message = "СНИЛС отсутствует")
     @Size(max = 100, message = "СНИЛС должен быть не более 100 символов")
     private String snils;
 
+    @NotNull(message = "Медицинская страховая компания отсутствует")
     @Size(max = 255, message = "Медицинская страховая компания должна быть не более 255 символов")
     private String medicalInsuranceCompany;
 
+    @NotNull(message = "ИНН отсутствует")
     @Size(max = 20, message = "ИНН должен быть не более 20 символов")
     private String inn;
 
+    @NotNull(message = "Место работы отсутствует")
     @Size(max = 255, message = "Место работы должно быть не более 255 символов")
     private String job;
 
-    private Date birthday;
+    @NotNull(message = "День рождения отсутствует")
+    @Size(max = 30, message = "День рождения родителя должно быть не более 30 символов")
+    private String birthday;
 
-    private boolean published;
+    @NotNull(message = "Поле published отсутствует")
+    private Boolean published;
 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    @Valid
+    @NotNull(message = "Документ отсутствует")
     private DocumentDTO document;
 
+    @Valid
+    @NotNull(message = "Адрес отсутствует")
     private AddressDTO address;
 
+    @Valid
+    @NotNull(message = "Тип отношения родителя с пациентом отсутствует")
     private TypeRelationshipWithPatientDTO typeRelationshipWithPatient;
 
+    @Valid
+    @NotNull(message = "Образование родителя отсутствует")
     private EducationDTO education;
 
+    @Valid
+    @NotNull(message = "Группа крови родителя отсутствует")
     private BloodDTO blood;
 
+    @Valid
+    @NotNull(message = "Тип занятости отсутствует")
     private TypeEmploymentDTO typeEmployment;
 
+    @Valid
+    @NotNull(message = "Гендерный признак отсутствует")
     private GenderDTO gender;
 
 }

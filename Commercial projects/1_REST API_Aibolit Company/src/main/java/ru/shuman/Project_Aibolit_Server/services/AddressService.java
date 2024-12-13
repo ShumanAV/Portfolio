@@ -15,29 +15,45 @@ public class AddressService {
     private final AddressRepository addressRepository;
     private final RegionService regionService;
 
+    /*
+    Внедрение зависимостей
+     */
     @Autowired
     public AddressService(AddressRepository addressRepository, RegionService regionService) {
         this.addressRepository = addressRepository;
         this.regionService = regionService;
     }
 
+    /*
+    Метод ищет адрес по id и возвращает его в обертке Optional
+     */
     public Optional<Address> findById(Integer addressId) {
         return addressRepository.findById(addressId);
     }
 
+    /*
+    Метод сохраняет новый адрес в БД
+     */
     @Transactional
-    public void create(Address address) {
+    public void create(Address newAddress) {
 
-        regionService.AddAddressAtListForRegion(address, address.getRegion());
+        //для кэша добавляем адрес в список адресов для региона указанного в адресе
+        regionService.AddAddressAtListForRegion(newAddress, newAddress.getRegion());
 
-        addressRepository.save(address);
+        //сохраняем новый адрес
+        addressRepository.save(newAddress);
     }
 
+    /*
+    Метод сохраняет измененный адрес в БД
+     */
     @Transactional
-    public void update(Address address) {
+    public void update(Address updatedAddress) {
 
-        regionService.AddAddressAtListForRegion(address, address.getRegion());
+        //для кэша добавляем адрес в список адресов для региона указанного в адресе
+        regionService.AddAddressAtListForRegion(updatedAddress, updatedAddress.getRegion());
 
-        addressRepository.save(address);
+        //сохраняем измененный адрес
+        addressRepository.save(updatedAddress);
     }
 }
