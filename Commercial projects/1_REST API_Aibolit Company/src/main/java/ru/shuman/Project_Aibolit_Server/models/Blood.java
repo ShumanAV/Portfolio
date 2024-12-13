@@ -10,6 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -35,5 +36,21 @@ public class Blood {
 
     @OneToMany(mappedBy = "blood")
     private List<Patient> patients;
+
+    /*
+    Данный метод нужен для тестирования
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+
+        Blood blood = (Blood) object;
+
+        if (!Objects.equals(id, blood.id)) return false;
+        if (!Objects.equals(name, blood.name)) return false;
+        if (!Objects.equals(parents, blood.parents)) return false;
+        return Objects.equals(patients, blood.patients);
+    }
 
 }

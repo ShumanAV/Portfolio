@@ -6,19 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
 import org.reflections.Reflections;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import ru.shuman.Project_Aibolit_Server.dto.*;
 import ru.shuman.Project_Aibolit_Server.models.*;
-import ru.shuman.Project_Aibolit_Server.repositories.PatientRepository;
-import ru.shuman.Project_Aibolit_Server.services.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -30,59 +26,27 @@ public class GeneralMethodsTest {
     private static BindingResult bindingResultWithErrors;
     private static Errors errors;
 
-    @Mock
-    private PatientRepository patientRepository;
-
-    @Mock
-    private PlaceStudyService placeStudyService;
-    @Mock
-    private ParentService parentService;
-    @Mock
-    private DocumentService documentService;
-    @Mock
-    private AddressService addressService;
-    @Mock
-    private BloodService bloodService;
-    @Mock
-    private GenderService genderService;
-
-    private static PatientService patientService;
-
-//    @Autowired
-    private GeneralMethodsTest () {
-//        this.patientRepository = patientRepository;
-//        this.placeStudyService = placeStudyService;
-//        this.parentService = parentService;
-//        this.typeDocService = typeDocService;
-//        this.documentService = documentService;
-//        this.addressService = addressService;
-//        this.bloodService = bloodService;
-//        this.genderService = genderService;
-
-
-        this.patientService = new PatientService(patientRepository, placeStudyService, parentService,
-                documentService, addressService, bloodService, genderService);
-    }
-
     @BeforeAll
     public static void init() {
+        //инициализируем пустой bindingResult без ошибок, в качестве таргетного класса будет выступать класс вызова врача
         bindingResultEmpty = new BeanPropertyBindingResult(new Calling(), "Calling");
 
+        //инициализируем пустой bindingResult с ошибками, в качестве таргетного класса будет выступать класс вызова врача
         bindingResultWithErrors = new BeanPropertyBindingResult(new Calling(), "Calling");
 
         // создаем в bindingResultWithErrors ошибку для поля id в качестве примера,
-        // теперь метод collectStringAboutErrors должен выбрасывать исключение
+        // теперь метод checkingForErrorsAndThrowsException должен выбрасывать исключение
         bindingResultWithErrors.rejectValue("id", "", "У объекта отсутствует id!");
 
         // создаем объект типа Errors с таргетным классом Calling
         errors = new BeanPropertyBindingResult(new Calling(), "Calling");
     }
 
-    // Метод тестирует метод collectStringAboutErrors на то, что не будет выброшено исключение в случае, когда
+    // Метод тестирует метод checkingForErrorsAndThrowsException на то, что не будет выброшено исключение в случае, когда
     // в bindingResultEmpty нет ошибок
     @ParameterizedTest
     @MethodSource("generateExceptions")
-    public void collectStringAboutErrorsTestWithoutExceptions(Class<? extends RuntimeException> clazz) {
+    public void checkingForErrorsAndThrowsExceptionTestWithoutExceptions(Class<? extends RuntimeException> clazz) {
         Assertions.assertDoesNotThrow(() -> {
             checkingForErrorsAndThrowsException(bindingResultEmpty, clazz);
         });
@@ -92,7 +56,7 @@ public class GeneralMethodsTest {
     // в bindingResultWithErrors есть хотя бы одна ошибка
     @ParameterizedTest
     @MethodSource("generateExceptions")
-    public void collectStringAboutErrorsTest(Class<? extends RuntimeException> clazz) {
+    public void checkingForErrorsAndThrowsExceptionTestWithException(Class<? extends RuntimeException> clazz) {
         // проверка на выброс исключения
         Assertions.assertThrows(clazz, () -> {
             checkingForErrorsAndThrowsException(bindingResultWithErrors, clazz);
@@ -113,45 +77,60 @@ public class GeneralMethodsTest {
         return out.stream();
     }
 
-    // Метод тестирует метод searchNameFieldInTargetClass
+    /*
+    Метод тестирует метод searchNameFieldInParentEntity, на вход принимает название поля, которое мы ожидаем увидеть,
+    название класса сущности, имя поля которой будем искать в родительской сущности - в таргентном классе errors - в данном
+    случае - это CallingDTO
+     */
     @ParameterizedTest
     @MethodSource("generateFields")
-    public void searchNameFieldInTargetClassTest(String fieldName, Class<?> searchableFieldType) {
+    public void searchNameFieldInParentEntityTest(String fieldName, Class<?> searchableFieldType) {
         Assertions.assertEquals(fieldName, GeneralMethods.searchNameFieldInParentEntity(errors, searchableFieldType));
     }
 
-    // Метод тестирует метод searchNameFieldInTargetClass на возврат null в случае,
-    // если метод searchNameFieldInTargetClass не находит поле такого типа,
-    // на примере моделей Contract и TypeContract, т.к. их dto не являются дочерними сущностями
-    // таргетного класса CallingDTO
+    /*
+    Метод тестирует метод searchNameFieldInParentEntity на возврат null в случае,
+    если данный метод не находит поле такого типа, на примере моделей Contract и TypeContract, т.к. их dto не являются
+     дочерними сущностями таргетного класса CallingDTO
+     */
     @Test
-    public void searchNameFieldInTargetClassTestOnNull() {
+    public void searchNameFieldInParentEntityTestOnNull() {
         Assertions.assertNull(GeneralMethods.searchNameFieldInParentEntity(errors, Contract.class));
         Assertions.assertNull(GeneralMethods.searchNameFieldInParentEntity(errors, TypeContract.class));
     }
 
-    // Метод генерирует имена полей и их типы - DTO на примере класса CallingDTO, а также его дочерних сущностей DTO
+    /*
+    Метод генерирует имена полей в родительской сущности на примере класса CallingDTO, а также его дочерних сущностей DTO, например,
+    DoctorDTO имеет название поля doctor в CallingDTO, SpecializationDTO также через связь с DoctorDTO имеет название поля
+    doctor и т.д.
+     */
     public static Stream<Arguments> generateFields() {
         List<Arguments> out = new ArrayList<>();
 
+        //сущность Doctor и ее дочерние сущности
         out.add(Arguments.arguments("doctor", Doctor.class));
         out.add(Arguments.arguments("doctor", Specialization.class));
         out.add(Arguments.arguments("doctor", Profile.class));
         out.add(Arguments.arguments("doctor", Role.class));
 
-        out.add(Arguments.arguments("diary", Journal.class));
+        //сущность карточка вызова
+        out.add(Arguments.arguments("journal", Journal.class));
 
+        //сущность прайс
         out.add(Arguments.arguments("price", Price.class));
 
+        //сущность пациент и его дочерние сущности
         out.add(Arguments.arguments("patient", Patient.class));
-
         out.add(Arguments.arguments("patient", PlaceStudy.class));
         out.add(Arguments.arguments("patient", Document.class));
+        out.add(Arguments.arguments("patient", TypeDoc.class));
         out.add(Arguments.arguments("patient", Address.class));
+        out.add(Arguments.arguments("patient", Region.class));
         out.add(Arguments.arguments("patient", Blood.class));
         out.add(Arguments.arguments("patient", Gender.class));
-        out.add(Arguments.arguments("patient", Parent.class));
 
+        //сущность родитель и его дочерние сущности
+        out.add(Arguments.arguments("patient", Parent.class));
         out.add(Arguments.arguments("patient", Document.class));
         out.add(Arguments.arguments("patient", Address.class));
         out.add(Arguments.arguments("patient", TypeRelationshipWithPatient.class));
@@ -160,14 +139,10 @@ public class GeneralMethodsTest {
         out.add(Arguments.arguments("patient", TypeEmployment.class));
         out.add(Arguments.arguments("patient", Gender.class));
 
-        out.add(Arguments.arguments("patient", TypeDoc.class));
-
-        out.add(Arguments.arguments("patient", Region.class));
-
         return out.stream();
     }
 
-    // Метод тестирует метод formClassDTO на соответствие класса модели и класса DTO для нее данной модели
+    // Метод тестирует метод formClassDTO на соответствие класса модели и ее класса DTO
     @ParameterizedTest
     @MethodSource("generateClassesModelsAndDTOs")
     public void formClassDTOTest(Class<?> model, Class<?> dto) {
@@ -182,6 +157,7 @@ public class GeneralMethodsTest {
         out.add(Arguments.arguments(Blood.class, BloodDTO.class));
         out.add(Arguments.arguments(Calling.class, CallingDTO.class));
         out.add(Arguments.arguments(Contract.class, ContractDTO.class));
+        out.add(Arguments.arguments(Doctor.class, DoctorDTO.class));
         out.add(Arguments.arguments(Document.class, DocumentDTO.class));
         out.add(Arguments.arguments(Education.class, EducationDTO.class));
         out.add(Arguments.arguments(Gender.class, GenderDTO.class));
@@ -197,35 +173,145 @@ public class GeneralMethodsTest {
         out.add(Arguments.arguments(TypeDoc.class, TypeDocDTO.class));
         out.add(Arguments.arguments(TypeEmployment.class, TypeEmploymentDTO.class));
         out.add(Arguments.arguments(TypeRelationshipWithPatient.class, TypeRelationshipWithPatientDTO.class));
-        out.add(Arguments.arguments(Doctor.class, DoctorDTO.class));
 
         return out.stream();
     }
 
+    // Метод тестирует метод searchGetterName на соответствие названий геттеров
     @ParameterizedTest
-    @MethodSource("generateObjectOfModels")
-    public void addObjectOneInListForObjectTwoTest(Patient patientWithParentForAssert, Parent parent,
-                                                   Patient patientWithoutParent, PatientService patientService) {
-        GeneralMethods.addObjectOneInListForObjectTwo(parent, patientWithoutParent, patientService);
-        Assertions.assertEquals(patientWithParentForAssert.getParents(), patientWithoutParent.getParents());
+    @MethodSource("generateGetterMethodsNames")
+    public void searchGetterNameTest(String getterOfObjectOne, Object objectOne, Object objectTwo) {
+        Assertions.assertEquals(getterOfObjectOne, GeneralMethods.searchGetterName(objectOne, objectTwo));
     }
 
-    public static Stream<Arguments> generateObjectOfModels() {
-
+    // Метод генерирует названия геттеров в соответствующих классах
+    public static Stream<Arguments> generateGetterMethodsNames() {
         List<Arguments> out = new ArrayList<>();
 
-        Optional<Patient> patientWithoutParent = patientService.findById(1);
-        Optional<Patient> patientWithParentForAssert = patientService.findById(1);
-        if (patientWithoutParent.isEmpty() || patientWithParentForAssert.isEmpty()) {
-            return null;
-        }
+        //примеры названия геттеров в objectOne возвращающий ObjectTwo
+        out.add(Arguments.arguments("getRegion", new Address(), new Region()));
+        out.add(Arguments.arguments("getTypeDoc", new Document(), new TypeDoc()));
+        out.add(Arguments.arguments("getTypeContract", new Contract(), new TypeContract()));
+        out.add(Arguments.arguments("getPrice", new Calling(), new Price()));
+        out.add(Arguments.arguments("getRole", new Profile(), new Role()));
 
-        Parent parent = new Parent();
-        patientWithParentForAssert.get().getParents().add(parent);
-
-        out.add(Arguments.arguments(patientWithParentForAssert, parent, patientWithoutParent, patientService));
+        //примеры названия геттеров в ObjectTwo возвращающий List<objectOne>
+        out.add(Arguments.arguments("getAddresses", new Region(), new Address()));
+        out.add(Arguments.arguments("getDocuments", new TypeDoc(), new Document()));
+        out.add(Arguments.arguments("getContracts", new TypeContract(), new Contract()));
+        out.add(Arguments.arguments("getCallings", new Price(), new Calling()));
+        out.add(Arguments.arguments("getProfiles", new Role(), new Profile()));
 
         return out.stream();
     }
 
+    // Метод тестирует метод searchSetterName на соответствие названий cеттеров
+    @ParameterizedTest
+    @MethodSource("generateSetterMethodsNames")
+    public void searchSetterNameTest(String getterOfObjectOne, Object objectOne, Object objectTwo) {
+        Assertions.assertEquals(getterOfObjectOne, GeneralMethods.searchSetterName(objectOne, objectTwo));
+    }
+
+    // Метод генерирует названия cеттеров в соответствующих классах
+    public static Stream<Arguments> generateSetterMethodsNames() {
+        List<Arguments> out = new ArrayList<>();
+
+        //примеры названия cеттеров в ObjectTwo возвращающий List<objectOne>
+        out.add(Arguments.arguments("setAddresses", new Region(), new Address()));
+        out.add(Arguments.arguments("setDocuments", new TypeDoc(), new Document()));
+        out.add(Arguments.arguments("setContracts", new TypeContract(), new Contract()));
+        out.add(Arguments.arguments("setCallings", new Price(), new Calling()));
+        out.add(Arguments.arguments("setProfiles", new Role(), new Profile()));
+
+        return out.stream();
+    }
+
+    // Метод тестирует метод searchGetIdName на соответствие названий методов getId
+    @ParameterizedTest
+    @MethodSource("generateGetIdMethodsNames")
+    public void searchSetterNameTest(String getIdMethodName, Object o) {
+        Assertions.assertEquals(getIdMethodName, GeneralMethods.searchGetIdName(o));
+    }
+
+    // Метод генерирует названия методов getId в соответствующих классах
+    public static Stream<Arguments> generateGetIdMethodsNames() {
+        List<Arguments> out = new ArrayList<>();
+
+        //примеры названия cеттеров в ObjectTwo возвращающий List<objectOne>
+        out.add(Arguments.arguments("getId", new Address()));
+        out.add(Arguments.arguments("getId", new Document()));
+        out.add(Arguments.arguments("getId", new Contract()));
+        out.add(Arguments.arguments("getId", new Calling()));
+        out.add(Arguments.arguments("getId", new Profile()));
+
+        return out.stream();
+    }
+
+    // Метод тестирует метод getNullPropertyNames на соответствие массивов с полями которые null в объектах
+    @ParameterizedTest
+    @MethodSource("generateNonNullProperties")
+    public void getNullPropertyNamesTest(String[] arrayOfNullPropertyNames, Object src) {
+        Assertions.assertArrayEquals(arrayOfNullPropertyNames, GeneralMethods.getNullPropertyNames(src));
+    }
+
+    // Метод генерирует строковые массивы с полями которые null в соответствующих классах
+    public static Stream<Arguments> generateNonNullProperties() {
+        List<Arguments> out = new ArrayList<>();
+
+        //примеры строковых массивов с названиями полей которые null в объектах
+        Blood blood = new Blood();
+        blood.setId(1);
+        out.add(Arguments.arguments(new String[] {"patients", "name", "parents"}, blood));
+
+        Gender gender = new Gender();
+        gender.setId(1);
+        gender.setName("name");
+        out.add(Arguments.arguments(new String[] {"patients", "parents"}, gender));
+
+        Document document = new Document();
+        document.setId(1);
+        document.setName("name");
+        out.add(Arguments.arguments(new String[] {"parent",  "patient", "typeDoc"}, document));
+
+        Education education = new Education();
+        education.setId(1);
+        education.setName("name");
+        out.add(Arguments.arguments(new String[] {"parents"}, education));
+
+        TypeDoc typeDoc = new TypeDoc();
+        typeDoc.setId(1);
+        typeDoc.setName("name");
+        typeDoc.setDocuments(new ArrayList<>());
+        out.add(Arguments.arguments(new String[] {}, typeDoc));
+
+        return out.stream();
+    }
+
+    // Метод тестирует метод copyNonNullProperties на соответствие полей в результирующем объекте, которые не null
+    @ParameterizedTest
+    @MethodSource("generateExampleTargetObjects")
+    public void copyNonNullPropertiesTest(Object exampleResultTarget, Object src, Object target) {
+        GeneralMethods.copyNonNullProperties(src, target);
+        Assertions.assertEquals(exampleResultTarget, target);
+    }
+
+    // Метод генерирует объекты: пример результирующего целевого объекта, объект источник, целевой объект
+    public static Stream<Arguments> generateExampleTargetObjects() {
+        List<Arguments> out = new ArrayList<>();
+
+        //примеры строковых массивов с названиями полей которые null в объектах
+        Blood bloodResultTarget = new Blood();
+        bloodResultTarget.setId(1);
+        bloodResultTarget.setName("name");
+
+        Blood bloodSrc = new Blood();
+        bloodSrc.setId(1);
+        bloodSrc.setName("name");
+
+        Blood bloodTarget = new Blood();
+
+        out.add(Arguments.arguments(bloodResultTarget, bloodSrc, bloodTarget));
+
+        return out.stream();
+    }
 }
